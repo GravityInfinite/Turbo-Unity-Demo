@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Net;
+using System.Text;
+using GravitySDK.PC.Constant;
+using GravitySDK.PC.Utils;
+using UnityEngine.Networking;
+using System.Collections;
+using GravitySDK.PC.GravityTurbo;
+
+namespace GravitySDK.PC.Request
+{
+    public class GravitySDKNormalRequest:GravitySDKBaseRequest
+    {
+        public GravitySDKNormalRequest(string appId, string url, IList<Dictionary<string, object>> data) :base(appId, url,data)
+        {
+        }
+        public GravitySDKNormalRequest(string appId, string url) : base(appId, url)
+        {
+        }
+
+        public override IEnumerator SendData_2(ResponseHandle responseHandle, IList<Dictionary<string, object>> data)
+        {
+            this.SetData(data);
+            string uri = this.URL();
+            Dictionary<string, object> param = new Dictionary<string, object>();
+            param[GravitySDKConstant.APPID] = this.APPID();
+            param["event_list"] = this.Data();
+            param["client_id"] = Turbo.GetClientId();
+            param["flush_time"] = GravitySDKUtil.GetTimeStamp();
+            string content = GravitySDKJSON.Serialize(param);
+            // 不要开启加密
+            // string encodeContent = Encode(content);
+            byte[] contentCompressed = Encoding.UTF8.GetBytes(content);
+
+            using (UnityWebRequest webRequest = new UnityWebRequest(uri, "POST"))
+            {
+                webRequest.timeout = 30;
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                webRequest.uploadHandler = (UploadHandler) new UploadHandlerRaw(contentCompressed);
+                webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
+
+                GravitySDKLogger.Print("Post event: " + content + "\n  Request URL: " + uri);
+
+                // Request and wait for the desired page.
+                yield return webRequest.SendWebRequest();
+
+                Dictionary<string,object> resultDict = null;
+                #if UNITY_2020_1_OR_NEWER
+                switch (webRequest.result)
+                {
+                    case UnityWebRequest.Result.ConnectionError:
+                    case UnityWebRequest.Result.DataProcessingError:
+                    case UnityWebRequest.Result.ProtocolError:
+                        GravitySDKLogger.Print("Error response : " + webRequest.error);
+                        break;
+                    case UnityWebRequest.Result.Success:
+                        GravitySDKLogger.Print("Response : " + webRequest.downloadHandler.text);
+                        if (!string.IsNullOrEmpty(webRequest.downloadHandler.text)) 
+                        {
+                            resultDict = GravitySDKJSON.Deserialize(webRequest.downloadHandler.text);
+                        } 
+                        break;
+                }
+                #else
+                if (webRequest.isHttpError || webRequest.isNetworkError)
+                {
+                    GravitySDKLogger.Print("Error response : " + webRequest.error);
+                }
+                else
+                {
+                    GravitySDKLogger.Print("Response : " + webRequest.downloadHandler.text);
+                    if (!string.IsNullOrEmpty(webRequest.downloadHandler.text)) 
+                    {
+                        resultDict = GravitySDKJSON.Deserialize(webRequest.downloadHandler.text);
+                    }
+                }
+                #endif
+                if (responseHandle != null) 
+                {
+                    // 用户还没注册成功时，返回2000，此时不能删除本地事件
+                    if (resultDict != null) 
+                    {
+                        resultDict.Add("flush_count", data.Count);
+                        resultDict.Add("is_response_error", resultDict.ContainsKey("code") && Convert.ToInt32(resultDict["code"]) == 2000);
+                    }
+                    responseHandle(resultDict);
+                }
+            }
+        }
+        private static string Encode(string inputStr)
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(inputStr);
+            using (var outputStream = new MemoryStream())
+            {
+                using (var gzipStream = new GZipStream(outputStream, CompressionMode.Compress))
+                    gzipStream.Write(inputBytes, 0, inputBytes.Length);
+                byte[] output = outputStream.ToArray();
+                return Convert.ToBase64String(output);
+            }
+        }
+
+    }
+}
