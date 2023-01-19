@@ -1,0 +1,404 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using GravityEngine;
+using System.Collections.Generic;
+using System;
+using System.Threading;
+using GravitySDK.PC.Constant;
+using GravitySDK.PC.Utils;
+using WeChatWASM;
+
+public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTrackEventCallback
+{
+    public GUISkin skin;
+    private const int Margin = 20;
+
+    private const int Height = 60;
+    
+    private Vector2 scrollPosition;
+
+    // 动态公共属性接口
+    public Dictionary<string, object> GetDynamicSuperProperties()
+    {
+        return new Dictionary<string, object>() 
+        {
+            {"DynamicProperty", DateTime.Now}
+        };
+    }
+    // 自动采集事件回调接口
+    public Dictionary<string, object> AutoTrackEventCallback(int type, Dictionary<string, object>properties)
+    {
+        return new Dictionary<string, object>() 
+        {
+            {"AutoTrackEventProperty", DateTime.Today}
+        };
+    }
+
+    private void Awake()
+    {
+    }
+    private void Start()
+    {
+        WXBase.InitSDK((code) => { Debug.Log("wx init end"); });
+    }
+
+    void OnGUI() 
+    {
+        GUILayout.BeginArea(new Rect(Margin, Margin, Screen.width-2*Margin, Screen.height));
+        scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Width(Screen.width - 2 * Margin), GUILayout.Height(Screen.height - 100));
+        
+        GUIStyle style = GUI.skin.label;
+        style.fontSize = 25;
+        GUILayout.Label("初始化 / 买量关键事件上报",style);
+
+        GUIStyle buttonStyle = GUI.skin.button;
+        buttonStyle.fontSize = 20;
+        GUILayout.BeginHorizontal(GUI.skin.box,GUILayout.Height(Height));
+        if (GUILayout.Button("ManualInitialization", GUILayout.Height(Height)))
+        {
+            // 手动初始化（动态挂载 GravityEngineAPI 脚本）
+            new GameObject("GravityEngine", typeof(GravityEngineAPI));
+
+            //设置实例参数并启动引擎
+            string appId = "18760451";
+            string accessToken = "gZGljPsq7I4wc3BMvkAUsevQznx1jahi";
+            string clientId = "123456789005";
+            
+            var systemInfo = WX.GetSystemInfoSync();
+            // 提前设置设备属性信息
+            GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
+            {
+                SDKVersion = systemInfo.SDKVersion, // 微信SDK版本号
+                benchmarkLevel = systemInfo.benchmarkLevel,
+                brand = systemInfo.brand,
+                deviceOrientation = systemInfo.deviceOrientation,
+                language = systemInfo.language,
+                model = systemInfo.model,
+                platform = systemInfo.platform,
+                screenHeight = systemInfo.screenHeight,
+                screenWidth = systemInfo.screenWidth,
+                system = systemInfo.system,
+                version = systemInfo.version, // 微信版本号
+            });
+            // 启动引力引擎
+            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.NORMAL);
+            // 记录小程序启动事件，在StartEngine之后并且获取network_type之后调用
+            WX.GetNetworkType(new GetNetworkTypeOption()
+            {
+                success = (result) => { GravitySDKDeviceInfo.SetNetworkType(result.networkType); },
+                fail = (result) => { GravitySDKDeviceInfo.SetNetworkType("error"); },
+                complete = (result) =>
+                {
+                    LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
+                    GravityEngineAPI.TrackMPLaunch(launchOptionsSync.query, launchOptionsSync.scene);
+                    GravityEngineAPI.Flush();
+                }
+            });
+           
+            // 挂载采集器，以开启微信小游戏的自动采集
+            GameObject mWechatGameAutoTrackObj = new GameObject("WechatGameAutoTrack", typeof(WeChatGameAutoTrack));
+            WeChatGameAutoTrack mWechatGameAutoTrack = (WeChatGameAutoTrack) mWechatGameAutoTrackObj.GetComponent(typeof(WeChatGameAutoTrack));
+            mWechatGameAutoTrack.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
+            {
+                {"auto_track_key", "auto_track_value"}
+            });
+            DontDestroyOnLoad(mWechatGameAutoTrackObj);
+
+            // 开启自动采集事件
+            // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME);
+            // 开启自动采集事件，并设置自定属性
+            // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME, new Dictionary<string, object>()
+            // {
+            //     {"auto_track_key", "auto_track_value"}
+            // });
+            // 开启自动采集，并设置事件回调
+            // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, this);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("Register", GUILayout.Height(Height)))
+        {
+            Debug.Log("register clicked");
+            var option = WX.GetLaunchOptionsSync();
+            foreach (var (key, value) in option.query)
+            {
+                Debug.Log($"key is {key}, value is {value}");
+            }
+            
+            GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid", option.query,
+                request =>
+                {
+                    Debug.Log("register call end");
+                    Debug.Log(request.downloadHandler.text);
+                });
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("HandleEventUpload", GUILayout.Height(Height)))
+        {
+            Debug.Log("handle event clicked");
+            // 上报注册事件举例
+            GravityEngineAPI.HandleEventUpload("register", request =>
+            {
+                Debug.Log("handle event register call end");
+                Debug.Log(request.downloadHandler.text);
+            });
+            
+            // // 上报激活事件举例
+            // GravityEngineAPI.HandleEventUpload("activate", request =>
+            // {
+            //     Debug.Log("handle event activate call end");
+            //     Debug.Log(request.downloadHandler.text);
+            // });
+            //
+            // // 上报次留事件举例
+            // GravityEngineAPI.HandleEventUpload("twice", request =>
+            // {
+            //     Debug.Log("handle event twice call end");
+            //     Debug.Log(request.downloadHandler.text);
+            // });
+            //
+            // // 上报付费事件举例，一定要传入金额，否则会上报失败影响买量！
+            // GravityEngineAPI.HandleEventUpload("pay", request =>
+            // {
+            //     Debug.Log("handle event pay call end");
+            //     Debug.Log(request.downloadHandler.text);
+            // }, 300, 300);
+            //
+            // // 上报关键行为事件举例
+            // GravityEngineAPI.HandleEventUpload("key_active", request =>
+            // {
+            //     Debug.Log("handle event key active call end");
+            //     Debug.Log(request.downloadHandler.text);
+            // });
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("QueryUser", GUILayout.Height(Height)))
+        {
+            Debug.Log("query user clicked");
+            GravityEngineAPI.QueryUser(request =>
+            {
+                Debug.Log("query user call end");
+                Debug.Log(request.downloadHandler.text);
+            });
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(20);
+        
+        GUILayout.Label("事件上报", GUI.skin.label);
+        GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
+        if (GUILayout.Button("TrackEvent", GUILayout.Height(Height)))
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            properties["channel"] = "base";//字符串，长度不超过2048
+            properties["age"] = 1;//数字
+            properties["isVip"] = true;//布尔
+            properties["birthday"] = DateTime.Now;//时间
+            properties["movies"] = new List<string>() { "Interstellar", "The Negro Motorist Green Book" };//字符串元素的数组 最大元素个数为 500
+
+            GravityEngineAPI.Track("GE_000",properties);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("TrackMPRegister", GUILayout.Height(Height)))
+        {
+            // 记录用户注册事件
+            GravityEngineAPI.TrackMPRegister();
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("TrackMPLogin", GUILayout.Height(Height)))
+        {
+            // 记录用户登录事件
+            GravityEngineAPI.TrackMPLogin();
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("TrackMPLogout", GUILayout.Height(Height)))
+        {
+            // 记录用户退出登录事件
+            GravityEngineAPI.TrackMPLogout();
+        }
+        GUILayout.EndHorizontal();
+        
+        GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
+        if (GUILayout.Button("TrackEventWithTimeTravel", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.TimeEvent("TestTimeEvent");
+            #if !(UNITY_WEBGL)
+            Thread.Sleep(1000);
+            #endif
+            GravityEngineAPI.Track("TestTimeEvent");
+        }
+
+        GUILayout.Space(20);
+        if (GUILayout.Button("TrackEventWithDate", GUILayout.Height(Height)))
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            properties["status"] = 4;
+            GravityEngineAPI.Track("GE_001", properties, DateTime.Now, TimeZoneInfo.Utc);
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(20);
+        
+        GUILayout.Label("用户属性上报", GUI.skin.label);
+        GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
+        if (GUILayout.Button("UserSet", GUILayout.Height(Height)))
+        {
+            Dictionary<string, object> userProperties = new Dictionary<string, object>();
+            userProperties["$name"] = "your_name2";
+            GravityEngineAPI.UserSet(userProperties);
+        }
+
+        GUILayout.Space(20);
+        if (GUILayout.Button("UserSetOnce", GUILayout.Height(Height)))
+        {
+            Dictionary<string, object> userProperties = new Dictionary<string, object>();
+            userProperties["$first_visit_time"] = DateTime.Now;
+            GravityEngineAPI.UserSetOnce(userProperties);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("UserAdd", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.UserAdd("age", 1);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("UserUnset", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.UserUnset(new List<string>() {"age", "$name", "$first_visit_time", "movies"});
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("UserDelete", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.UserDelete();
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("UserAppend", GUILayout.Height(Height)))
+        {
+            List<string> propList = new List<string>();
+            propList.Add("Interstellar");
+            propList.Add("The Negro Motorist Green Book");
+            
+            // 为属性名为 movies 的用户属性追加 2 个元素
+            GravityEngineAPI.UserAppend(new Dictionary<string, object>()
+            {
+                {"movies", propList}
+            });
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("UserUniqAppend", GUILayout.Height(Height)))
+        {
+            List<string> propList = new List<string>();
+            propList.Add("Interstellar");
+            propList.Add("The Shawshank Redemption");
+            
+            // 为属性名为 movies 的用户属性去重追加 2 个元素
+            GravityEngineAPI.UserUniqAppend(new Dictionary<string, object>()
+            {
+                {"movies", propList}
+            });
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(20);
+        GUILayout.Label("通用属性设置", GUI.skin.label);
+        GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
+        if (GUILayout.Button("SetSuperProperties", GUILayout.Height(Height)))
+        {
+            Dictionary<string, object> superProperties = new Dictionary<string, object>();
+            superProperties["vipLevel"] = 1;
+            GravityEngineAPI.SetSuperProperties(superProperties);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("UpdateSuperProperties", GUILayout.Height(Height)))
+        {
+            Dictionary<string, object> superProperties = new Dictionary<string, object>();
+            superProperties["vipLevel"] = 2;
+            GravityEngineAPI.SetSuperProperties(superProperties);
+        }
+       
+        GUILayout.Space(20);
+        if (GUILayout.Button("ClearSuperProperties", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.UnsetSuperProperty("vipLevel");
+        }
+
+        GUILayout.Space(20);
+        if (GUILayout.Button("ClearAllSuperProperties", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.ClearSuperProperties();
+        }
+
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
+        if (GUILayout.Button("SetDynamicSuperProperties", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.SetDynamicSuperProperties(this);
+        }
+
+        GUILayout.Space(20);
+        if (GUILayout.Button("GetPresetProperties", GUILayout.Height(Height)))
+        {
+            GEPresetProperties presetProperties = GravityEngineAPI.GetPresetProperties();
+            string deviceModel = presetProperties.DeviceModel;
+            Debug.Log("GEPresetProperties DeviceModel is " + deviceModel);
+            Dictionary<string, object> eventPresetProperties = presetProperties.ToEventPresetProperties();
+            string propertiesStr = "";
+            foreach (KeyValuePair<string, object> kv in eventPresetProperties)
+            {
+                propertiesStr = propertiesStr + kv.Key + " = " + kv.Value + ", ";
+            }
+            Debug.Log("eventPresetProperties: " + propertiesStr);
+        }
+
+        GUILayout.Space(20);
+        if (GUILayout.Button("LoadScene", GUILayout.Height(Height)))
+        {
+            SceneManager.LoadScene("NewScene", LoadSceneMode.Single);
+        }
+        GUILayout.EndHorizontal();
+        
+        GUILayout.Space(20);
+        GUILayout.Label("其他配置", GUI.skin.label);
+        GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
+        if (GUILayout.Button("Flush", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.Flush();
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("GetDeviceID", GUILayout.Height(Height)))
+        {
+            Debug.Log("DeviceID: " + GravityEngineAPI.GetDeviceId());
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("Pause", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.SetTrackStatus(GE_TRACK_STATUS.PAUSE);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("Stop", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.SetTrackStatus(GE_TRACK_STATUS.STOP);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("SaveOnly", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.SetTrackStatus(GE_TRACK_STATUS.SAVE_ONLY);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("Normal", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.SetTrackStatus(GE_TRACK_STATUS.NORMAL);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("CalibrateTime", GUILayout.Height(Height)))
+        {
+            //时间戳,单位毫秒 对应时间为1668982523000 2022-11-21 06:15:23
+            GravityEngineAPI.CalibrateTime(1668982523000);
+
+            //NTP 时间服务器校准，如：time.apple.com
+            //GravityEngineAPI.CalibrateTimeWithNtp("time.apple.com");
+        }
+        GUILayout.EndHorizontal();
+        
+        GUILayout.EndScrollView();
+        GUILayout.EndArea();
+    }    
+}
