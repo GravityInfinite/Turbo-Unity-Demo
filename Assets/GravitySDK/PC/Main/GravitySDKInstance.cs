@@ -109,12 +109,7 @@ namespace GravitySDK.PC.Main
             }
             else
             {
-                this.mRequest = new GravitySDKDebugRequest(appId,this.mConfig.DebugURL());
-                if (this.mConfig.GetMode() == Mode.DEBUG_ONLY)
-                {
-                    // Debug Only演练模式
-                    ((GravitySDKDebugRequest)this.mRequest).SetDryRun(1);
-                }
+                this.mRequest = new GravitySDKDebugRequest(appId, this.mConfig.NormalURL());
             }
             DefaultData();
             mCurrentInstance = this;

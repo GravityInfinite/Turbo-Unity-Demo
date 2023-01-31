@@ -25,14 +25,13 @@ namespace GravitySDK.PC.Request
         {
             this.SetData(data);
             string uri = this.URL();
+            
             Dictionary<string, object> param = new Dictionary<string, object>();
             param[GravitySDKConstant.APPID] = this.APPID();
             param["event_list"] = this.Data();
             param["client_id"] = Turbo.GetClientId();
             param["flush_time"] = GravitySDKUtil.GetTimeStamp();
             string content = GravitySDKJSON.Serialize(param);
-            // 不要开启加密
-            // string encodeContent = Encode(content);
             byte[] contentCompressed = Encoding.UTF8.GetBytes(content);
 
             using (UnityWebRequest webRequest = new UnityWebRequest(uri, "POST"))
@@ -84,7 +83,10 @@ namespace GravitySDK.PC.Request
                     if (resultDict != null) 
                     {
                         resultDict.Add("flush_count", data.Count);
-                        resultDict.Add("is_response_error", resultDict.ContainsKey("code") && Convert.ToInt32(resultDict["code"]) == 2000);
+                        int code = Convert.ToInt32(resultDict["code"]);
+                        resultDict.Add("is_response_error",
+                            resultDict.ContainsKey("code") && (code == 2000 || code != 0));
+                        
                     }
                     responseHandle(resultDict);
                 }

@@ -14,16 +14,13 @@ namespace GravitySDK.PC.Config
         /* 正常模式，数据会存入缓存，并依据一定的缓存策略上报 */
         NORMAL,
         /* Debug 模式，数据逐条上报。当出现问题时会以日志和异常的方式提示用户 */
-        DEBUG,
-        /* Debug Only 模式，只对数据做校验，不会入库 */
-        DEBUG_ONLY
+        DEBUG
     }
     public class GravitySDKConfig
     {
         private string mToken;
         private string mServerUrl;
         private string mNormalUrl;
-        private string mDebugUrl;
         private string mConfigUrl;
         private string mInstanceName;
         private Mode mMode = Mode.NORMAL;
@@ -37,10 +34,8 @@ namespace GravitySDK.PC.Config
             //校验 server url
             serverUrl = this.VerifyUrl(serverUrl);
             this.mServerUrl = serverUrl;
-            this.mNormalUrl = serverUrl + "/event_center/api/v1/eventv2/collect/?access_token=" +
+            this.mNormalUrl = serverUrl + "/event_center/api/v1/event/collect/?access_token=" +
                               Turbo.GetAccessToken();
-            // 这两个接口都没有启用
-            this.mDebugUrl = serverUrl + "/data_debug";
             this.mConfigUrl = serverUrl + "/config";
             this.mToken = token;
             this.mInstanceName = instanceName;
@@ -66,10 +61,6 @@ namespace GravitySDK.PC.Config
         public Mode GetMode()
         {
             return this.mMode;
-        }
-        public string DebugURL()
-        {
-            return this.mDebugUrl;
         }
         public string NormalURL()
         {

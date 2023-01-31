@@ -115,8 +115,7 @@ namespace GravityEngine
         public enum SDKRunMode
         {
             NORMAL = 0,
-            DEBUG = 1,
-            DEBUG_ONLY = 2
+            DEBUG = 1
         }
 
         public enum NetworkType

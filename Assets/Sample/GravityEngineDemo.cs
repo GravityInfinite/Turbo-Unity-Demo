@@ -64,6 +64,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
             string accessToken = "gZGljPsq7I4wc3BMvkAUsevQznx1jahi";
             string clientId = "123456789005";
             
+#if (UNITY_WEBGL)
             var systemInfo = WX.GetSystemInfoSync();
             // 提前设置设备属性信息
             GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
@@ -80,30 +81,34 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
                 system = systemInfo.system,
                 version = systemInfo.version, // 微信版本号
             });
+#endif
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.NORMAL);
-            // 记录小程序启动事件，在StartEngine之后并且获取network_type之后调用
-            WX.GetNetworkType(new GetNetworkTypeOption()
-            {
-                success = (result) => { GravitySDKDeviceInfo.SetNetworkType(result.networkType); },
-                fail = (result) => { GravitySDKDeviceInfo.SetNetworkType("error"); },
-                complete = (result) =>
-                {
-                    LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
-                    GravityEngineAPI.TrackMPLaunch(launchOptionsSync.query, launchOptionsSync.scene);
-                    GravityEngineAPI.Flush();
-                }
-            });
-           
-            // 挂载采集器，以开启微信小游戏的自动采集
-            GameObject mWechatGameAutoTrackObj = new GameObject("WechatGameAutoTrack", typeof(WeChatGameAutoTrack));
-            WeChatGameAutoTrack mWechatGameAutoTrack = (WeChatGameAutoTrack) mWechatGameAutoTrackObj.GetComponent(typeof(WeChatGameAutoTrack));
-            mWechatGameAutoTrack.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
-            {
-                {"auto_track_key", "auto_track_value"}
-            });
-            DontDestroyOnLoad(mWechatGameAutoTrackObj);
+            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
 
+#if (UNITY_WEBGL)
+            // 记录小程序启动事件，在StartEngine之后并且获取network_type之后调用
+                        WX.GetNetworkType(new GetNetworkTypeOption()
+                        {
+                            success = (result) => { GravitySDKDeviceInfo.SetNetworkType(result.networkType); },
+                            fail = (result) => { GravitySDKDeviceInfo.SetNetworkType("error"); },
+                            complete = (result) =>
+                            {
+                                LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
+                                GravityEngineAPI.TrackMPLaunch(launchOptionsSync.query, launchOptionsSync.scene);
+                                GravityEngineAPI.Flush();
+                            }
+                        });
+                       
+                        // 挂载采集器，以开启微信小游戏的自动采集
+                        GameObject mWechatGameAutoTrackObj = new GameObject("WechatGameAutoTrack", typeof(WeChatGameAutoTrack));
+                        WeChatGameAutoTrack mWechatGameAutoTrack = (WeChatGameAutoTrack) mWechatGameAutoTrackObj.GetComponent(typeof(WeChatGameAutoTrack));
+                        mWechatGameAutoTrack.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
+                        {
+                            {"auto_track_key", "auto_track_value"}
+                        });
+                        DontDestroyOnLoad(mWechatGameAutoTrackObj);
+#endif
+            
             // 开启自动采集事件
             // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME);
             // 开启自动采集事件，并设置自定属性
@@ -118,13 +123,17 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
         if (GUILayout.Button("Register", GUILayout.Height(Height)))
         {
             Debug.Log("register clicked");
-            var option = WX.GetLaunchOptionsSync();
-            foreach (var (key, value) in option.query)
+#if (UNITY_WEBGL)
+            var query = WX.GetLaunchOptionsSync().query;
+            foreach (var (key, value) in query)
             {
                 Debug.Log($"key is {key}, value is {value}");
             }
+#else
+            Dictionary<string, string> query = null;
+#endif
             
-            GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid", option.query,
+            GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid", query,
                 request =>
                 {
                     Debug.Log("register call end");

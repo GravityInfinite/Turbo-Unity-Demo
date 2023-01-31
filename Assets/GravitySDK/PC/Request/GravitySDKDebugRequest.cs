@@ -9,17 +9,12 @@ using GravitySDK.PC.Utils;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using GravitySDK.PC.GravityTurbo;
 
 namespace GravitySDK.PC.Request
 {
     public class GravitySDKDebugRequest:GravitySDKBaseRequest
     {
-        private int mDryRun = 0;
-        private string mDeviceID = GravitySDKDeviceInfo.DeviceID();
-        public void SetDryRun(int dryRun)
-        {
-            mDryRun = dryRun;
-        }
         public GravitySDKDebugRequest(string appId, string url, IList<Dictionary<string, object>> data):base(appId,url,data)
         {
             
@@ -32,19 +27,22 @@ namespace GravitySDK.PC.Request
         {
             this.SetData(data);
             string uri = this.URL();
-            string content = GravitySDKJSON.Serialize(this.Data()[0]);
-
-            WWWForm form = new WWWForm();
-            form.AddField("appid", this.APPID());
-            form.AddField("source", "client");
-            form.AddField("dryRun", mDryRun);
-            form.AddField("deviceId", mDeviceID);
-            form.AddField("data", content);
-
-            using (UnityWebRequest webRequest = UnityWebRequest.Post(uri, form))
+            
+            Dictionary<string, object> param = new Dictionary<string, object>();
+            param[GravitySDKConstant.APPID] = this.APPID();
+            param["event_list"] = this.Data();
+            param["client_id"] = Turbo.GetClientId();
+            param["flush_time"] = GravitySDKUtil.GetTimeStamp();
+            string content = GravitySDKJSON.Serialize(param);
+            byte[] contentCompressed = Encoding.UTF8.GetBytes(content);
+            
+            using (UnityWebRequest webRequest = new UnityWebRequest(uri, "POST"))
             {
                 webRequest.timeout = 30;
-                webRequest.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                webRequest.SetRequestHeader("Turbo-Debug-Mode", "1");
+                webRequest.uploadHandler = (UploadHandler) new UploadHandlerRaw(contentCompressed);
+                webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
 
                 GravitySDKLogger.Print("Post event: " + content + "\n  Request URL: " + uri);
 
@@ -84,9 +82,13 @@ namespace GravitySDK.PC.Request
                 #endif
                 if (responseHandle != null) 
                 {
+                    // 用户还没注册成功时，返回2000，此时不能删除本地事件
                     if (resultDict != null)
                     {
                         resultDict.Add("flush_count", data.Count);
+                        int code = Convert.ToInt32(resultDict["code"]);
+                        resultDict.Add("is_response_error",
+                            resultDict.ContainsKey("code") && (code == 2000 || code != 0));
                     }
                     responseHandle(resultDict);
                 }

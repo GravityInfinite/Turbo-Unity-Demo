@@ -55,10 +55,6 @@ namespace GravityEngine.Wrapper
             {
                 config.SetMode(Mode.DEBUG);
             }
-            else if(token.mode == GravityEngineAPI.SDKRunMode.DEBUG_ONLY)
-            {
-                config.SetMode(Mode.DEBUG_ONLY);
-            }
             GravityPCSDK.Init(token.appid, GravitySDKConstant.SERVER_URL, token.GetInstanceName(), config, sMono);
         }
 
