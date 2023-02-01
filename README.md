@@ -347,7 +347,7 @@ GravityEngineAPI.UserAdd(new Dictionary<string, object>()
 
 #### 3.4 UserUnset 重置用户属性
 
-如果您需要重置用户的某个属性，可以调用 `UserUnset` 将该用户指定用户属性的值重置。
+如果您需要重置用户的某个属性，可以调用 `UserUnset` 将该用户指定用户属性的值重置，此接口支持传入字符串、列表、布尔类型的参数:
 
 ```csharp
 // 删除单个用户属性
@@ -357,7 +357,7 @@ GravityEngineAPI.UserUnset("userPropertyName");
 GravityEngineAPI.UserUnset(new List<string>() {"age", "$name", "$first_visit_time", "movies"});
 ```
 
-> UserUnset: 的传入值为被清空属性的 Key 值。
+> UserUnset: 的传入值为被重置属性的 Key 值。
 
 #### 3.5 UserDelete 删除用户
 
