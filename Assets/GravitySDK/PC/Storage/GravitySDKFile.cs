@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using WeChatWASM;
 
 namespace GravitySDK.PC.Storage
 {
