@@ -8,7 +8,7 @@ using GravitySDK.PC.Constant;
 using GravitySDK.PC.Utils;
 using WeChatWASM;
 
-public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTrackEventCallback
+public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
 {
     public GUISkin skin;
     private const int Margin = 20;
@@ -25,21 +25,15 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
             {"DynamicProperty", DateTime.Now}
         };
     }
-    // 自动采集事件回调接口
-    public Dictionary<string, object> AutoTrackEventCallback(int type, Dictionary<string, object>properties)
-    {
-        return new Dictionary<string, object>() 
-        {
-            {"AutoTrackEventProperty", DateTime.Today}
-        };
-    }
 
     private void Awake()
     {
     }
     private void Start()
     {
+#if UNITY_WEBGL
         WXBase.InitSDK((code) => { Debug.Log("wx init end"); });
+#endif
     }
 
     void OnGUI() 
@@ -49,95 +43,43 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
         
         GUIStyle style = GUI.skin.label;
         style.fontSize = 25;
-        GUILayout.Label("初始化 / 买量关键事件上报",style);
+        GUILayout.Label("StartEngine / EventUpload",style);
 
         GUIStyle buttonStyle = GUI.skin.button;
         buttonStyle.fontSize = 20;
         GUILayout.BeginHorizontal(GUI.skin.box,GUILayout.Height(Height));
-        if (GUILayout.Button("ManualInitialization", GUILayout.Height(Height)))
+        if (GUILayout.Button("StartEngine", GUILayout.Height(Height)))
         {
             // 手动初始化（动态挂载 GravityEngineAPI 脚本）
             new GameObject("GravityEngine", typeof(GravityEngineAPI));
 
-            //设置实例参数并启动引擎
+            //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string appId = "18760451";
             string accessToken = "gZGljPsq7I4wc3BMvkAUsevQznx1jahi";
-            string clientId = "123456789005";
+            string clientId = "123456789006";
             
-#if (UNITY_WEBGL)
-            var systemInfo = WX.GetSystemInfoSync();
-            // 提前设置设备属性信息
-            GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
-            {
-                SDKVersion = systemInfo.SDKVersion, // 微信SDK版本号
-                benchmarkLevel = systemInfo.benchmarkLevel,
-                brand = systemInfo.brand,
-                deviceOrientation = systemInfo.deviceOrientation,
-                language = systemInfo.language,
-                model = systemInfo.model,
-                platform = systemInfo.platform,
-                screenHeight = systemInfo.screenHeight,
-                screenWidth = systemInfo.screenWidth,
-                system = systemInfo.system,
-                version = systemInfo.version, // 微信版本号
-            });
-#endif
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
-
-#if (UNITY_WEBGL)
-            // 记录小程序启动事件，在StartEngine之后并且获取network_type之后调用
-                        WX.GetNetworkType(new GetNetworkTypeOption()
-                        {
-                            success = (result) => { GravitySDKDeviceInfo.SetNetworkType(result.networkType); },
-                            fail = (result) => { GravitySDKDeviceInfo.SetNetworkType("error"); },
-                            complete = (result) =>
-                            {
-                                LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
-                                GravityEngineAPI.TrackMPLaunch(launchOptionsSync.query, launchOptionsSync.scene);
-                                GravityEngineAPI.Flush();
-                            }
-                        });
-                       
-                        // 挂载采集器，以开启微信小游戏的自动采集
-                        GameObject mWechatGameAutoTrackObj = new GameObject("WechatGameAutoTrack", typeof(WeChatGameAutoTrack));
-                        WeChatGameAutoTrack mWechatGameAutoTrack = (WeChatGameAutoTrack) mWechatGameAutoTrackObj.GetComponent(typeof(WeChatGameAutoTrack));
-                        mWechatGameAutoTrack.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
-                        {
-                            {"auto_track_key", "auto_track_value"}
-                        });
-                        DontDestroyOnLoad(mWechatGameAutoTrackObj);
-#endif
+            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.NORMAL);
             
             // 开启自动采集事件
-            // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME);
-            // 开启自动采集事件，并设置自定属性
-            // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME, new Dictionary<string, object>()
-            // {
-            //     {"auto_track_key", "auto_track_value"}
-            // });
-            // 开启自动采集，并设置事件回调
-            // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, this);
+            // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL);
+            // 开启自动采集，并设置自定属性
+            GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
+            {
+                {"auto_track_key", "auto_track_value"} // 静态属性
+            });
         }
         GUILayout.Space(20);
         if (GUILayout.Button("Register", GUILayout.Height(Height)))
         {
             Debug.Log("register clicked");
-#if (UNITY_WEBGL)
-            var query = WX.GetLaunchOptionsSync().query;
-            foreach (var (key, value) in query)
-            {
-                Debug.Log($"key is {key}, value is {value}");
-            }
-#else
-            Dictionary<string, string> query = null;
-#endif
-            
-            GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid", query,
+            GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid",
                 request =>
                 {
                     Debug.Log("register call end");
                     Debug.Log(request.downloadHandler.text);
+                    // 建议在此执行一次Flush
+                    GravityEngineAPI.Flush();
                 });
         }
         GUILayout.Space(20);
@@ -193,7 +135,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
 
         GUILayout.Space(20);
         
-        GUILayout.Label("事件上报", GUI.skin.label);
+        GUILayout.Label("EventTrack", GUI.skin.label);
         GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
         if (GUILayout.Button("TrackEvent", GUILayout.Height(Height)))
         {
@@ -247,7 +189,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
 
         GUILayout.Space(20);
         
-        GUILayout.Label("用户属性上报", GUI.skin.label);
+        GUILayout.Label("UserProfile", GUI.skin.label);
         GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
         if (GUILayout.Button("UserSet", GUILayout.Height(Height)))
         {
@@ -307,7 +249,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
         GUILayout.EndHorizontal();
 
         GUILayout.Space(20);
-        GUILayout.Label("通用属性设置", GUI.skin.label);
+        GUILayout.Label("SuperProperties", GUI.skin.label);
         GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
         if (GUILayout.Button("SetSuperProperties", GUILayout.Height(Height)))
         {
@@ -365,7 +307,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IAutoTr
         GUILayout.EndHorizontal();
         
         GUILayout.Space(20);
-        GUILayout.Label("其他配置", GUI.skin.label);
+        GUILayout.Label("Others", GUI.skin.label);
         GUILayout.BeginHorizontal(GUI.skin.textArea, GUILayout.Height(Height));
         if (GUILayout.Button("Flush", GUILayout.Height(Height)))
         {

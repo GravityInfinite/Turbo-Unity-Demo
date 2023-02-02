@@ -25,8 +25,10 @@ using GravityEngine.Utils;
 using GravityEngine.Wrapper;
 using UnityEngine;
 using GravitySDK.PC.Constant;
+using GravitySDK.PC.Utils;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using WeChatWASM;
 
 namespace GravityEngine
 {
@@ -270,44 +272,7 @@ namespace GravityEngine
                 });
             }
         }
-
-        /// <summary>
-        /// 开启自动采集功能.
-        /// </summary>
-        /// <param name="events">自动采集事件</param>
-        /// <param name="eventCallback">自动采集事件回调，可动态设置扩展属性(可选)</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback eventCallback, string appId = "")
-        {
-            if (tracking_enabled)
-            {
-                GravityEngineWrapper.EnableAutoTrack(events, eventCallback, appId);
-                // C#异常捕获提前，包含所有端
-                if ((events & AUTO_TRACK_EVENTS.APP_CRASH) != 0 && !GE_PublicConfig.DisableCSharpException)
-                {
-                    GravityEngineExceptionHandler.RegisterTAExceptionHandler(eventCallback);
-                }
-                if ((events & AUTO_TRACK_EVENTS.APP_SCENE_LOAD) != 0)
-                {
-                    SceneManager.sceneLoaded += GravityEngineAPI.OnSceneLoaded;
-                }
-                if ((events & AUTO_TRACK_EVENTS.APP_SCENE_UNLOAD) != 0)
-                {
-                    SceneManager.sceneUnloaded += GravityEngineAPI.OnSceneUnloaded;
-                }
-            }
-            else
-            {
-                System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { events, eventCallback, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
-                });
-            }
-
-        }
-
+        
         /// <summary>
         /// 设置自动采集扩展属性.
         /// </summary>
@@ -1216,6 +1181,24 @@ namespace GravityEngine
 
             if (tracking_enabled)
             {
+#if (UNITY_WEBGL) // 微信平台
+                var systemInfo = WX.GetSystemInfoSync();
+                // 提前设置设备属性信息
+                GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
+                {
+                    SDKVersion = systemInfo.SDKVersion, // 微信SDK版本号
+                    benchmarkLevel = systemInfo.benchmarkLevel,
+                    brand = systemInfo.brand,
+                    deviceOrientation = systemInfo.deviceOrientation,
+                    language = systemInfo.language,
+                    model = systemInfo.model,
+                    platform = systemInfo.platform,
+                    screenHeight = systemInfo.screenHeight,
+                    screenWidth = systemInfo.screenWidth,
+                    system = systemInfo.system,
+                    version = systemInfo.version, // 微信版本号
+                });
+#endif
                 GE_PublicConfig.GetPublicConfig();
                 GE_Log.EnableLog(_sGravityEngineAPI.enableLog);
                 GravityEngineWrapper.EnableLog(_sGravityEngineAPI.enableLog);
@@ -1241,7 +1224,21 @@ namespace GravityEngine
                 }
                 catch
                 {
+                    // ignored
                 }
+#if (UNITY_WEBGL)
+                // 记录小程序/小游戏启动事件，在StartEngine并且获取network_type之后调用
+                WX.GetNetworkType(new GetNetworkTypeOption()
+                {
+                    success = (result) => { GravitySDKDeviceInfo.SetNetworkType(result.networkType); },
+                    fail = (result) => { GravitySDKDeviceInfo.SetNetworkType("error"); },
+                    complete = (result) =>
+                    {
+                        LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
+                        TrackMPLaunch(launchOptionsSync.query, launchOptionsSync.scene);
+                    }
+                });
+#endif
             }
 
             //上报缓存事件
@@ -1258,12 +1255,15 @@ namespace GravityEngine
         /// <param name="version"></param>          用户注册的程序版本，比如当前微信小游戏的版本号
         /// <param name="wxOpenId"></param>         微信open id (微信小程序和小游戏必填)
         /// <param name="wxUnionId"></param>        微信union id（微信小程序和小游戏选填）
-        /// <param name="wxLaunchQuery"></param>    启动参数字典(微信小程序和小游戏必填)
         /// <param name="actionResult"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void Register(string name, string channel, int version, string wxOpenId, string wxUnionId,
-            Dictionary<string, string> wxLaunchQuery, Action<UnityWebRequest> actionResult)
+        public static void Register(string name, string channel, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
         {
+#if (UNITY_WEBGL)
+            var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
+#else
+            Dictionary<string, string> wxLaunchQuery = null;
+#endif
             Turbo.Register(name, channel, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult);
         }
 

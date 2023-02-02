@@ -52,6 +52,7 @@ namespace GravitySDK.PC.Main
         private MonoBehaviour mMono;
         private static MonoBehaviour sMono;
         private GravitySDKAutoTrack mAutoTrack;
+        private WeChatGameAutoTrack mWechatGameAutoTrack;
 
         ResponseHandle mResponseHandle;
         public void SetTimeCalibratieton(GravitySDKTimeCalibration timeCalibration)
@@ -117,6 +118,7 @@ namespace GravitySDK.PC.Main
             GameObject mGravitySDKTask = new GameObject("GravitySDKTask", typeof(GravitySDKTask));
             UnityEngine.Object.DontDestroyOnLoad(mGravitySDKTask);
 
+            // 挂在采集器，开启App的自动采集
             GameObject mGravitySDKAutoTrack = new GameObject("GravitySDKAutoTrack", typeof(GravitySDKAutoTrack));
             this.mAutoTrack = (GravitySDKAutoTrack) mGravitySDKAutoTrack.GetComponent(typeof(GravitySDKAutoTrack));
             if (!string.IsNullOrEmpty(instanceName))
@@ -128,6 +130,11 @@ namespace GravitySDK.PC.Main
                 this.mAutoTrack.SetAppId(this.mAppid);
             }
             UnityEngine.Object.DontDestroyOnLoad(mGravitySDKAutoTrack);
+            
+            // 挂载采集器，以开启微信小游戏的自动采集
+            GameObject mWechatGameAutoTrackObj = new GameObject("WechatGameAutoTrack", typeof(WeChatGameAutoTrack));
+            mWechatGameAutoTrack = (WeChatGameAutoTrack) mWechatGameAutoTrackObj.GetComponent(typeof(WeChatGameAutoTrack));
+            UnityEngine.Object.DontDestroyOnLoad(mWechatGameAutoTrackObj);
         }
         public static GravitySDKInstance CreateLightInstance()
         {
@@ -213,10 +220,12 @@ namespace GravitySDK.PC.Main
         public virtual void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
             this.mAutoTrack.EnableAutoTrack(events, properties, mAppid);
+            mWechatGameAutoTrack.EnableAutoTrack(events, properties);
         }
         public virtual void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback_PC eventCallback)
         {
             this.mAutoTrack.EnableAutoTrack(events, eventCallback, mAppid);
+            mWechatGameAutoTrack.EnableAutoTrack(events, null);
         }
         // 设置自动采集事件的自定义属性
         public virtual void SetAutoTrackProperties(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)

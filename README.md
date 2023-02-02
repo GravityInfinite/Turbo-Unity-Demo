@@ -25,43 +25,16 @@ string appId = "your_app_id";
 string accessToken = "your_access_token";
 string clientId = "your_user_id"; // 通常是某一个用户的唯一标识，比如微信小游戏中的 openId
 
-var systemInfo = WX.GetSystemInfoSync();
-// 提前设置设备属性信息
-GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
-{
-    SDKVersion = systemInfo.SDKVersion, // 微信SDK版本号
-    benchmarkLevel = systemInfo.benchmarkLevel,
-    brand = systemInfo.brand,
-    deviceOrientation = systemInfo.deviceOrientation,
-    language = systemInfo.language,
-    model = systemInfo.model,
-    platform = systemInfo.platform,
-    screenHeight = systemInfo.screenHeight,
-    screenWidth = systemInfo.screenWidth,
-    system = systemInfo.system,
-    version = systemInfo.version, // 微信版本号
-});
 // 启动引力引擎
 GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.NORMAL);
-// 记录小程序启动事件，在StartEngine之后并且获取network_type之后调用
-WX.GetNetworkType(new GetNetworkTypeOption()
-{
-    success = (result) => { GravitySDKDeviceInfo.SetNetworkType(result.networkType); },
-    fail = (result) => { GravitySDKDeviceInfo.SetNetworkType("error"); },
-    complete = (result) =>
-    {
-        LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
-        GravityEngineAPI.TrackMPLaunch(launchOptionsSync.query, launchOptionsSync.scene);
-        GravityEngineAPI.Flush();
-    }
-});
 
-// 挂载采集器，以开启微信小游戏的自动采集
-GameObject mWechatGameAutoTrackObj = new GameObject("WechatGameAutoTrack", typeof(WeChatGameAutoTrack));
-WeChatGameAutoTrack mWechatGameAutoTrack = (WeChatGameAutoTrack) mWechatGameAutoTrackObj.GetComponent(typeof(WeChatGameAutoTrack));
-mWechatGameAutoTrack.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME);
-GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME);
-DontDestroyOnLoad(mWechatGameAutoTrackObj);
+// 开启自动采集事件
+// GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL);
+// 开启自动采集，并设置自定属性
+GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
+{
+    {"auto_track_key", "auto_track_value"} // 静态属性
+});
 ```
 
 #### 1.3 Register 用户注册
@@ -75,16 +48,16 @@ DontDestroyOnLoad(mWechatGameAutoTrackObj);
 /// <param name="version"></param>          用户注册的程序版本，比如当前微信小游戏的版本号
 /// <param name="wxOpenId"></param>         微信open id (微信小程序和小游戏必填)
 /// <param name="wxUnionId"></param>        微信union id（微信小程序和小游戏选填）
-/// <param name="wxLaunchQuery"></param>    启动参数字典(微信小程序和小游戏必填)
 /// <param name="actionResult"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
 /// <exception cref="ArgumentException"></exception> 当参数校验失败时，会抛出ArgumentException异常
 
-var option = WX.GetLaunchOptionsSync();
-GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid", option.query,
+GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid",
     request =>
     {
         Debug.Log("register call end");
         Debug.Log(request.downloadHandler.text);
+        // 建议在此执行一次Flush
+        GravityEngineAPI.Flush();
     });
 ```
 
