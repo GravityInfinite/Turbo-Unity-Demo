@@ -1,20 +1,21 @@
-# Unity 接入
+# Unity 接入指南
 
 本文档为**Unity**接入 [引力引擎](https://gravity-engine.com/)的技术接入方案，具体 Demo
 请参考[GitHub](https://github.com/GravityInfinite/Turbo-Unity-Demo)开源项目，Demo 工程中可以参考 `GravityEngineDemo.cs` 脚本中对每一个方法的调用示例。
 
-### 1. SDK基础配置
+### 1. SDK 基础配置
 
 #### 1.1 SDK 引入
 
 下载最新的 [GravityEngine.unitypackage](https://github.com/GravityInfinite/Turbo-Unity-Demo/releases)
 资源文件，并导入资源文件到您的项目中：`Assets > Import Package > Custom Package`，选中您刚刚下载的文件。
 
-> 注意：如果您的项目是微信小游戏，请一定注意要先接入微信团队开源的Unity转微信小游戏的插件，可参考[这里](https://github.com/wechat-miniprogram/minigame-unity-webgl-transform)。
+> [!Tip]
+> 如果您的项目是微信小游戏，请一定注意要先接入微信团队开源的 [Unity 转微信小游戏的插件](https://github.com/wechat-miniprogram/minigame-unity-webgl-transform)。
 
 #### 1.2 引力引擎初始化
 
-请直接复制以下代码到您项目中需要进行引力引擎初始化的地方，一般建议在能够获取到用户唯一ID，如微信小游戏的`openId`时，尽早的进行初始化。
+请直接复制以下代码到您项目中需要进行引力引擎初始化的地方，一般建议在能够获取到用户唯一 ID，如微信小游戏的`openId`时，尽早的进行初始化。
 
 ```csharp
 // 手动初始化（动态挂载 GravityEngineAPI 脚本）
@@ -164,7 +165,7 @@ GravityEngineAPI.QueryUser(request =>
 
 通过 `GravityEngineAPI.Track()` 可以上报事件及其属性。一般情况下，您可能需要上传十几到上百个不同的事件，如果您是第一次使用引力引擎事件采集系统，我们推荐您先上传几个关键事件。
 
-我们也支持了若干自动采集事件，包括游戏启动、关闭、异常、小游戏添加收藏、Unity场景加载或者卸载等事件，您可以根据业务需求选择是否开启自动采集事件。
+我们也支持了若干自动采集事件，包括游戏启动、关闭、异常、小游戏添加收藏、Unity 场景加载或者卸载等事件，您可以根据业务需求选择是否开启自动采集事件。
 
 #### 2.1 用户自定义事件上报
 
@@ -181,16 +182,17 @@ properties["movies"] = new List<string>() { "Interstellar", "The Negro Motorist 
 GravityEngineAPI.Track("TEST_EVENT_NAME",properties);
 ```
 
-- 事件名称是 `string` 类型，只能以字母开头，可包含数字，字母和下划线 “_”，长度最大为 50 个字符，对字母大小写不敏感。
+- 事件名称是 `string` 类型，只能以字母开头，可包含数字，字母和下划线 “\_”，长度最大为 50 个字符，对字母大小写不敏感。
 - 事件属性是 `Dictionary<string, object>` 类型，其中每个元素代表一个属性；
-    - 事件属性 `Key` 为属性名称，为 `string` 类型，规定只能以字母开头，包含数字，字母和下划线 “_”，长度最大为 50 个字符，对字母大小写不敏感；
-    - 属性 `Value` 支持`string`、`int`、`float`、`bool`、`DateTime`、`List<string>`；
+  - 事件属性 `Key` 为属性名称，为 `string` 类型，规定只能以字母开头，包含数字，字母和下划线 “\_”，长度最大为 50 个字符，对字母大小写不敏感；
+  - 属性 `Value` 支持`string`、`int`、`float`、`bool`、`DateTime`、`List<string>`；
 
 当您调用 `Track()` 时，SDK 会取系统当前时间作为事件发生的时刻，如果您需要指定事件时间，可以传入 DateTime 类型的参数来设置事件触发时间。
 
-SDK 提供了时间校准接口，允许使用服务器时间对 SDK 时间进行校准，具体请参考Demo中对 `CalibrateTime` 和 `CalibrateTimeWithNtp` 方法的使用。
+SDK 提供了时间校准接口，允许使用服务器时间对 SDK 时间进行校准，具体请参考 Demo 中对 `CalibrateTime` 和 `CalibrateTimeWithNtp` 方法的使用。
 
-> 注意：尽管事件可以设置触发时间，但是接收端会做如下的限制：只接收相对服务器时间在前 10 天至后 1 小时的数据，超过时限的数据将会被视为异常数据，整条数据无法入库。
+> [!WARNING]
+> 尽管事件可以设置触发时间，但是接收端会做如下的限制：只接收相对服务器时间在前 10 天至后 1 小时的数据，超过时限的数据将会被视为异常数据，整条数据无法入库!
 
 #### 2.2 用户注册事件上报
 
@@ -251,7 +253,8 @@ GravityEngineAPI.ClearSuperProperties();
 GravityEngineAPI.GetSuperProperties();
 ```
 
-> 注意：在上报公共事件属性之前，请确保已经在引力引擎后台配置了该属性，否则会导致数据无法入库。
+> [!WARNING]
+> 在上报公共事件属性之前，请确保已经在引力引擎后台配置了该属性，否则会导致数据无法入库。
 
 #### 2.6 记录事件时长
 
@@ -316,7 +319,7 @@ GravityEngineAPI.UserAdd(new Dictionary<string, object>()
     });
 ```
 
-> 设置的属性key为字符串，Value 只允许为数值。
+> 设置的属性 key 为字符串，Value 只允许为数值。
 
 #### 3.4 UserUnset 重置用户属性
 
@@ -330,6 +333,7 @@ GravityEngineAPI.UserUnset("userPropertyName");
 GravityEngineAPI.UserUnset(new List<string>() {"age", "$name", "$first_visit_time", "movies"});
 ```
 
+> [!Tip]
 > UserUnset: 的传入值为被重置属性的 Key 值。
 
 #### 3.5 UserDelete 删除用户
@@ -374,7 +378,7 @@ GravityEngineAPI.UserUniqAppend(new Dictionary<string, object>()
 
 ### 4. 其他配置
 
-#### 4.1 打印数据Log
+#### 4.1 打印数据 Log
 
 您可以调用 `EnableLog` 来关闭日志输出（默认是开启的）。
 
@@ -395,7 +399,8 @@ SDK 支持在两种模式下运行：
 
 您在调用 `StartGravityEngine` 初始化引擎时，可以传入 `SDKRunMode` 参数来指定 SDK 运行模式。
 
-> 注意: DEBUG 模式仅仅用于集成阶段数据校验，不要在生产模式下使用！
+> [!WARNING]
+> DEBUG 模式仅仅用于集成阶段数据校验，不要在生产模式下使用！
 
 #### 4.3 校准时间
 
@@ -415,12 +420,9 @@ GravityEngineAPI.CalibrateTime(1668982523000);
 GravityEngineAPI.CalibrateTimeWithNtp("time.apple.com");
 ```
 
-> **注意：**
->  - 您需要谨慎地选择您的 NTP 服务器地址，以保证网络状况良好的情况下，用户设备可以很快的获取到服务器时间。
->  - 使用 NTP 服务进行时间校准存在一定的不确定性，建议您优先考虑用时间戳校准的方式。
+> [!Tip]
+>
+> - 您需要谨慎地选择您的 NTP 服务器地址，以保证网络状况良好的情况下，用户设备可以很快的获取到服务器时间。
+> - 使用 NTP 服务进行时间校准存在一定的不确定性，建议您优先考虑用时间戳校准的方式。
 
-除了以上校准时间接口外，SDK还提供了所有用户属性接口的时间函数重载，您可以在调用用户属性相关接口时，传入 `DateTime` 对象，则系统会使用传入的 `DateTime` 对象来设定数据的 `time` 字段。
-
-#### License
-
-Under BSD license，you can check out the license file
+除了以上校准时间接口外，SDK 还提供了所有用户属性接口的时间函数重载，您可以在调用用户属性相关接口时，传入 `DateTime` 对象，则系统会使用传入的 `DateTime` 对象来设定数据的 `time` 字段。
