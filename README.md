@@ -22,8 +22,8 @@
 new GameObject("GravityEngine", typeof(GravityEngineAPI));
 
 //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
-string appId = "your_app_id";
-string accessToken = "your_access_token";
+string appId = "your_app_id"; // 项目APP ID，在：网站后台-->管理中心-->应用列表中可以找到（首次使用可能需要先新增应用）
+string accessToken = "your_access_token"; // 项目通行证，在：网站后台-->管理中心-->应用列表中找到Access Token列 复制（首次使用可能需要先新增应用）
 string clientId = "your_user_id"; // 通常是某一个用户的唯一标识，比如微信小游戏中的 openId
 
 // 启动引力引擎
@@ -62,54 +62,22 @@ GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unio
     });
 ```
 
-#### 1.4 HandleEventUpload 埋点事件上报
+#### 1.4 TrackPayEvent 上报付费事件
+
+当用户发生付费行为时，需要调用 trackPayEvent 方法记录用户付费事件，此事件非常重要，会影响买量和 ROI 统计，请务必重点测试
 
 ```csharp
 /// <summary>
-/// 埋点事件上报（主要分为：注册、激活、次留、付费、关键行为五种类型的事件）
+/// 上报微信小游戏付费事件 PayEvent
 /// </summary>
-/// <param name="eventType"></param>            上报事件类型，取值为：pay、activate、register、key_active、twice，分别对应：付费、激活、注册、关键行为、次留事件
-/// <param name="actionResult"></param>         上报回调
-/// <param name="amount"></param>               付费金额
-/// <param name="realAmount"></param>           付费折后金额（实际付费金额）
-/// <param name="isUseClientTime"></param>      是否使用上报的timestamp作为回传时间，默认为false，当为true时，timestamp必填
-/// <param name="timestamp"></param>            事件发生时间，用来回传给广告平台，毫秒时间戳(只有在`use_client_time`为`true`时才需要传入)
-/// <param name="traceId"></param>              本次事件的唯一id（重复上报会根据该id去重，trace_id的长度不能超过128），可填入订单id，请求id等唯一值。如果为空，引力引擎则会自动生成一个。
+/// <param name="payAmount"></param>            付费金额 单位为分
+/// <param name="payType"></param>              付费类型 按照国际标准组织ISO 4217中规范的3位字母，例如CNY人民币、USD美金等
+/// <param name="orderId"></param>              订单号
+/// <param name="payReason"></param>            付费原因 例如：购买钻石、办理月卡
+/// <param name="payMethod"></param>            付费方式 例如：支付宝、微信、银联等
+/// <param name="isFirstPay"></param>           是否首次付费
 
-// 上报注册事件举例
-GravityEngineAPI.HandleEventUpload("register", request =>
-{
-    Debug.Log("handle event register call end");
-    Debug.Log(request.downloadHandler.text);
-});
-
-// 上报激活事件举例
-GravityEngineAPI.HandleEventUpload("activate", request =>
-{
-    Debug.Log("handle event activate call end");
-    Debug.Log(request.downloadHandler.text);
-});
-
-// 上报次留事件举例
-GravityEngineAPI.HandleEventUpload("twice", request =>
-{
-    Debug.Log("handle event twice call end");
-    Debug.Log(request.downloadHandler.text);
-});
-
-// 上报付费事件举例，一定要传入金额，否则会上报失败影响买量！
-GravityEngineAPI.HandleEventUpload("pay", request =>
-{
-    Debug.Log("handle event pay call end");
-    Debug.Log(request.downloadHandler.text);
-}, 300, 300);
-
-// 上报关键行为事件举例
-GravityEngineAPI.HandleEventUpload("key_active", request =>
-{
-    Debug.Log("handle event key active call end");
-    Debug.Log(request.downloadHandler.text);
-});
+GravityEngineAPI.TrackPayEvent(300, "CNY", "your_order_id", "月卡", "支付宝", true);
 ```
 
 #### 1.5 QueryUser 查询用户信息
@@ -395,7 +363,7 @@ GravityEngineAPI.EnableLog(true);
 SDK 支持在两种模式下运行：
 
 - NORMAL: 普通模式，数据会存入缓存，并依据一定的缓存策略上报
-- DEBUG: 测试模式，数据逐条上报。当出现问题时会以日志和异常的方式提示用户，也可以去`引力网站后台--管理中心--元数据--事件流`中查看实时上报的数据。
+- DEBUG: 测试模式，数据逐条上报。当出现问题时会以日志和异常的方式提示用户，也可以去`引力网站后台--管理中心--元数据--事件流`中查看实时上报的数据，辅助您判断数据接入是否正常。
 
 您在调用 `StartGravityEngine` 初始化引擎时，可以传入 `SDKRunMode` 参数来指定 SDK 运行模式。
 

@@ -372,6 +372,29 @@ namespace GravityEngine
         }
         
         /// <summary>
+        /// 上报微信小游戏付费事件 PayEvent
+        /// </summary>
+        /// <param name="payAmount"></param>            付费金额 单位为分
+        /// <param name="payType"></param>              付费类型 按照国际标准组织ISO 4217中规范的3位字母，例如CNY人民币、USD美金等
+        /// <param name="orderId"></param>              订单号
+        /// <param name="payReason"></param>            付费原因 例如：购买钻石、办理月卡
+        /// <param name="payMethod"></param>            付费方式 例如：支付宝、微信、银联等
+        /// <param name="isFirstPay"></param>           是否首次付费
+        public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,
+            string payMethod, bool isFirstPay)
+        {
+            Track("$PayEvent", new Dictionary<string, object>()
+            {
+                {"$pay_amount", payAmount},
+                {"$pay_type", payType},
+                {"$order_id", orderId},
+                {"$pay_reason", payReason},
+                {"$pay_method", payMethod},
+                {"$is_first_pay", isFirstPay},
+            });
+        }
+
+        /// <summary>
         /// 上报微信小游戏注册事件 $MPRegister
         /// </summary>
         public static void TrackMPRegister()
