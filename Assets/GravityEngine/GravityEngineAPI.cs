@@ -390,7 +390,22 @@ namespace GravityEngine
                 {"$order_id", orderId},
                 {"$pay_reason", payReason},
                 {"$pay_method", payMethod},
-                {"$is_first_pay", isFirstPay},
+                {"$is_first_pay", isFirstPay}
+            });
+        }
+        
+        /// <summary>
+        /// 上报微信小游戏广告观看事件 AdShow
+        /// </summary>
+        /// <param name="adType"></param>               广告类型 取值为：reward、banner、native、interstitial、video_feed、video_begin，分别对应：激励视频广告、Banner广告、原生模板广告、插屏广告、视频广告、视频贴片广告
+        /// <param name="adUnitId"></param>             广告位ID
+        public static void TrackAdShowEvent(string adType, string adUnitId)
+        {
+            Track("$AdShow", new Dictionary<string, object>()
+            {
+                {"$ad_type", adType},
+                {"$ad_unit_id", adUnitId},
+                {"$adn_type", "wechat"}
             });
         }
 

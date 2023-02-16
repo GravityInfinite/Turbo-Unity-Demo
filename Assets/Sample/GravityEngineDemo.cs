@@ -149,6 +149,12 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             GravityEngineAPI.Track("GE_000",properties);
         }
         GUILayout.Space(20);
+        if (GUILayout.Button("TrackAdShowEvent", GUILayout.Height(Height)))
+        {
+            // 记录用户广告观看事件
+            GravityEngineAPI.TrackAdShowEvent("reward", "your_ad_unit_id");
+        }
+        GUILayout.Space(20);
         if (GUILayout.Button("TrackPayEvent", GUILayout.Height(Height)))
         {
             // 记录用户付费事件

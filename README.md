@@ -38,19 +38,21 @@ GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictiona
 });
 ```
 
-#### 1.3 Register 用户注册
+#### 1.3 用户注册引力引擎
+
+在用户注册或者可以获取到用户唯一性信息时调用 `Register` 方法，推荐首次安装启动时调用，其他方法均需在本方法回调成功之后才可正常使用
 
 ```csharp
 /// <summary>
-/// 在用户注册或者可以获取到用户唯一性信息时调用，推荐首次安装启动时调用，其他方法均需在本方法回调成功之后才可正常使用
+/// 注册引力引擎SDK
 /// </summary>
-/// <param name="name"></param>             用户名
-/// <param name="channel"></param>          用户注册渠道
-/// <param name="version"></param>          用户注册的程序版本，比如当前微信小游戏的版本号
-/// <param name="wxOpenId"></param>         微信open id (微信小程序和小游戏必填)
-/// <param name="wxUnionId"></param>        微信union id（微信小程序和小游戏选填）
-/// <param name="actionResult"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
-/// <exception cref="ArgumentException"></exception> 当参数校验失败时，会抛出ArgumentException异常
+/// <param name="name"></param>                       用户名
+/// <param name="channel"></param>                    用户注册渠道
+/// <param name="version"></param>                    用户注册的程序版本，比如当前微信小游戏的版本号
+/// <param name="wxOpenId"></param>                   微信open id (微信小程序和小游戏必填)
+/// <param name="wxUnionId"></param>                  微信union id（微信小程序和小游戏选填）
+/// <param name="actionResult"></param>               网络回调，其他方法均需在回调成功之后才可正常使用
+/// <exception cref="ArgumentException"></exception>  当参数校验失败时，会抛出ArgumentException异常
 
 GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid",
     request =>
@@ -62,25 +64,7 @@ GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unio
     });
 ```
 
-#### 1.4 TrackPayEvent 上报付费事件
-
-当用户发生付费行为时，需要调用 trackPayEvent 方法记录用户付费事件，此事件非常重要，会影响买量和 ROI 统计，请务必重点测试
-
-```csharp
-/// <summary>
-/// 上报微信小游戏付费事件 PayEvent
-/// </summary>
-/// <param name="payAmount"></param>            付费金额 单位为分
-/// <param name="payType"></param>              付费类型 按照国际标准组织ISO 4217中规范的3位字母，例如CNY人民币、USD美金等
-/// <param name="orderId"></param>              订单号
-/// <param name="payReason"></param>            付费原因 例如：购买钻石、办理月卡
-/// <param name="payMethod"></param>            付费方式 例如：支付宝、微信、银联等
-/// <param name="isFirstPay"></param>           是否首次付费
-
-GravityEngineAPI.TrackPayEvent(300, "CNY", "your_order_id", "月卡", "支付宝", true);
-```
-
-#### 1.5 QueryUser 查询用户信息
+#### 1.4 查询用户信息
 
 ```csharp
 /// <summary>
@@ -162,7 +146,7 @@ SDK 提供了时间校准接口，允许使用服务器时间对 SDK 时间进�
 > [!WARNING]
 > 尽管事件可以设置触发时间，但是接收端会做如下的限制：只接收相对服务器时间在前 10 天至后 1 小时的数据，超过时限的数据将会被视为异常数据，整条数据无法入库!
 
-#### 2.2 用户注册事件上报
+#### 2.2 注册事件上报
 
 当用户注册成功时，需要调用 `TrackMPRegister`方法记录用户注册事件
 
@@ -171,7 +155,7 @@ SDK 提供了时间校准接口，允许使用服务器时间对 SDK 时间进�
 GravityEngineAPI.TrackMPRegister();
 ```
 
-#### 2.3 用户登录事件上报
+#### 2.3 登录事件上报
 
 当用户登录成功时，需要调用 `TrackMPLogin`方法记录用户登录事件
 
@@ -180,7 +164,7 @@ GravityEngineAPI.TrackMPRegister();
 GravityEngineAPI.TrackMPLogin();
 ```
 
-#### 2.4 用户退出登录事件上报
+#### 2.4 退出登录事件上报
 
 当用户退出登录成功时，需要调用 `TrackMPLogout`方法记录用户退出登录事件
 
@@ -189,7 +173,39 @@ GravityEngineAPI.TrackMPLogin();
 GravityEngineAPI.TrackMPLogout();
 ```
 
-#### 2.5 设置事件公共属性
+#### 2.5 付费事件上报
+
+当用户发生付费行为时，需要调用 `TrackPayEvent` 方法记录用户付费事件，此事件非常重要，会影响买量和 ROI 统计，请务必重点测试
+
+```csharp
+/// <summary>
+/// 上报微信小游戏付费事件 PayEvent
+/// </summary>
+/// <param name="payAmount"></param>            付费金额 单位为分
+/// <param name="payType"></param>              付费类型 按照国际标准组织ISO 4217中规范的3位字母，例如CNY人民币、USD美金等
+/// <param name="orderId"></param>              订单号
+/// <param name="payReason"></param>            付费原因 例如：购买钻石、办理月卡
+/// <param name="payMethod"></param>            付费方式 例如：支付宝、微信、银联等
+/// <param name="isFirstPay"></param>           是否首次付费
+
+GravityEngineAPI.TrackPayEvent(300, "CNY", "your_order_id", "月卡", "支付宝", true);
+```
+
+#### 2.6 广告观看事件上报
+
+在用户观看广告的onShow回调中调用 `TrackAdShowEvent` 方法记录用户广告观看事件
+
+```csharp
+/// <summary>
+/// 上报微信小游戏广告观看事件 AdShow
+/// </summary>
+/// <param name="adType"></param>               广告类型 取值为：reward、banner、native、interstitial、video_feed、video_begin，分别对应：激励视频广告、Banner广告、原生模板广告、插屏广告、视频广告、视频贴片广告
+/// <param name="adUnitId"></param>             广告位ID
+
+GravityEngineAPI.TrackAdShowEvent("reward", "your_ad_unit_id");
+```
+
+#### 2.7 设置事件公共属性
 
 对于一些重要的属性，譬如玩家的区服和渠道等，这些属性需要设置在每个事件中，此时您可以将这些属性设置为公共事件属性。公共事件属性指的就是每个事件都会带有的属性，您可以调用 `SetSuperProperties`
 来设置公共事件属性，我们推荐您在发送事件前，先设置公共事件属性。
@@ -224,7 +240,7 @@ GravityEngineAPI.GetSuperProperties();
 > [!WARNING]
 > 在上报公共事件属性之前，请确保已经在引力引擎后台配置了该属性，否则会导致数据无法入库。
 
-#### 2.6 记录事件时长
+#### 2.8 记录事件时长
 
 如果您需要记录某个事件持续时长，您可以调用 `TimeEvent()` 来开始计时，配置您想要计时的事件名称，当您上传该事件时，将会自动在您的事件属性中加入 `$event_duration` 这一属性来表示记录的时长，单位为秒。
 
@@ -238,7 +254,7 @@ GravityEngineAPI.TimeEvent("TIME_EVENT");
 GravityEngineAPI.Track("TIME_EVENT");
 ```
 
-#### 2.7 立即上报事件
+#### 2.9 立即上报事件
 
 如果需要立即上报缓存的事件，可以调用 `Flush()` 来上报所有缓存的事件。
 
