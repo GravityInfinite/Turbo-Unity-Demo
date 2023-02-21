@@ -7,7 +7,7 @@ namespace GravitySDK.PC.GravityTurbo
 {
     public static class Turbo
     {
-        private const string TurboHost = "https://turbo.api.plutus-cat.com";
+        private const string TurboHost = "https://backend.gravity-engine.com";
         private static string _accessToken;
         private static string _clientID;
 

@@ -104,6 +104,6 @@ namespace GravitySDK.PC.Constant
         public static readonly string CRASH_REASON = "$app_crashed_reason";
 
         // host
-        public static readonly string SERVER_URL = "https://turbo.api.plutus-cat.com";
+        public static readonly string SERVER_URL = "https://backend.gravity-engine.com";
     }
 }
