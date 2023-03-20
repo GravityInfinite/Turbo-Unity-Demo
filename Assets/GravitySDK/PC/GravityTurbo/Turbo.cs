@@ -71,6 +71,25 @@ namespace GravitySDK.PC.GravityTurbo
                 {
                     gdt_vid = wxQueryPathDictionary.GetValueOrDefault("gdt_vid", "")
                 };
+                platform = "tencent";
+            }
+            
+            if (wxQueryPathDictionary.ContainsKey("bd_vid"))
+            {
+                adData = new AdData()
+                {
+                    bd_vid = wxQueryPathDictionary.GetValueOrDefault("bd_vid", "")
+                };
+                platform = "baidu";
+            }
+
+            if (wxQueryPathDictionary.ContainsKey("turbo_vid"))
+            {
+                adData = new AdData()
+                {
+                    turbo_vid = wxQueryPathDictionary.GetValueOrDefault("turbo_vid", "")
+                };
+                platform = "gravity";
             }
             
             // 默认走到腾讯
@@ -123,8 +142,14 @@ namespace GravitySDK.PC.GravityTurbo
                 media_type = platform,
                 wx_openid = wxOpenId,
                 wx_unionid = wxUnionId,
-                ad_data = adData
+                ad_data = adData,
+                query_object = wxLaunchQuery
             };
+
+            if (wxLaunchQuery.ContainsKey("turbo_promoted_object_id"))
+            {
+                registerRequestBody.promoted_object_id = wxLaunchQuery.GetValueOrDefault("turbo_promoted_object_id", "");
+            }
 
             UnityWebRequestMgr.Instance.Post(TurboHost + "/event_center/api/v1/user/register/?access_token=" + _accessToken,
                 registerRequestBody, actionResult);

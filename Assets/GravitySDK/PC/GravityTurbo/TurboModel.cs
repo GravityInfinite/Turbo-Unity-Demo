@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace GravitySDK.PC.GravityTurbo
 {
@@ -30,6 +31,12 @@ namespace GravitySDK.PC.GravityTurbo
         
         // 腾讯 click_id?
         public string gdt_vid;
+
+        // 百度
+        public string bd_vid;
+
+        // 引力换量
+        public string turbo_vid;
     }
 
     [Serializable]
@@ -43,6 +50,8 @@ namespace GravitySDK.PC.GravityTurbo
         public string wx_openid;
         public string wx_unionid;
         public AdData ad_data;
+        public string promoted_object_id;
+        public Dictionary<string, string > query_object;
     }
 
     [Serializable]
