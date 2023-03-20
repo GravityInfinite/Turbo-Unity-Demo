@@ -1295,14 +1295,14 @@ namespace GravityEngine
         /// <param name="wxUnionId"></param>        微信union id（微信小程序和小游戏选填）
         /// <param name="actionResult"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void Register(string name, string channel, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
         {
 #if (UNITY_WEBGL)
             var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
 #else
             Dictionary<string, string> wxLaunchQuery = null;
 #endif
-            Turbo.Register(name, channel, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult);
+            Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult);
         }
 
         /// <summary>

@@ -103,7 +103,7 @@ namespace GravitySDK.PC.GravityTurbo
             Debug.Log("turbo init success");
         }
         
-        public static void Register(string name, string channel, int version, string wxOpenId, string wxUnionId,
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId,
             Dictionary<string, string> wxLaunchQuery, Action<UnityWebRequest> actionResult)
         {
             // check params
@@ -113,16 +113,12 @@ namespace GravitySDK.PC.GravityTurbo
                 throw new ArgumentException("name must be required");
             }
 
-            if (string.IsNullOrEmpty(channel))
-            {
-                throw new ArgumentException("channel must be required");
-            }
-
             var (platform, adData) = GetAdData(wxLaunchQuery);
             var registerRequestBody = new RegisterRequestBody
             {
                 client_id = _clientID,
                 name = name,
+                channel = "base_channel",
                 version = version,
                 media_type = platform,
                 wx_openid = wxOpenId,

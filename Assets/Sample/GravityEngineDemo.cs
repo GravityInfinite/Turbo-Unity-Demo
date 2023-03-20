@@ -73,7 +73,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         if (GUILayout.Button("Register", GUILayout.Height(Height)))
         {
             Debug.Log("register clicked");
-            GravityEngineAPI.Register("name_123", "test", 1, "your_wx_openid", "your_wx_unionid",
+            GravityEngineAPI.Register("name_123", 1, "your_wx_openid", "your_wx_unionid",
                 request =>
                 {
                     Debug.Log("register call end");
