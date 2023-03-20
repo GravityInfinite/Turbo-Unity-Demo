@@ -198,6 +198,30 @@ namespace GravityEngine.Wrapper
             GE_PropertiesChecker.CheckProperties(properties);
             userAdd(serilize(properties), dateTime, appId);
         }
+        
+        public static void UserNumberMin(Dictionary<string, object> properties, string appId)
+        {
+            GE_PropertiesChecker.CheckProperties(properties);
+            userNumberMin(serilize(properties), appId);
+        }
+
+        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime, string appId)
+        {
+            GE_PropertiesChecker.CheckProperties(properties);
+            userNumberMin(serilize(properties), dateTime, appId);
+        }
+        
+        public static void UserNumberMax(Dictionary<string, object> properties, string appId)
+        {
+            GE_PropertiesChecker.CheckProperties(properties);
+            userNumberMax(serilize(properties), appId);
+        }
+
+        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime, string appId)
+        {
+            GE_PropertiesChecker.CheckProperties(properties);
+            userNumberMax(serilize(properties), dateTime, appId);
+        }
 
         public static void UserAppend(Dictionary<string, object> properties, string appId)
         {

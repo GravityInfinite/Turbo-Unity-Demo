@@ -647,6 +647,28 @@ namespace GravitySDK.PC.Main
             GravitySDKUserData data = new GravitySDKUserData(time, GravitySDKConstant.USER_ADD, properties);
             SendData(data);
         }
+        public void UserNumberMin(Dictionary<string, object> properties)
+        {
+            UserNumberMin(properties, DateTime.MinValue);
+        }
+        public void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime)
+        {
+            GravitySDKTimeInter time = GetTime(dateTime);
+            GravitySDKUserData data = new GravitySDKUserData(time, GravitySDKConstant.USER_NUMBER_MIN, properties);
+            SendData(data);
+        }
+        
+        public void UserNumberMax(Dictionary<string, object> properties)
+        {
+            UserNumberMax(properties, DateTime.MinValue);
+        }
+        public void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime)
+        {
+            GravitySDKTimeInter time = GetTime(dateTime);
+            GravitySDKUserData data = new GravitySDKUserData(time, GravitySDKConstant.USER_NUMBER_MAX, properties);
+            SendData(data);
+        }
+        
         public void UserAppend(Dictionary<string, object> properties)
         {
             UserAppend(properties, DateTime.MinValue);

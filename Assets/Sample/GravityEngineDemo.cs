@@ -73,7 +73,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         if (GUILayout.Button("Register", GUILayout.Height(Height)))
         {
             Debug.Log("register clicked");
-            GravityEngineAPI.Register("name_123", 1, "your_wx_openid", "your_wx_unionid",
+            GravityEngineAPI.Register("name_123", 1, "your_wx_openid_111", "your_wx_unionid",
                 request =>
                 {
                     Debug.Log("register call end");
@@ -221,6 +221,16 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         if (GUILayout.Button("UserAdd", GUILayout.Height(Height)))
         {
             GravityEngineAPI.UserAdd("age", 1);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("UserNumberMin", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.UserNumberMin("age", 0);
+        }
+        GUILayout.Space(20);
+        if (GUILayout.Button("UserNumberMax", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.UserNumberMax("age", 10);
         }
         GUILayout.Space(20);
         if (GUILayout.Button("UserUnset", GUILayout.Height(Height)))

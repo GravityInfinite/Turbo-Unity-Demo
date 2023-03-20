@@ -191,6 +191,30 @@ namespace GravityEngine.Wrapper
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
             GravityPCSDK.UserAdd(propertiesDic,dateTime,appId);
         }
+        
+        private static void userNumberMin(string properties, string appId)
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.UserNumberMin(propertiesDic,appId);
+        }
+
+        private static void userNumberMin(string properties, DateTime dateTime, string appId)
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.UserNumberMin(propertiesDic,dateTime,appId);
+        }
+        
+        private static void userNumberMax(string properties, string appId)
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.UserNumberMax(propertiesDic,appId);
+        }
+
+        private static void userNumberMax(string properties, DateTime dateTime, string appId)
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.UserNumberMax(propertiesDic,dateTime,appId);
+        }
 
         private static void userDelete(string appId)
         {

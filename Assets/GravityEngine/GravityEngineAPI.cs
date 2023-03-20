@@ -934,6 +934,126 @@ namespace GravityEngine
                 });
             }
         }
+        
+        /// <summary>
+        /// 对数值类用户属性取最小值. 如果属性还未被设置，则会赋值 0 后再进行计算.
+        /// </summary>
+        /// <param name="property">属性名称</param>
+        /// <param name="value">数值</param>
+        /// <param name="appId">项目 ID(可选)</param>
+        public static void UserNumberMin(string property, object value, string appId = "")
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>()
+            {
+                { property, value }
+            };
+            UserNumberMin(properties, appId);
+        }
+        
+        /// <summary>
+        /// 对数值类用户属性取最小值. 如果属性还未被设置，则会赋值 0 后再进行计算.
+        /// </summary>
+        /// <param name="properties">用户属性</param>
+        /// <param name="appId">项目 ID(可选)</param>
+        public static void UserNumberMin(Dictionary<string, object> properties, string appId = "")
+        {
+            if (tracking_enabled)
+            {
+                GravityEngineWrapper.UserNumberMin(properties, appId);
+            }
+            else
+            {
+                System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
+                object[] parameters = new object[] { properties, appId };
+                eventCaches.Add(new Dictionary<string, object>() {
+                    { "method", method},
+                    { "parameters", parameters}
+                });
+            }
+        }
+
+        /// <summary>
+        /// 对数值类用户属性取最小值. 如果属性还未被设置，则会赋值 0 后再进行计算.
+        /// </summary>
+        /// <param name="properties">用户属性</param>
+        /// <param name="dateTime">操作时间</param>
+        /// <param name="appId">项目 ID(可选)</param>
+        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        {
+            if (tracking_enabled)
+            {
+                GravityEngineWrapper.UserNumberMin(properties, dateTime, appId);
+            }
+            else
+            {
+                System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
+                object[] parameters = new object[] { properties, dateTime, appId };
+                eventCaches.Add(new Dictionary<string, object>() {
+                    { "method", method},
+                    { "parameters", parameters}
+                });
+            }
+        }
+        
+        /// <summary>
+        /// 对数值类用户属性取最大值. 如果属性还未被设置，则会赋值 0 后再进行计算.
+        /// </summary>
+        /// <param name="property">属性名称</param>
+        /// <param name="value">数值</param>
+        /// <param name="appId">项目 ID(可选)</param>
+        public static void UserNumberMax(string property, object value, string appId = "")
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>()
+            {
+                { property, value }
+            };
+            UserNumberMax(properties, appId);
+        }
+        
+        /// <summary>
+        /// 对数值类用户属性取最大值. 如果属性还未被设置，则会赋值 0 后再进行计算.
+        /// </summary>
+        /// <param name="properties">用户属性</param>
+        /// <param name="appId">项目 ID(可选)</param>
+        public static void UserNumberMax(Dictionary<string, object> properties, string appId = "")
+        {
+            if (tracking_enabled)
+            {
+                GravityEngineWrapper.UserNumberMax(properties, appId);
+            }
+            else
+            {
+                System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
+                object[] parameters = new object[] { properties, appId };
+                eventCaches.Add(new Dictionary<string, object>() {
+                    { "method", method},
+                    { "parameters", parameters}
+                });
+            }
+        }
+
+        /// <summary>
+        /// 对数值类用户属性取最大值. 如果属性还未被设置，则会赋值 0 后再进行计算.
+        /// </summary>
+        /// <param name="properties">用户属性</param>
+        /// <param name="dateTime">操作时间</param>
+        /// <param name="appId">项目 ID(可选)</param>
+        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        {
+            if (tracking_enabled)
+            {
+                GravityEngineWrapper.UserNumberMax(properties, dateTime, appId);
+            }
+            else
+            {
+                System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
+                object[] parameters = new object[] { properties, dateTime, appId };
+                eventCaches.Add(new Dictionary<string, object>() {
+                    { "method", method},
+                    { "parameters", parameters}
+                });
+            }
+        }
 
         /// <summary>
         /// 对 List 类型的用户属性进行追加.

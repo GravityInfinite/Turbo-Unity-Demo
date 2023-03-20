@@ -274,6 +274,22 @@ namespace GravitySDK.PC.Main
         {
             GetInstance(appId).UserAdd(properties,dateTime);
         }
+        public static void UserNumberMin(Dictionary<string, object> properties, string appId = "")
+        {
+            GetInstance(appId).UserNumberMin(properties);
+        }
+        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        {
+            GetInstance(appId).UserNumberMin(properties,dateTime);
+        }
+        public static void UserNumberMax(Dictionary<string, object> properties, string appId = "")
+        {
+            GetInstance(appId).UserNumberMax(properties);
+        }
+        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        {
+            GetInstance(appId).UserNumberMax(properties,dateTime);
+        }
         public static void UserAppend(Dictionary<string, object> properties, string appId = "")
         {
             GetInstance(appId).UserAppend(properties);

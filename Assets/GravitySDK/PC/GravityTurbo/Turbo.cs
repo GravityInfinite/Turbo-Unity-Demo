@@ -142,8 +142,7 @@ namespace GravitySDK.PC.GravityTurbo
                 media_type = platform,
                 wx_openid = wxOpenId,
                 wx_unionid = wxUnionId,
-                ad_data = adData,
-                query_object = wxLaunchQuery
+                ad_data = adData
             };
 
             if (wxLaunchQuery.ContainsKey("turbo_promoted_object_id"))

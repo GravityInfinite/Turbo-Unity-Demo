@@ -78,6 +78,8 @@ namespace GravitySDK.PC.Constant
 
         //用户属性相关
         public static readonly string USER_ADD = "profile_increment";
+        public static readonly string USER_NUMBER_MIN = "profile_number_min";
+        public static readonly string USER_NUMBER_MAX = "profile_number_max";
         public static readonly string USER_SET = "profile_set";
         public static readonly string USER_SETONCE = "profile_set_once";
         public static readonly string USER_UNSET = "profile_unset";
