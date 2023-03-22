@@ -1409,7 +1409,6 @@ namespace GravityEngine
         /// 在引力引擎注册，其他方法均需在本方法回调成功之后才可正常使用
         /// </summary>
         /// <param name="name"></param>             用户名
-        /// <param name="channel"></param>          用户注册渠道
         /// <param name="version"></param>          用户注册的程序版本，比如当前微信小游戏的版本号
         /// <param name="wxOpenId"></param>         微信open id (微信小程序和小游戏必填)
         /// <param name="wxUnionId"></param>        微信union id（微信小程序和小游戏选填）
