@@ -410,14 +410,6 @@ namespace GravityEngine
         }
 
         /// <summary>
-        /// 上报微信小游戏注册事件 $MPRegister
-        /// </summary>
-        public static void TrackMPRegister()
-        {
-            Track("$MPRegister");
-        }
-        
-        /// <summary>
         /// 上报微信小游戏登录事件 $MPLogin
         /// </summary>
         public static void TrackMPLogin()
@@ -1421,7 +1413,12 @@ namespace GravityEngine
 #else
             Dictionary<string, string> wxLaunchQuery = null;
 #endif
-            Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult);
+            Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult, () =>
+            {
+                // 自动采集注册事件
+                Track("$MPRegister");
+                Flush();
+            });
         }
 
         /// <summary>

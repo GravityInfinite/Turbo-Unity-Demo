@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GravitySDK.PC.TaskManager;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -121,9 +122,10 @@ namespace GravitySDK.PC.GravityTurbo
             GlobalCheck();
             Debug.Log("turbo init success");
         }
-        
+
         public static void Register(string name, int version, string wxOpenId, string wxUnionId,
-            Dictionary<string, string> wxLaunchQuery, Action<UnityWebRequest> actionResult)
+            Dictionary<string, string> wxLaunchQuery, Action<UnityWebRequest> actionResult,
+            UnityWebRequestMgr.Callback callback)
         {
             // check params
             GlobalCheck();
@@ -150,8 +152,9 @@ namespace GravitySDK.PC.GravityTurbo
                 registerRequestBody.promoted_object_id = wxLaunchQuery.GetValueOrDefault("turbo_promoted_object_id", "");
             }
 
-            UnityWebRequestMgr.Instance.Post(TurboHost + "/event_center/api/v1/user/register/?access_token=" + _accessToken,
-                registerRequestBody, actionResult);
+            UnityWebRequestMgr.Instance.Post(
+                TurboHost + "/event_center/api/v1/user/register/?access_token=" + _accessToken,
+                registerRequestBody, actionResult, callback);
         }
 
         public static void HandleEvent(string eventType, Action<UnityWebRequest> actionResult, bool isUseClientTime,

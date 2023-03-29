@@ -161,12 +161,6 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             GravityEngineAPI.TrackPayEvent(300, "CNY", "your_order_id", "月卡", "支付宝", true);
         }
         GUILayout.Space(20);
-        if (GUILayout.Button("TrackMPRegister", GUILayout.Height(Height)))
-        {
-            // 记录用户注册事件
-            GravityEngineAPI.TrackMPRegister();
-        }
-        GUILayout.Space(20);
         if (GUILayout.Button("TrackMPLogin", GUILayout.Height(Height)))
         {
             // 记录用户登录事件

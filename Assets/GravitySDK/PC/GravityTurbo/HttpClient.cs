@@ -66,6 +66,7 @@ namespace GravitySDK.PC.GravityTurbo
 
         #endregion
 
+        public delegate void Callback();
 
         /// <summary>
         /// GET请求
@@ -83,10 +84,11 @@ namespace GravitySDK.PC.GravityTurbo
         /// <param name="serverURL">服务器请求目标地址</param>
         /// <param name="requestBody">请求的结构体</param>
         /// <param name="actionResult">处理返回结果的委托,处理请求对象</param>
+        /// <param name="callback"></param>
         /// <returns></returns>
-        public void Post(string serverURL, object requestBody, Action<UnityWebRequest> actionResult)
+        public void Post(string serverURL, object requestBody, Action<UnityWebRequest> actionResult, Callback callback=null)
         {
-            StartCoroutine(_Post(serverURL, requestBody, actionResult));
+            StartCoroutine(_Post(serverURL, requestBody, actionResult, callback));
         }
 
         /// <summary>
@@ -111,7 +113,7 @@ namespace GravitySDK.PC.GravityTurbo
         /// <param name="requestBody">发送的结构体</param>
         /// <param name="actionResult">处理返回结果的委托</param>
         /// <returns></returns>
-        IEnumerator _Post(string serverURL, object requestBody, Action<UnityWebRequest> actionResult)
+        IEnumerator _Post(string serverURL, object requestBody, Action<UnityWebRequest> actionResult, Callback callback)
         {
             var uwr = new UnityWebRequest(serverURL, "POST");
 
@@ -123,6 +125,7 @@ namespace GravitySDK.PC.GravityTurbo
             uwr.SetRequestHeader("Content-Type", "application/json");
             yield return uwr.SendWebRequest();
             actionResult?.Invoke(uwr);
+            callback?.Invoke();
         }
     }
 }
