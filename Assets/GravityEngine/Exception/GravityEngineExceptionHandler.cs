@@ -59,7 +59,7 @@ namespace GravityEngine
             {
                 if (!IsRegistered)
                 {
-                    Application.logMessageReceived += _LogHandler;
+                    // Application.logMessageReceived += _LogHandler;
                     AppDomain.CurrentDomain.UnhandledException += _UncaughtExceptionHandler;
                     IsRegistered = true;
                 }

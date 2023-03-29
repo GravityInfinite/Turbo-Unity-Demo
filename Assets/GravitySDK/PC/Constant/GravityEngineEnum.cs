@@ -19,7 +19,7 @@ namespace GravitySDK.PC.Constant
         MP_HIDE = 1 << 9, // 当微信小游戏进入后台的时候触发上报，对应 $MPHide
         MP_SHARE = 1 << 10, // 当微信小游戏分享的时候触发上报，对应 $MPShare
         MP_ADD_TO_FAVORITES = 1 << 11, // 当微信小游戏添加收藏的时候触发上报，对应 $MPAddFavorites
-        WECHAT_GAME_ALL = APP_CRASH | APP_SCENE_LOAD | APP_SCENE_UNLOAD | MP_SHOW | MP_HIDE | MP_SHARE | MP_ADD_TO_FAVORITES,
+        WECHAT_GAME_ALL = APP_SCENE_LOAD | APP_SCENE_UNLOAD | MP_SHOW | MP_HIDE | MP_SHARE | MP_ADD_TO_FAVORITES,
     }
 
     // 数据上报状态
