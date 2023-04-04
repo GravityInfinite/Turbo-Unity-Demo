@@ -333,6 +333,7 @@ namespace GravityEngine
         public static void TrackMPLaunch(Dictionary<string, string> query, double scene)
         {
             TrackMPEvent("$MPLaunch", query, scene, null);
+            Flush();
         }
 
         /// <summary>
@@ -392,6 +393,7 @@ namespace GravityEngine
                 {"$pay_method", payMethod},
                 {"$is_first_pay", isFirstPay}
             });
+            Flush();
         }
         
         /// <summary>
@@ -407,6 +409,7 @@ namespace GravityEngine
                 {"$ad_unit_id", adUnitId},
                 {"$adn_type", "wechat"}
             });
+            Flush();
         }
 
         /// <summary>
