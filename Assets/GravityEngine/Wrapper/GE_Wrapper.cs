@@ -18,6 +18,11 @@ namespace GravityEngine.Wrapper
             return GE_MiniJson.Serialize(data, getTimeString);
         }
 
+        public static string GetTimeString(DateTime dateTime)
+        {
+            return getTimeString(dateTime);
+        }
+
         public static void ShareInstance(GravityEngineAPI.Token token, MonoBehaviour mono, bool initRequired = true)
         {
             sMono = mono;

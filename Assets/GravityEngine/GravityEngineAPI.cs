@@ -25,6 +25,7 @@ using GravityEngine.Utils;
 using GravityEngine.Wrapper;
 using UnityEngine;
 using GravitySDK.PC.Constant;
+using GravitySDK.PC.Time;
 using GravitySDK.PC.Utils;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -1420,10 +1421,23 @@ namespace GravityEngine
             {
                 // 自动采集注册事件
                 Track("$MPRegister");
+                UserSetOnce(new Dictionary<string, object>()
+                {
+                    {GravitySDKConstant.MANUFACTURE, GravitySDKDeviceInfo.Manufacture()},
+                    {GravitySDKConstant.DEVICE_MODEL, GravitySDKDeviceInfo.DeviceModel()},
+                    {GravitySDKConstant.DEVICE_BRAND, GravitySDKDeviceInfo.Manufacture().ToUpper()},
+                    {GravitySDKConstant.OS, GravitySDKDeviceInfo.OS()},
+                    {"$first_visit_time", GravityEngineWrapper.GetTimeString(DateTime.Now)}
+                });
                 Flush();
             });
         }
 
+        public static void test()
+        {
+            // 方便调用
+        }
+        
         /// <summary>
         /// 埋点事件上报
         /// </summary>

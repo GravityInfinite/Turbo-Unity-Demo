@@ -277,7 +277,6 @@ namespace GravityEngine.Wrapper
 
         private static string getTimeString(DateTime dateTime)
         {
-       
             return GravityPCSDK.TimeString(dateTime);
         }
 
