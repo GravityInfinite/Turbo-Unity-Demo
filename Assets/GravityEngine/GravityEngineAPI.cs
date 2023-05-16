@@ -381,9 +381,8 @@ namespace GravityEngine
         /// <param name="orderId"></param>              订单号
         /// <param name="payReason"></param>            付费原因 例如：购买钻石、办理月卡
         /// <param name="payMethod"></param>            付费方式 例如：支付宝、微信、银联等
-        /// <param name="isFirstPay"></param>           是否首次付费
         public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,
-            string payMethod, bool isFirstPay)
+            string payMethod)
         {
             Track("$PayEvent", new Dictionary<string, object>()
             {
@@ -391,8 +390,7 @@ namespace GravityEngine
                 {"$pay_type", payType},
                 {"$order_id", orderId},
                 {"$pay_reason", payReason},
-                {"$pay_method", payMethod},
-                {"$is_first_pay", isFirstPay}
+                {"$pay_method", payMethod}
             });
             Flush();
         }
@@ -1436,65 +1434,6 @@ namespace GravityEngine
         public static void test()
         {
             // 方便调用
-        }
-        
-        /// <summary>
-        /// 埋点事件上报
-        /// </summary>
-        /// <param name="eventType"></param>            上报事件类型，取值为：pay、activate、register、key_active、twice，分别对应：付费、激活、注册、关键行为、次留事件
-        /// <param name="actionResult"></param>         上报回调
-        /// <param name="amount"></param>               付费金额
-        /// <param name="realAmount"></param>           付费折后金额（实际付费金额）
-        /// <param name="isUseClientTime"></param>      是否使用上报的timestamp作为回传时间，默认为false，当为true时，timestamp必填
-        /// <param name="timestamp"></param>            事件发生时间，用来回传给广告平台，毫秒时间戳(只有在`use_client_time`为`true`时才需要传入)
-        /// <param name="traceId"></param>              本次事件的唯一id（重复上报会根据该id去重，trace_id的长度不能超过128），可填入订单id，请求id等唯一值。如果为空，引力引擎则会自动生成一个。
-        public static void HandleEventUpload(string eventType, Action<UnityWebRequest> actionResult, long amount = 0,
-            long realAmount = 0, bool isUseClientTime = false, long timestamp = 0, string traceId = "")
-        {
-            Turbo.HandleEvent(eventType, actionResult, isUseClientTime, timestamp, traceId, amount, realAmount);
-        }
-
-        /// <summary>
-        /// 查询用户信息
-        /// </summary>
-        /// <param name="actionResult"></param> 查询回调，返回数据如下：
-        ///  1. client_id       用户ID
-        //   2. channel         用户渠道
-        //   3. click_company   用户买量来源，枚举值 为：tencent、bytedance、kuaishou  为空则为自然量用户
-        //   4. aid             广告计划ID
-        //   5. cid             广告创意ID
-        //   6. advertiser_id   广告账户ID
-        //   7. bytedance_v2    头条体验版数据（用户如果为头条体验版投放获取的，bytedance_v2才有值）
-        //      1. project_id   项目ID
-        //      2. promotion_id 广告ID
-        //      3. mid1         图片ID
-        //      4. mid2         标题ID
-        //      5. mid3         视频ID
-        //      6. mid4         试完ID
-        //      7. mid5         落地页ID
-        // "user_list": [
-        // {
-        //     "create_time": "2022-09-09 14:50:04",
-        //     "client_id": "Bn2RhTcU",
-        //     "advertiser_id": "12948974294275",
-        //     "channel": "wechat_mini_game",
-        //     "click_company": "gdt",
-        //     "aid": "65802182823",
-        //     "cid": "65580218538",
-        //     "bytedance_v2": {
-        //         "project_id":"924563792",
-        //         "promotion_id":"93795753",
-        //         "mid1":"3256634642",
-        //         "mid2":"2353252367",
-        //         "mid3":"3245235236",
-        //         "mid4":"6346347623",
-        //         "mid5":"7345232424"
-        //     }
-        // },
-        // ]
-        public static void QueryUser(Action<UnityWebRequest> actionResult)
-        {
-            Turbo.QueryUser(actionResult);
         }
 
         #endregion

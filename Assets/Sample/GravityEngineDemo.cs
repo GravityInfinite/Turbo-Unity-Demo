@@ -4,6 +4,7 @@ using GravityEngine;
 using System.Collections.Generic;
 using System;
 using System.Threading;
+using GravityEngine.Utils;
 using GravitySDK.PC.Constant;
 using GravitySDK.PC.Utils;
 using WeChatWASM;
@@ -56,7 +57,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string appId = "18760451";
             string accessToken = "gZGljPsq7I4wc3BMvkAUsevQznx1jahi";
-            string clientId = "123456789006";
+            string clientId = "1234567890067";
             
             // 启动引力引擎
             GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.NORMAL);
@@ -81,55 +82,6 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
                     // 建议在此执行一次Flush
                     GravityEngineAPI.Flush();
                 });
-        }
-        GUILayout.Space(20);
-        if (GUILayout.Button("HandleEventUpload", GUILayout.Height(Height)))
-        {
-            Debug.Log("handle event clicked");
-            // 上报注册事件举例
-            GravityEngineAPI.HandleEventUpload("register", request =>
-            {
-                Debug.Log("handle event register call end");
-                Debug.Log(request.downloadHandler.text);
-            });
-            
-            // // 上报激活事件举例
-            // GravityEngineAPI.HandleEventUpload("activate", request =>
-            // {
-            //     Debug.Log("handle event activate call end");
-            //     Debug.Log(request.downloadHandler.text);
-            // });
-            //
-            // // 上报次留事件举例
-            // GravityEngineAPI.HandleEventUpload("twice", request =>
-            // {
-            //     Debug.Log("handle event twice call end");
-            //     Debug.Log(request.downloadHandler.text);
-            // });
-            //
-            // // 上报付费事件举例，一定要传入金额，否则会上报失败影响买量！
-            // GravityEngineAPI.HandleEventUpload("pay", request =>
-            // {
-            //     Debug.Log("handle event pay call end");
-            //     Debug.Log(request.downloadHandler.text);
-            // }, 300, 300);
-            //
-            // // 上报关键行为事件举例
-            // GravityEngineAPI.HandleEventUpload("key_active", request =>
-            // {
-            //     Debug.Log("handle event key active call end");
-            //     Debug.Log(request.downloadHandler.text);
-            // });
-        }
-        GUILayout.Space(20);
-        if (GUILayout.Button("QueryUser", GUILayout.Height(Height)))
-        {
-            Debug.Log("query user clicked");
-            GravityEngineAPI.QueryUser(request =>
-            {
-                Debug.Log("query user call end");
-                Debug.Log(request.downloadHandler.text);
-            });
         }
         GUILayout.EndHorizontal();
 
@@ -158,7 +110,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         if (GUILayout.Button("TrackPayEvent", GUILayout.Height(Height)))
         {
             // 记录用户付费事件
-            GravityEngineAPI.TrackPayEvent(300, "CNY", "your_order_id", "月卡", "支付宝", true);
+            GravityEngineAPI.TrackPayEvent(300, "CNY", "your_order_id", "月卡", "支付宝");
         }
         GUILayout.Space(20);
         if (GUILayout.Button("TrackMPLogin", GUILayout.Height(Height)))
