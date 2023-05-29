@@ -300,6 +300,22 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_CRASH;
             }
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
+            {
+                pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHOW;
+            }
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_HIDE) != 0)
+            {
+                pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_HIDE;
+            }
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHARE) != 0)
+            {
+                pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHARE;
+            }
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES) != 0)
+            {
+                pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES;
+            }
             GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, propertiesDic, appId);
         }
 
@@ -321,6 +337,22 @@ namespace GravityEngine.Wrapper
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_CRASH) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_CRASH;
+            }
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
+            {
+                pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHOW;
+            }
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_HIDE) != 0)
+            {
+                pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_HIDE;
+            }
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHARE) != 0)
+            {
+                pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHARE;
+            }
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES) != 0)
+            {
+                pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES;
             }
             mEventCallback = eventCallback;
             GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, new GravityEngineWrapper());

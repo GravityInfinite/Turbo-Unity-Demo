@@ -8,9 +8,9 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/GravityEngineSample/GravityEngineSample.unity
-    guid: 741c7d08d0bfd46ae96dff68cdd17f99
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects:
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 535ec13a2de8d4d7c8e948a6ec60e4fe, type: 2}
     com.unity.adaptiveperformance.samsung.android.provider_settings: {fileID: 11400000, guid: 28b1d049744e343c0bc07da14b71009b, type: 2}

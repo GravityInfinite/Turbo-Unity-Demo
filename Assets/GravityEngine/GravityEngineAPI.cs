@@ -248,6 +248,7 @@ namespace GravityEngine
                 {
                     properties = new Dictionary<string, object>();
                 }
+
                 GravityEngineWrapper.EnableAutoTrack(events, properties, appId);
                 // C#异常捕获提前，包含所有端
                 if ((events & AUTO_TRACK_EVENTS.APP_CRASH) != 0 && !GE_PublicConfig.DisableCSharpException)
@@ -1413,7 +1414,9 @@ namespace GravityEngine
 #if (UNITY_WEBGL)
             var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
 #else
-            Dictionary<string, string> wxLaunchQuery = null;
+            Dictionary<string, string> wxLaunchQuery = new Dictionary<string, object>()
+                {
+                });
 #endif
             Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult, () =>
             {
