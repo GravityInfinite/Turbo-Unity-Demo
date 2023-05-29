@@ -74,7 +74,16 @@ namespace GravitySDK.PC.GravityTurbo
             
             if (wxLaunchQuery.ContainsKey("turbo_promoted_object_id"))
             {
-                registerRequestDir["promoted_object_id"] = wxLaunchQuery.GetValueOrDefault("turbo_promoted_object_id", "");
+                string value;
+                if (wxLaunchQuery.TryGetValue("turbo_promoted_object_id", out value))
+                {
+                    Debug.Log("get promoted object id");
+                }
+                else
+                {
+                    Debug.Log("no promoted object id");
+                }
+                registerRequestDir["promoted_object_id"] = value ?? "";
             }
             
             Debug.Log(registerRequestDir.ToString());
