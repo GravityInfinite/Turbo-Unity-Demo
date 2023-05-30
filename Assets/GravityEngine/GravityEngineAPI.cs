@@ -1303,7 +1303,7 @@ namespace GravityEngine
         /// <param name="mode">SDK运行模式</param>
         public static void StartGravityEngine(string appId, string accessToken, string clientId, SDKRunMode mode)
         {
-            GravityEngineAPI.SDKTimeZone timeZone = GravityEngineAPI.SDKTimeZone.Local;
+            GravityEngineAPI.SDKTimeZone timeZone = GravityEngineAPI.SDKTimeZone.UTC;
             GravityEngineAPI.Token token =
                 new GravityEngineAPI.Token(appId, accessToken, clientId, mode, timeZone);
             GravityEngineAPI.StartGravityEngine(token);
@@ -1414,9 +1414,7 @@ namespace GravityEngine
 #if (UNITY_WEBGL)
             var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
 #else
-            Dictionary<string, string> wxLaunchQuery = new Dictionary<string, object>()
-                {
-                });
+            Dictionary<string, string> wxLaunchQuery = new Dictionary<string, string>();
 #endif
             Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult, () =>
             {

@@ -60,7 +60,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             string clientId = "1234567890067";
             
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.NORMAL);
+            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
             
             // 开启自动采集事件
             // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL);

@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using GravitySDK.PC.Constant;
 using GravitySDK.PC.Time;
 using GravitySDK.PC.Utils;
+using UnityEngine;
 
 namespace GravitySDK.PC.DataModel
 {
     public class GravitySDKUserData:GravitySDKBaseData
     {
+        
+        private TimeZoneInfo mTimeZone;
+        public void SetTimeZone(TimeZoneInfo timeZone)
+        {
+            this.mTimeZone = timeZone;
+        }
         public GravitySDKUserData(GravitySDKTimeInter time,string eventName, Dictionary<string,object> properties)
         {
             this.SetTime(time);
@@ -18,7 +25,9 @@ namespace GravitySDK.PC.DataModel
         {
             Dictionary<string, object> data = new Dictionary<string, object>();
             data[GravitySDKConstant.TYPE] = "profile";
-            data[GravitySDKConstant.TIME] = GravitySDKUtil.GetTimeStamp();
+            // data[GravitySDKConstant.TIME] = GravitySDKUtil.GetTimeStamp();
+            data[GravitySDKConstant.TIME] = this.EventTime().GetTimeLong(this.mTimeZone);// 使用默认的time zone
+            Debug.Log("diff time " + data[GravitySDKConstant.TIME] + " " + GravitySDKUtil.GetTimeStamp());
             data[GravitySDKConstant.DISTINCT_ID] = DistinctID();
             if (!string.IsNullOrEmpty(this.EventName()))
             {
