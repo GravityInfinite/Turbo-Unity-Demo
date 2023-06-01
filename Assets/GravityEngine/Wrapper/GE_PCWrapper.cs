@@ -300,6 +300,7 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_CRASH;
             }
+#if GRAVITY_WECHAT_GAME_MODE
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHOW;
@@ -316,6 +317,8 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES;
             }
+#endif
+            
             GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, propertiesDic, appId);
         }
 
@@ -338,7 +341,8 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_CRASH;
             }
-            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
+#if GRAVITY_WECHAT_GAME_MODE
+           if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHOW;
             }
@@ -353,7 +357,8 @@ namespace GravityEngine.Wrapper
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES;
-            }
+            } 
+#endif
             mEventCallback = eventCallback;
             GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, new GravityEngineWrapper());
         }

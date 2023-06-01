@@ -49,18 +49,6 @@ namespace GravitySDK.PC.GravityTurbo
                 throw new ArgumentException("name must be required");
             }
 
-            // var (platform, adData) = GetAdData(wxLaunchQuery);
-            // var registerRequestBody = new RegisterRequestBody
-            // {
-            //     client_id = _clientID,
-            //     name = name,
-            //     channel = "base_channel",
-            //     version = version,
-            //     wx_openid = wxOpenId,
-            //     wx_unionid = wxUnionId,
-            //     ad_data = wxLaunchQuery
-            // };
-
             var registerRequestDir = new Dictionary<string, object>()
             {
                 {"client_id", _clientID},

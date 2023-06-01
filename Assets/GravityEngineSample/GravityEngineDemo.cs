@@ -7,7 +7,10 @@ using System.Threading;
 using GravityEngine.Utils;
 using GravitySDK.PC.Constant;
 using GravitySDK.PC.Utils;
+
+#if GRAVITY_WECHAT_GAME_MODE
 using WeChatWASM;
+#endif
 
 public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
 {
@@ -26,13 +29,10 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             {"DynamicProperty", DateTime.Now}
         };
     }
-
-    private void Awake()
-    {
-    }
+    
     private void Start()
     {
-#if UNITY_WEBGL
+#if GRAVITY_WECHAT_GAME_MODE
         WXBase.InitSDK((code) => { Debug.Log("wx init end"); });
 #endif
     }
@@ -53,7 +53,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         {
             // 手动初始化（动态挂载 GravityEngineAPI 脚本）
             new GameObject("GravityEngine", typeof(GravityEngineAPI));
-
+            
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string appId = "18760451";
             string accessToken = "gZGljPsq7I4wc3BMvkAUsevQznx1jahi";
@@ -61,14 +61,17 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             
             // 启动引力引擎
             GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
-            
-            // 开启自动采集事件
-            // GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL);
-            // 开启自动采集，并设置自定属性
+
+#if GRAVITY_WECHAT_GAME_MODE
+            // 微信小游戏开启自动采集，并设置自定属性
             GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
+#else
+            // App开启自动采集事件
+            GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL);
+#endif
         }
         GUILayout.Space(20);
         if (GUILayout.Button("Register", GUILayout.Height(Height)))

@@ -217,7 +217,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-            #if (UNITY_WEBGL)
+            #if GRAVITY_WECHAT_GAME_MODE
                 return RandomDeviceID();
             #else
                 return SystemInfo.deviceUniqueIdentifier;
@@ -241,7 +241,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             return  _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.networkType : "";
 #else
                 string networkType = "NULL";
@@ -263,7 +263,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             return  _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.platform : "";
 #else
                 string os = "other";
@@ -289,7 +289,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             return  _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.system : "";
 #else
             return SystemInfo.operatingSystem;
@@ -302,7 +302,7 @@ namespace GravitySDK.PC.Utils
             {
                 return 0;
             }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             return (int) (_wechatGameDeviceInfo?.screenWidth ?? 0);
 #else
             return (int)(UnityEngine.Screen.currentResolution.width);
@@ -315,7 +315,7 @@ namespace GravitySDK.PC.Utils
             {
                 return 0;
             }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             return (int) (_wechatGameDeviceInfo?.screenHeight ?? 0);
 #else
             return (int)(UnityEngine.Screen.currentResolution.height);
@@ -328,7 +328,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             return _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.brand : "";
 #else
             return SystemInfo.graphicsDeviceVendor;
@@ -341,7 +341,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             return _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.brand : "";
 #else
             return SystemInfo.deviceModel;
@@ -354,7 +354,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             return _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.language : "";
 #else
 switch (Application.systemLanguage)

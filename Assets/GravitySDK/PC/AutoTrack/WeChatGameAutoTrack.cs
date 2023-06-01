@@ -1,4 +1,4 @@
-#if  (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
 using System.Collections;
 using System.Collections.Generic;
 using GravityEngine;

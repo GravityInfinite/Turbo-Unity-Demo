@@ -766,7 +766,8 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    WebGL: GRAVITY_WECHAT_GAME_MODE
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

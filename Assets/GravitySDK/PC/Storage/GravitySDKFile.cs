@@ -1,5 +1,4 @@
 ﻿using System;
-using WeChatWASM;
 
 namespace GravitySDK.PC.Storage
 {
@@ -17,6 +16,7 @@ namespace GravitySDK.PC.Storage
         {
             if (!string.IsNullOrEmpty(key))
             {
+#if GRAVITY_WECHAT_GAME_MODE
                 if (value.GetType() == typeof(int))
                 {
                     PlayerPrefs.SetInt(key, (int)value);
@@ -29,11 +29,27 @@ namespace GravitySDK.PC.Storage
                 {
                     PlayerPrefs.SetString(key, (string)value);
                 }
-                PlayerPrefs.Save();
+                PlayerPrefs.Save();         
+#else
+                if (value.GetType() == typeof(int))
+                {
+                    UnityEngine.PlayerPrefs.SetInt(key, (int)value);
+                }
+                else if (value.GetType() == typeof(float))
+                {
+                    UnityEngine.PlayerPrefs.SetFloat(key, (float)value);
+                }
+                else if (value.GetType() == typeof(string))
+                {
+                    UnityEngine.PlayerPrefs.SetString(key, (string)value);
+                }
+                UnityEngine.PlayerPrefs.Save();
+#endif
             }
         }
         public static object GetData(string key, Type type)
         {
+#if GRAVITY_WECHAT_GAME_MODE
             if (!string.IsNullOrEmpty(key) && PlayerPrefs.HasKey(key))
             {
                 if (type == typeof(int))
@@ -50,6 +66,24 @@ namespace GravitySDK.PC.Storage
                 }
                 PlayerPrefs.Save();
             }
+#else
+            if (!string.IsNullOrEmpty(key) && UnityEngine.PlayerPrefs.HasKey(key))
+            {
+                if (type == typeof(int))
+                {
+                    return UnityEngine.PlayerPrefs.GetInt(key);
+                }
+                else if (type == typeof(float))
+                {
+                    return UnityEngine.PlayerPrefs.GetFloat(key);
+                }
+                else if (type == typeof(string))
+                {
+                    return UnityEngine.PlayerPrefs.GetString(key);
+                }
+                UnityEngine.PlayerPrefs.Save();
+            }
+#endif
             return null;
 
         }
@@ -63,10 +97,17 @@ namespace GravitySDK.PC.Storage
         {
             if (!string.IsNullOrEmpty(key))
             {
+#if GRAVITY_WECHAT_GAME_MODE
                 if (PlayerPrefs.HasKey(key))
                 {
                     PlayerPrefs.DeleteKey(key);
+                }        
+#else
+                if (UnityEngine.PlayerPrefs.HasKey(key))
+                {
+                    UnityEngine.PlayerPrefs.DeleteKey(key);
                 }
+#endif
             }
         }
         public static void DeleteData(string prefix,string key)

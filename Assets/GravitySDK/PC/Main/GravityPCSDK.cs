@@ -100,6 +100,11 @@ namespace GravitySDK.PC.Main
             GetInstance(appId).Identifiy(distinctID);
         }
 
+        public static GravitySDKTimeInter GetTime(DateTime dateTime)
+        {
+            return GetInstance("").GetTime(dateTime);
+        }
+
         /// <summary>
         /// 获取访客ID
         /// </summary>

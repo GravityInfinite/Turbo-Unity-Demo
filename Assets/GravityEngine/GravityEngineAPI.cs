@@ -13,11 +13,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
-#if !(UNITY_5_4_OR_NEWER)
-#define DISABLE_TA
-#warning "Your Unity version is not supported by us - GravityEngineSDK disabled"
-#endif
-
 using System;
 using System.Collections.Generic;
 using GravitySDK.PC.GravityTurbo;
@@ -29,7 +24,10 @@ using GravitySDK.PC.Time;
 using GravitySDK.PC.Utils;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+
+#if GRAVITY_WECHAT_GAME_MODE
 using WeChatWASM;
+#endif
 
 namespace GravityEngine
 {
@@ -1326,15 +1324,11 @@ namespace GravityEngine
         /// <param name="token">多项目配置，详情参见 GravityEngineAPI.Token</param>
         public static void StartGravityEngine(Token[] tokens = null)
         {
-            #if DISABLE_TA
-            tracking_enabled = false;
-            #else
             tracking_enabled = true;
-            #endif
 
             if (tracking_enabled)
             {
-#if (UNITY_WEBGL) // 微信平台
+#if GRAVITY_WECHAT_GAME_MODE
                 var systemInfo = WX.GetSystemInfoSync();
                 // 提前设置设备属性信息
                 GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
@@ -1379,7 +1373,7 @@ namespace GravityEngine
                 {
                     // ignored
                 }
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
                 // 记录小程序/小游戏启动事件，在StartEngine并且获取network_type之后调用
                 WX.GetNetworkType(new GetNetworkTypeOption()
                 {
@@ -1411,7 +1405,7 @@ namespace GravityEngine
         /// <exception cref="ArgumentException"></exception>
         public static void Register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
         {
-#if (UNITY_WEBGL)
+#if GRAVITY_WECHAT_GAME_MODE
             var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
 #else
             Dictionary<string, string> wxLaunchQuery = new Dictionary<string, string>();
