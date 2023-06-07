@@ -254,22 +254,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         {
             GravityEngineAPI.SetDynamicSuperProperties(this);
         }
-
-        GUILayout.Space(20);
-        if (GUILayout.Button("GetPresetProperties", GUILayout.Height(Height)))
-        {
-            GEPresetProperties presetProperties = GravityEngineAPI.GetPresetProperties();
-            string deviceModel = presetProperties.DeviceModel;
-            Debug.Log("GEPresetProperties DeviceModel is " + deviceModel);
-            Dictionary<string, object> eventPresetProperties = presetProperties.ToEventPresetProperties();
-            string propertiesStr = "";
-            foreach (KeyValuePair<string, object> kv in eventPresetProperties)
-            {
-                propertiesStr = propertiesStr + kv.Key + " = " + kv.Value + ", ";
-            }
-            Debug.Log("eventPresetProperties: " + propertiesStr);
-        }
-
+        
         GUILayout.Space(20);
         if (GUILayout.Button("LoadScene", GUILayout.Height(Height)))
         {

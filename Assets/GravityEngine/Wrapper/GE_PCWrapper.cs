@@ -1,4 +1,5 @@
-﻿#if  (!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)
+﻿#if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_ANDROID_GAME_MODE || GRAVITY_IOS_GAME_MODE
+// #if false
 using System;
 using System.Collections.Generic;
 using GravityEngine.Utils;
@@ -7,6 +8,7 @@ using GravitySDK.PC.Utils;
 using GravitySDK.PC.DataModel;
 using GravitySDK.PC.Config;
 using GravitySDK.PC.Constant;
+using UnityEngine.Networking;
 
 namespace GravityEngine.Wrapper
 {
@@ -133,10 +135,6 @@ namespace GravityEngine.Wrapper
             return GravityPCSDK.SuperProperties(appId);
         }
 
-        private static Dictionary<string, object> getPresetProperties(string appId)
-        {
-            return GravityPCSDK.PresetProperties(appId);
-        }
         private static void timeEvent(string eventName, string appId)
         {
             GravityPCSDK.TimeEvent(eventName,appId);
@@ -401,6 +399,11 @@ namespace GravityEngine.Wrapper
         private static void enableThirdPartySharing(TAThirdPartyShareType shareType, string properties, string appId)
         {
             GravitySDKLogger.Print("Third Party Sharing is not support on PC: " + shareType + ", " + properties + ", "+ appId);
+        }
+
+        private static void register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
+        {
+            GravityPCSDK.Register(name, version, wxOpenId, wxUnionId, actionResult);
         }
     }
 }

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GravityEngine.Wrapper;
 using GravitySDK.PC.Config;
 using GravitySDK.PC.Constant;
 using GravitySDK.PC.DataModel;
+using GravitySDK.PC.GravityTurbo;
 using GravitySDK.PC.Storage;
 using GravitySDK.PC.Time;
 using GravitySDK.PC.Utils;
 using UnityEngine;
+using UnityEngine.Networking;
+
 namespace GravitySDK.PC.Main
 {
     public class GravityPCSDK
@@ -208,11 +212,6 @@ namespace GravitySDK.PC.Main
         {
            return GetInstance(appId).SuperProperties();
         }
-        
-        public static Dictionary<string, object> PresetProperties(string appId="")
-        {
-            return GetInstance(appId).PresetProperties();
-        }
 
         public static void ClearSuperProperties(string appId= "")
         {
@@ -409,6 +408,29 @@ namespace GravitySDK.PC.Main
         public static string TimeString(DateTime dateTime, string appId = "")
         {
             return GetInstance(appId).TimeString(dateTime);
+        }
+        
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
+        {
+#if GRAVITY_WECHAT_GAME_MODE
+            var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
+#else
+            Dictionary<string, string> wxLaunchQuery = new Dictionary<string, string>();
+#endif
+            Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult, () =>
+            {
+                // 自动采集注册事件
+                Track("$MPRegister");
+                UserSetOnce(new Dictionary<string, object>()
+                {
+                    {GravitySDKConstant.MANUFACTURE, GravitySDKDeviceInfo.Manufacture()},
+                    {GravitySDKConstant.DEVICE_MODEL, GravitySDKDeviceInfo.DeviceModel()},
+                    {GravitySDKConstant.DEVICE_BRAND, GravitySDKDeviceInfo.Manufacture().ToUpper()},
+                    {GravitySDKConstant.OS, GravitySDKDeviceInfo.OS()},
+                    {"$first_visit_time", GravityEngineWrapper.GetTimeString(DateTime.Now)}
+                });
+                Flush();
+            });
         }
     }
 }

@@ -517,24 +517,6 @@ namespace GravitySDK.PC.Main
             }
             return this.mSupperProperties;
         }
-        public  Dictionary<string, object> PresetProperties()
-        {
-            Dictionary<string, object> presetProperties = new Dictionary<string, object>();
-            presetProperties[GravitySDKConstant.DEVICE_ID] = GravitySDKDeviceInfo.DeviceID();
-            presetProperties[GravitySDKConstant.OS] = GravitySDKDeviceInfo.OS();
-            presetProperties[GravitySDKConstant.SCREEN_HEIGHT] = GravitySDKDeviceInfo.ScreenHeight();
-            presetProperties[GravitySDKConstant.SCREEN_WIDTH] = GravitySDKDeviceInfo.ScreenWidth();
-            presetProperties[GravitySDKConstant.MANUFACTURE] = GravitySDKDeviceInfo.Manufacture();
-            presetProperties[GravitySDKConstant.DEVICE_MODEL] = GravitySDKDeviceInfo.DeviceModel();
-            presetProperties[GravitySDKConstant.SYSTEM_LANGUAGE] = GravitySDKDeviceInfo.MachineLanguage();
-            presetProperties[GravitySDKConstant.OS_VERSION] = GravitySDKDeviceInfo.OSVersion();
-            presetProperties[GravitySDKConstant.NETWORK_TYPE] = GravitySDKDeviceInfo.NetworkType();
-            presetProperties[GravitySDKConstant.APP_BUNDLEID] = GravitySDKAppInfo.AppIdentifier();
-            presetProperties[GravitySDKConstant.APP_VERSION] = GravitySDKAppInfo.AppVersion();
-            presetProperties[GravitySDKConstant.ZONE_OFFSET] = GravitySDKUtil.ZoneOffset(DateTime.Now, this.mConfig.TimeZone());
-            
-            return presetProperties;
-        }
         public virtual void ClearSuperProperties()
         {
             if (IsPaused())

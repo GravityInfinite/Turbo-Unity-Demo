@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GravityEngine.Utils;
 using GravitySDK.PC.Constant;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace GravityEngine.Wrapper
 {
@@ -151,11 +152,6 @@ namespace GravityEngine.Wrapper
             return getSuperProperties(appId);
         }
 
-        public static Dictionary<string, object> GetPresetProperties(string appId)
-        {
-            return getPresetProperties(appId);
-        }
-
         public static void UserSet(Dictionary<string, object> properties, string appId)
         {
             GE_PropertiesChecker.CheckProperties(properties);
@@ -292,11 +288,6 @@ namespace GravityEngine.Wrapper
             setTrackStatus(status, appId);
         }
 
-        public static string CreateLightInstance()
-        {
-            return createLightInstance();
-        }
-
         public static void CalibrateTime(long timestamp)
         {
             calibrateTime(timestamp);
@@ -311,6 +302,11 @@ namespace GravityEngine.Wrapper
         {
             if (null == properties) properties = new Dictionary<string, object>();
             enableThirdPartySharing(shareType, serilize(properties), appId);
+        }
+
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
+        {
+            register(name, version, wxOpenId, wxUnionId, actionResult);
         }
     }
 }

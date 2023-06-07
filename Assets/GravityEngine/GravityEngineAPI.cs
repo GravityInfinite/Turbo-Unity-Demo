@@ -130,8 +130,6 @@ namespace GravityEngine
         [Tooltip("是否手动初始化SDK")]
         public bool startManually = true;
 
-        [Tooltip("是否打开 Log")]
-        public bool enableLog = true;
         [Tooltip("设置网络类型")]
         public NetworkType networkType = NetworkType.DEFAULT;
 
@@ -140,19 +138,6 @@ namespace GravityEngine
 
         #endregion
 
-        /// <summary>
-        /// 是否打开日志log
-        /// </summary>
-        /// <param name="enable">允许打印日志</param>
-        public static void EnableLog(bool enable)
-        {
-            if (_sGravityEngineAPI != null)
-            {
-                _sGravityEngineAPI.enableLog = enable;
-                GE_Log.EnableLog(enable);
-                GravityEngineWrapper.EnableLog(enable);
-            }
-        }
         /// <summary>
         /// 设置自定义访客 ID，用于替换系统生成的访客 ID
         /// </summary>
@@ -251,7 +236,7 @@ namespace GravityEngine
                 // C#异常捕获提前，包含所有端
                 if ((events & AUTO_TRACK_EVENTS.APP_CRASH) != 0 && !GE_PublicConfig.DisableCSharpException)
                 {
-                    GravityEngineExceptionHandler.RegisterTAExceptionHandler(properties);
+                    GravityEngineExceptionHandler.RegisterGEExceptionHandler(properties);
                 }
                 if ((events & AUTO_TRACK_EVENTS.APP_SCENE_LOAD) != 0)
                 {
@@ -634,22 +619,6 @@ namespace GravityEngine
                     { "parameters", parameters}
                 });
             }
-        }
-
-        /// <summary>
-        /// 返回事件预置属性
-        /// </summary>
-        /// <returns>事件预置属性</returns>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static GEPresetProperties GetPresetProperties(string appId = "")
-        {
-            if (tracking_enabled)
-            {
-                Dictionary<string, object> properties = GravityEngineWrapper.GetPresetProperties(appId);
-                GEPresetProperties presetProperties = new GEPresetProperties(properties);
-                return presetProperties;
-            }
-            return null;
         }
 
         /// <summary>
@@ -1304,25 +1273,16 @@ namespace GravityEngine
             GravityEngineAPI.SDKTimeZone timeZone = GravityEngineAPI.SDKTimeZone.UTC;
             GravityEngineAPI.Token token =
                 new GravityEngineAPI.Token(appId, accessToken, clientId, mode, timeZone);
-            GravityEngineAPI.StartGravityEngine(token);
-        }
-
-        /// <summary>
-        /// 手动初始化 Gravity Engine SDK
-        /// </summary>
-        /// <param name="token">项目配置，详情参见 GravityEngineAPI.Token</param>
-        public static void StartGravityEngine(GravityEngineAPI.Token token)
-        {
             GravityEngineAPI.Token[] tokens = new GravityEngineAPI.Token[1];
             tokens[0] = token;
             GravityEngineAPI.StartGravityEngine(tokens);
         }
 
         /// <summary>
-        /// 初始化 Gravity Engine SDK
+        /// 初始化 Gravity Engine SDK，仅内部调用
         /// </summary>
         /// <param name="token">多项目配置，详情参见 GravityEngineAPI.Token</param>
-        public static void StartGravityEngine(Token[] tokens = null)
+        private static void StartGravityEngine(Token[] tokens = null)
         {
             tracking_enabled = true;
 
@@ -1347,8 +1307,6 @@ namespace GravityEngine
                 });
 #endif
                 GE_PublicConfig.GetPublicConfig();
-                GE_Log.EnableLog(_sGravityEngineAPI.enableLog);
-                GravityEngineWrapper.EnableLog(_sGravityEngineAPI.enableLog);
                 GravityEngineWrapper.SetVersionInfo(GE_PublicConfig.LIB_VERSION);
                 if (tokens == null)
                 {
@@ -1362,7 +1320,11 @@ namespace GravityEngine
                         if (!string.IsNullOrEmpty(token.appid))
                         {
                             token.appid = token.appid.Replace(" ", "");
+                            GE_Log.EnableLog(token.mode == SDKRunMode.DEBUG);
+                            GravityEngineWrapper.EnableLog(token.mode == SDKRunMode.DEBUG);
+                            
                             GE_Log.d("GravityEngine start with APPID: " + token.appid + ", SERVER_URL: " + GravitySDKConstant.SERVER_URL + ", MODE: " + token.mode);
+                            
                             Turbo.InitSDK(token.accessToken, token.clientId);
                             GravityEngineWrapper.ShareInstance(token, _sGravityEngineAPI);
                             GravityEngineWrapper.SetNetworkType(_sGravityEngineAPI.networkType);
@@ -1405,25 +1367,7 @@ namespace GravityEngine
         /// <exception cref="ArgumentException"></exception>
         public static void Register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
         {
-#if GRAVITY_WECHAT_GAME_MODE
-            var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
-#else
-            Dictionary<string, string> wxLaunchQuery = new Dictionary<string, string>();
-#endif
-            Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult, () =>
-            {
-                // 自动采集注册事件
-                Track("$MPRegister");
-                UserSetOnce(new Dictionary<string, object>()
-                {
-                    {GravitySDKConstant.MANUFACTURE, GravitySDKDeviceInfo.Manufacture()},
-                    {GravitySDKConstant.DEVICE_MODEL, GravitySDKDeviceInfo.DeviceModel()},
-                    {GravitySDKConstant.DEVICE_BRAND, GravitySDKDeviceInfo.Manufacture().ToUpper()},
-                    {GravitySDKConstant.OS, GravitySDKDeviceInfo.OS()},
-                    {"$first_visit_time", GravityEngineWrapper.GetTimeString(DateTime.Now)}
-                });
-                Flush();
-            });
+            GravityEngineWrapper.Register(name, version, wxOpenId, wxUnionId, actionResult);
         }
 
         public static void test()

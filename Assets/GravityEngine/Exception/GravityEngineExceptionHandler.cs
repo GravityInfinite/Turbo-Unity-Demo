@@ -33,7 +33,7 @@ namespace GravityEngine
             }
         }
 
-        public static void RegisterTAExceptionHandler(IAutoTrackEventCallback eventCallback)
+        public static void RegisterGEExceptionHandler(IAutoTrackEventCallback eventCallback)
         {
             mEventCallback = eventCallback;
             //注册异常处理委托
@@ -51,7 +51,7 @@ namespace GravityEngine
             }            
         }
 
-        public static void RegisterTAExceptionHandler(Dictionary<string, object> properties)
+        public static void RegisterGEExceptionHandler(Dictionary<string, object> properties)
         {
             SetAutoTrackProperties(properties);
             //注册异常处理委托
@@ -69,7 +69,7 @@ namespace GravityEngine
             }
         }
 
-        public static void UnregisterTAExceptionHandler ()
+        public static void UnRegisterGEExceptionHandler ()
         {
             //清除异常处理委托
             try
