@@ -54,23 +54,34 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             // 手动初始化（动态挂载 GravityEngineAPI 脚本）
             new GameObject("GravityEngine", typeof(GravityEngineAPI));
             
+#if GRAVITY_WECHAT_GAME_MODE
+            // 微信小游戏示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string appId = "18760451";
             string accessToken = "gZGljPsq7I4wc3BMvkAUsevQznx1jahi";
             string clientId = "1234567890067";
             
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
-
-#if GRAVITY_WECHAT_GAME_MODE
+            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.NORMAL);
             // 微信小游戏开启自动采集，并设置自定属性
             GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
-#else
-            // App开启自动采集事件
-            GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL);
+#elif GRAVITY_IOS_GAME_MODE || GRAVITY_ANDROID_GAME_MODE
+            // Android、iOS原生应用示例
+            //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
+            string appId = "16209157";
+            string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
+            string clientId = "1234567890067";
+            
+            // 启动引力引擎
+            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
+            // 原生app开启自动采集，并设置自定属性
+            GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, new Dictionary<string, object>()
+            {
+                {"auto_track_key", "auto_track_value"} // 静态属性
+            });
 #endif
         }
         GUILayout.Space(20);

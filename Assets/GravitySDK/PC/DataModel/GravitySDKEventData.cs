@@ -48,9 +48,10 @@ namespace GravitySDK.PC.DataModel
         {
             Dictionary<string, object> data = new Dictionary<string, object>();
             data[GravitySDKConstant.TYPE] = "track";
-            data[GravitySDKConstant.TIME] = this.EventTime().GetTimeLong(this.mTimeZone);
-            Debug.Log("diff time " + data[GravitySDKConstant.TIME] + " " + GravitySDKUtil.GetTimeStamp());
             // data[GravitySDKConstant.TIME] = GravitySDKUtil.GetTimeStamp();
+            data[GravitySDKConstant.TIME] = this.EventTime().GetDateTimeUtcTimestamp();
+            // Debug.Log("GravityTest event " + this.mTimeZone + " " + data[GravitySDKConstant.TIME] + " " + GravitySDKUtil.GetTimeStamp() + " " +
+            //           (float) ((long) data[GravitySDKConstant.TIME] - GravitySDKUtil.GetTimeStamp()) / 1000 / 60);
             data[GravitySDKConstant.DISTINCT_ID] = this.DistinctID();
             if (!string.IsNullOrEmpty(this.EventName()))
             {

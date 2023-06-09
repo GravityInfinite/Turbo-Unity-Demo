@@ -1,6 +1,7 @@
 ﻿using System;
 using GravitySDK.PC.Time;
 using GravitySDK.PC.Utils;
+using UnityEngine;
 
 namespace GravitySDK.PC.Time
 {
@@ -12,7 +13,7 @@ namespace GravitySDK.PC.Time
         public GravitySDKTime(TimeZoneInfo timezone, DateTime date)
         {
             this.mTimeZone = timezone;
-            this.mDate = date;
+            this.mDate = date; // 这个是没有经过校准的时间
         }
 
         public string GetTime(TimeZoneInfo timeZone)
@@ -27,16 +28,9 @@ namespace GravitySDK.PC.Time
             }
         }
         
-        public long GetTimeLong(TimeZoneInfo timeZone)
+        public long GetDateTimeUtcTimestamp()
         {
-            if (timeZone == null)
-            {
-                return GravitySDKUtil.FormatDateTimeToLong(mDate, mTimeZone);
-            }
-            else
-            {
-                return GravitySDKUtil.FormatDateTimeToLong(mDate, timeZone);
-            }
+            return GravitySDKUtil.FormatDateTimeToUtcTimestamp(mDate);
         }
 
         public double GetZoneOffset(TimeZoneInfo timeZone)

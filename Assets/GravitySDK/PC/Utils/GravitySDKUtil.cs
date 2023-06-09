@@ -2,6 +2,7 @@
 using System;
 using System.Xml;
 using System.Collections.Generic;
+using System.Globalization;
 using GravitySDK.PC.Config;
 using GravitySDK.PC.Constant;
 using GravitySDK.PC.Storage;
@@ -138,15 +139,36 @@ namespace GravitySDK.PC.Utils
             }
             return timeSpan.TotalHours;
         }
-        //时间格式化
+        //时间格式化，转换成字符串的时候会考虑时区
         public static string FormatDateTime(DateTime dateTime, TimeZoneInfo timeZone)
         {
-            return GetDateTime(dateTime, timeZone).ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            return GetDateTime(dateTime, timeZone).ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
         
-        public static long FormatDateTimeToLong(DateTime dateTime, TimeZoneInfo timeZone)
+        // 不考虑时区，只获取utc时间戳
+        public static long FormatDateTimeToUtcTimestamp(DateTime dateTime)
         {
-            return ((DateTimeOffset)GetDateTime(dateTime, timeZone)).ToUnixTimeMilliseconds();
+            // Debug.Log("lpf_test0 " + dateTime);
+            // DateTime currentDateTime = GetDateTime(dateTime, timeZone); // 为什么这里会被加8？因为考虑了时区
+            //
+            // DateTime d1 =
+            //     DateTime.ParseExact(currentDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+            //         "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            //
+            // // 做了一次转换之后，看看dateTime是否有变化？
+            // Debug.Log("lpf_test1 " + currentDateTime + " " + d1 + " equals " + currentDateTime.Equals(d1));
+            //
+            // long milliseconds = new DateTimeOffset(d1).ToUnixTimeMilliseconds(); // right
+            //
+            // long m1 = new DateTimeOffset(currentDateTime).ToUnixTimeMilliseconds();
+            // long m2 = new DateTimeOffset(d1).ToUnixTimeMilliseconds(); // right
+            // long m3 = new DateTimeOffset(dateTime).ToUnixTimeMilliseconds(); // right
+            //
+            // // 看看最后输出的时间戳是否有变化
+            // Debug.Log("lpf_test2 " + " error " + ((DateTimeOffset) currentDateTime).ToUnixTimeMilliseconds() +
+            //           " error2 " + ((DateTimeOffset) d1).ToUnixTimeMilliseconds() + // right
+            //           " right " + milliseconds + " m1 " + m1 + " m2 " + m2 + " m3 " + m3);
+            return new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();;
         }
 
         private static DateTime GetDateTime(DateTime dateTime, TimeZoneInfo timeZone)

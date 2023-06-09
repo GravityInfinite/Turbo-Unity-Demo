@@ -102,6 +102,18 @@ namespace GravitySDK.PC.Constant
         public static readonly string END_EVENT = "$AppEnd";
         //崩溃事件
         public static readonly string CRASH_EVENT = "$AppCrash";
+        
+        //小游戏启动事件
+        public static readonly string MP_LAUNCH = "$MPLaunch";
+        //小游戏展示事件
+        public static readonly string MP_SHOW = "$MPShow";
+        //小游戏退到后台事件
+        public static readonly string MP_HIDE = "$MPHide";
+        //小游戏分享事件
+        public static readonly string MP_SHARE = "$MPShare";
+        //小游戏添加收藏事件
+        public static readonly string MP_ADD_FAVORITES = "$MPAddFavorites";
+
         //崩溃原因
         public static readonly string CRASH_REASON = "$app_crashed_reason";
 

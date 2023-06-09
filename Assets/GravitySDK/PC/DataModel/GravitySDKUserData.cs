@@ -26,8 +26,9 @@ namespace GravitySDK.PC.DataModel
             Dictionary<string, object> data = new Dictionary<string, object>();
             data[GravitySDKConstant.TYPE] = "profile";
             // data[GravitySDKConstant.TIME] = GravitySDKUtil.GetTimeStamp();
-            data[GravitySDKConstant.TIME] = this.EventTime().GetTimeLong(this.mTimeZone);// 使用默认的time zone
-            Debug.Log("diff time " + data[GravitySDKConstant.TIME] + " " + GravitySDKUtil.GetTimeStamp());
+            data[GravitySDKConstant.TIME] = this.EventTime().GetDateTimeUtcTimestamp();// 使用默认的time zone
+            // Debug.Log("GravityTest user " + this.mTimeZone + " " + data[GravitySDKConstant.TIME] + " " + GravitySDKUtil.GetTimeStamp() + " " +
+            //           (float) ((long) data[GravitySDKConstant.TIME] - GravitySDKUtil.GetTimeStamp()) / 1000 / 60);
             data[GravitySDKConstant.DISTINCT_ID] = DistinctID();
             if (!string.IsNullOrEmpty(this.EventName()))
             {

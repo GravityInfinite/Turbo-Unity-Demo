@@ -1,5 +1,6 @@
 ﻿using System;
 using GravitySDK.PC.Utils;
+using UnityEngine;
 
 namespace GravitySDK.PC.Time
 {
@@ -13,9 +14,10 @@ namespace GravitySDK.PC.Time
         {
             this.mCalibratedTime = calibrateTimeInter;
             this.mTimeZone = timeZoneInfo;
-            this.mDate = mCalibratedTime.NowDate();
+            this.mDate = mCalibratedTime.NowDate(); // 这个时间，是已经校准过的时间，事件发生的时间
             GravitySDKLogger.Print("CurrentDate = " + this.mDate.ToString("UTC yyyy-MM-dd HH:mm:ss.fff"));
         }
+        
         public string GetTime(TimeZoneInfo timeZone)
         {
             if (timeZone == null)
@@ -28,16 +30,9 @@ namespace GravitySDK.PC.Time
             }
         }
         
-        public long GetTimeLong(TimeZoneInfo timeZone)
+        public long GetDateTimeUtcTimestamp()
         {
-            if (timeZone == null)
-            {
-                return GravitySDKUtil.FormatDateTimeToLong(mDate, mTimeZone);
-            }
-            else
-            {
-                return GravitySDKUtil.FormatDateTimeToLong(mDate, timeZone);
-            }
+            return GravitySDKUtil.FormatDateTimeToUtcTimestamp(mDate);
         }
 
         public double GetZoneOffset(TimeZoneInfo timeZone)

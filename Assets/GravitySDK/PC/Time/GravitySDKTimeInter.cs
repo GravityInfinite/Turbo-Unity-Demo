@@ -4,7 +4,7 @@ namespace GravitySDK.PC.Time
     public interface GravitySDKTimeInter
     {
         string GetTime(TimeZoneInfo timeZone);
-        long GetTimeLong(TimeZoneInfo timeZone);
+        long GetDateTimeUtcTimestamp();
         Double GetZoneOffset(TimeZoneInfo timeZone);
     }
 }

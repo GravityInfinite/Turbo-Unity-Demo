@@ -12,6 +12,10 @@ using GravitySDK.PC.Utils;
 using UnityEngine;
 using UnityEngine.Networking;
 
+#if GRAVITY_WECHAT_GAME_MODE
+using WeChatWASM;
+#endif
+
 namespace GravitySDK.PC.Main
 {
     public class GravityPCSDK

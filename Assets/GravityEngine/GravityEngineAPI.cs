@@ -317,7 +317,7 @@ namespace GravityEngine
         /// <param name="scene"></param>
         public static void TrackMPLaunch(Dictionary<string, string> query, double scene)
         {
-            TrackMPEvent("$MPLaunch", query, scene, null);
+            TrackMPEvent(GravitySDKConstant.MP_LAUNCH, query, scene, null);
             Flush();
         }
 
@@ -328,9 +328,9 @@ namespace GravityEngine
         /// <param name="scene"></param>
         public static void TrackMPShow(Dictionary<string, string> query, double scene, Dictionary<string, object> properties)
         {
-            TrackMPEvent("$MPShow", query, scene, properties);
+            TrackMPEvent(GravitySDKConstant.MP_SHOW, query, scene, properties);
             // $MPHide开始计时
-            TimeEvent("$MPHide");
+            TimeEvent(GravitySDKConstant.MP_HIDE);
         }
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace GravityEngine
         /// </summary>
         public static void TrackMPHide(Dictionary<string, object> properties)
         {
-            Track("$MPHide", properties);
+            Track(GravitySDKConstant.MP_HIDE, properties);
         }
         
         /// <summary>
@@ -346,7 +346,7 @@ namespace GravityEngine
         /// </summary>
         public static void TrackMPShare(Dictionary<string, object> properties)
         {
-            Track("$MPShare", properties);
+            Track(GravitySDKConstant.MP_SHARE, properties);
         }
         
         /// <summary>
@@ -354,7 +354,7 @@ namespace GravityEngine
         /// </summary>
         public static void TrackMPAddFavorites(Dictionary<string, object> properties)
         {
-            Track("$MPAddFavorites", properties);
+            Track(GravitySDKConstant.MP_ADD_FAVORITES, properties);
         }
         
         /// <summary>
@@ -1270,7 +1270,7 @@ namespace GravityEngine
         /// <param name="mode">SDK运行模式</param>
         public static void StartGravityEngine(string appId, string accessToken, string clientId, SDKRunMode mode)
         {
-            GravityEngineAPI.SDKTimeZone timeZone = GravityEngineAPI.SDKTimeZone.UTC;
+            GravityEngineAPI.SDKTimeZone timeZone = GravityEngineAPI.SDKTimeZone.Local;
             GravityEngineAPI.Token token =
                 new GravityEngineAPI.Token(appId, accessToken, clientId, mode, timeZone);
             GravityEngineAPI.Token[] tokens = new GravityEngineAPI.Token[1];
@@ -1289,6 +1289,7 @@ namespace GravityEngine
             if (tracking_enabled)
             {
 #if GRAVITY_WECHAT_GAME_MODE
+                // 从微信SDK获取属性信息
                 var systemInfo = WX.GetSystemInfoSync();
                 // 提前设置设备属性信息
                 GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
