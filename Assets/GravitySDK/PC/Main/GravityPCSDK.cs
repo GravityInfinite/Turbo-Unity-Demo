@@ -14,6 +14,8 @@ using UnityEngine.Networking;
 
 #if GRAVITY_WECHAT_GAME_MODE
 using WeChatWASM;
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+using StarkSDKSpace;
 #endif
 
 namespace GravitySDK.PC.Main
@@ -418,6 +420,8 @@ namespace GravitySDK.PC.Main
         {
 #if GRAVITY_WECHAT_GAME_MODE
             var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+            var wxLaunchQuery = StarkSDK.API.GetLaunchOptionsSync().Query;
 #else
             Dictionary<string, string> wxLaunchQuery = new Dictionary<string, string>();
 #endif

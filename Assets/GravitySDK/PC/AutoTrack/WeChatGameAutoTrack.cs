@@ -1,11 +1,16 @@
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
 using System.Collections;
 using System.Collections.Generic;
 using GravityEngine;
 using GravitySDK.PC.Constant;
 using GravitySDK.PC.Utils;
-using UnityEngine;
+
+#if GRAVITY_WECHAT_GAME_MODE
 using WeChatWASM;
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+using StarkSDKSpace;
+#endif
+using UnityEngine;
 
 /// <summary>
 /// 微信小游戏事件自动采集类，要求引用Unity WebGL 微信小游戏适配方案中的Unity插件，参考：https://github.com/wechat-miniprogram/minigame-unity-webgl-transform
@@ -33,39 +38,59 @@ public class WeChatGameAutoTrack : MonoBehaviour
         SetAutoTrackProperties(events, properties);
         if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHOW))
         {
+#if GRAVITY_WECHAT_GAME_MODE
             WX.OnShow((result =>
             {
                 GravitySDKLogger.Print("wechat game on show");
-                GravityEngineAPI.TrackMPShow(result.query, result.scene, GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_SHOW.ToString()));
+                GravityEngineAPI.TrackMPShow(result.query, "" + result.scene, GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_SHOW.ToString()));
             }));
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+            StarkSDK.API.GetStarkAppLifeCycle().OnShow += (scene, query, refererInfo) =>
+            {
+                GravitySDKLogger.Print("bytedance game on show");
+                GravityEngineAPI.TrackMPShow(query, "" + scene, GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_SHOW.ToString()));
+            };
+#endif
         }
 
         if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_HIDE))
         {
+#if GRAVITY_WECHAT_GAME_MODE
             WX.OnHide((result =>
             {
                 GravitySDKLogger.Print("wechat game on hide");
                 GravityEngineAPI.TrackMPHide(GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_HIDE.ToString()));
             }));
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+            StarkSDK.API.GetStarkAppLifeCycle().OnHide += () =>
+            {
+                GravitySDKLogger.Print("bytedance game on hide");
+                GravityEngineAPI.TrackMPHide(GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_HIDE.ToString()));
+            };
+#endif
         }
 
         if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES))
         {
+#if GRAVITY_WECHAT_GAME_MODE
             WX.OnAddToFavorites((action =>
             {
                 GravitySDKLogger.Print("wechat game on add to favorites");
                 GravityEngineAPI.TrackMPAddFavorites(GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES.ToString()));
             }));
+#endif
         }
 
         if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHARE))
         {
+#if GRAVITY_WECHAT_GAME_MODE
             WXShareAppMessageParam param = new WXShareAppMessageParam();
             WX.OnShareAppMessage(param, action =>
             {
                 action.Invoke(param);
                 GravityEngineAPI.TrackMPShare(GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_SHARE.ToString()));
             });
+#endif
         }
     }
 

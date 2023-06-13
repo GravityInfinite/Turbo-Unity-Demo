@@ -10,6 +10,8 @@ using GravitySDK.PC.Utils;
 
 #if GRAVITY_WECHAT_GAME_MODE
 using WeChatWASM;
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+using StarkSDKSpace;
 #endif
 
 public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
@@ -34,6 +36,12 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
     {
 #if GRAVITY_WECHAT_GAME_MODE
         WXBase.InitSDK((code) => { Debug.Log("wx init end"); });
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+        StarkSDK.Init();
+        StarkSDK.API.SetContainerInitCallback((env =>
+        {
+            StarkUIManager.ShowToastLong("stark init end " + env + " ::: " + env.GetLaunchOptionsSync().Query);
+        }));
 #endif
     }
 
@@ -79,6 +87,20 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
             // 原生app开启自动采集，并设置自定属性
             GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, new Dictionary<string, object>()
+            {
+                {"auto_track_key", "auto_track_value"} // 静态属性
+            });
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+            // 抖音小游戏示例
+            //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
+            string appId = "18760451";
+            string accessToken = "gZGljPsq7I4wc3BMvkAUsevQznx1jahi";
+            string clientId = "1234567890067";
+            
+            // 启动引力引擎
+            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
+            // 微信小游戏开启自动采集，并设置自定属性
+            GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.BYTEDANCE_GAME_ALL, new Dictionary<string, object>()
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });

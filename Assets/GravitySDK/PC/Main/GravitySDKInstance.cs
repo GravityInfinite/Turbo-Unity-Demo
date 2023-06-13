@@ -52,7 +52,7 @@ namespace GravitySDK.PC.Main
         private MonoBehaviour mMono;
         private static MonoBehaviour sMono;
         private GravitySDKAutoTrack mAutoTrack;
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
         private WeChatGameAutoTrack mWechatGameAutoTrack;
 #endif
 
@@ -133,8 +133,8 @@ namespace GravitySDK.PC.Main
             }
             UnityEngine.Object.DontDestroyOnLoad(mGravitySDKAutoTrack);
 
-#if GRAVITY_WECHAT_GAME_MODE
-            // 挂载采集器，以开启微信小游戏的自动采集
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
+            // 挂载采集器，以开启微信、抖音小游戏的自动采集
             GameObject mWechatGameAutoTrackObj = new GameObject("WechatGameAutoTrack", typeof(WeChatGameAutoTrack));
             mWechatGameAutoTrack = (WeChatGameAutoTrack) mWechatGameAutoTrackObj.GetComponent(typeof(WeChatGameAutoTrack));
             UnityEngine.Object.DontDestroyOnLoad(mWechatGameAutoTrackObj);
@@ -224,14 +224,14 @@ namespace GravitySDK.PC.Main
         public virtual void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
             this.mAutoTrack.EnableAutoTrack(events, properties, mAppid);
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             mWechatGameAutoTrack.EnableAutoTrack(events, properties);
 #endif
         }
         public virtual void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback_PC eventCallback)
         {
             this.mAutoTrack.EnableAutoTrack(events, eventCallback, mAppid);
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             mWechatGameAutoTrack.EnableAutoTrack(events, null);
 #endif
         }

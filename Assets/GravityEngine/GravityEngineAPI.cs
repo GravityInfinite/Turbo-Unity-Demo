@@ -27,6 +27,8 @@ using UnityEngine.SceneManagement;
 
 #if GRAVITY_WECHAT_GAME_MODE
 using WeChatWASM;
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+using StarkSDKSpace;
 #endif
 
 namespace GravityEngine
@@ -291,7 +293,7 @@ namespace GravityEngine
         /// </summary>
         /// <param name="query"></param>
         /// <param name="scene"></param>
-        private static void TrackMPEvent(string eventName, Dictionary<string, string> query, double scene, Dictionary<string, object> properties)
+        private static void TrackMPEvent(string eventName, Dictionary<string, string> query, string scene, Dictionary<string, object> properties)
         {
             // join query's key and value with =, and join all query with &, ignore the last &
             string queryStr = "";
@@ -315,7 +317,7 @@ namespace GravityEngine
         /// </summary>
         /// <param name="query"></param>
         /// <param name="scene"></param>
-        public static void TrackMPLaunch(Dictionary<string, string> query, double scene)
+        public static void TrackMPLaunch(Dictionary<string, string> query, string scene)
         {
             TrackMPEvent(GravitySDKConstant.MP_LAUNCH, query, scene, null);
             Flush();
@@ -326,7 +328,7 @@ namespace GravityEngine
         /// </summary>
         /// <param name="query"></param>
         /// <param name="scene"></param>
-        public static void TrackMPShow(Dictionary<string, string> query, double scene, Dictionary<string, object> properties)
+        public static void TrackMPShow(Dictionary<string, string> query, string scene, Dictionary<string, object> properties)
         {
             TrackMPEvent(GravitySDKConstant.MP_SHOW, query, scene, properties);
             // $MPHide开始计时
@@ -1295,9 +1297,7 @@ namespace GravityEngine
                 GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
                 {
                     SDKVersion = systemInfo.SDKVersion, // 微信SDK版本号
-                    benchmarkLevel = systemInfo.benchmarkLevel,
                     brand = systemInfo.brand,
-                    deviceOrientation = systemInfo.deviceOrientation,
                     language = systemInfo.language,
                     model = systemInfo.model,
                     platform = systemInfo.platform,
@@ -1305,6 +1305,22 @@ namespace GravityEngine
                     screenWidth = systemInfo.screenWidth,
                     system = systemInfo.system,
                     version = systemInfo.version, // 微信版本号
+                });
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+                // 从抖音SDK获取属性信息
+                var systemInfo = StarkSDK.API.GetSystemInfo();
+                // 提前设置设备属性信息
+                GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
+                {
+                    SDKVersion = systemInfo.sdkVersion, // 抖音SDK版本号
+                    brand = systemInfo.brand,
+                    language = systemInfo.language,
+                    model = systemInfo.model,
+                    platform = systemInfo.platform,
+                    screenHeight = systemInfo.screenHeight,
+                    screenWidth = systemInfo.screenWidth,
+                    system = systemInfo.system,
+                    version = systemInfo.hostVersion, // 抖音版本号
                 });
 #endif
                 GE_PublicConfig.GetPublicConfig();
@@ -1345,9 +1361,13 @@ namespace GravityEngine
                     complete = (result) =>
                     {
                         LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
-                        TrackMPLaunch(launchOptionsSync.query, launchOptionsSync.scene);
+                        TrackMPLaunch(launchOptionsSync.query, "" + launchOptionsSync.scene);
                     }
                 });
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+                // 抖音小游戏不需要提前获取网络状态，直接使用unity自带的即可
+                LaunchOption launchOptionsSync = StarkSDK.API.GetLaunchOptionsSync();
+                TrackMPLaunch(launchOptionsSync.Query, launchOptionsSync.Scene);
 #endif
             }
 

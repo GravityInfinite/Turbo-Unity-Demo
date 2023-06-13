@@ -20,12 +20,6 @@ namespace GravitySDK.PC.Utils
         public bool albumAuthorized;
 
         /// <summary> 
-        /// 需要基础库： `1.8.0`
-        /// 设备性能等级（仅 Android）。取值为：-2 或 0（该设备无法运行小游戏），-1（性能未知），>=1（设备性能值，该值越高，设备性能越好，目前最高不到50）
-        /// </summary>
-        public double benchmarkLevel;
-
-        /// <summary> 
         /// 需要基础库： `2.6.0`
         /// 蓝牙的系统开关
         /// </summary>
@@ -42,14 +36,6 @@ namespace GravitySDK.PC.Utils
         /// 允许微信使用摄像头的开关
         /// </summary>
         public bool cameraAuthorized;
-
-        /// <summary> 
-        /// 设备方向
-        /// 可选值：
-        /// - 'portrait': 竖屏;
-        /// - 'landscape': 横屏;
-        /// </summary>
-        public string deviceOrientation;
 
         /// <summary> 
         /// 需要基础库： `2.15.0`
@@ -217,7 +203,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-            #if GRAVITY_WECHAT_GAME_MODE
+            #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
                 return RandomDeviceID();
             #else
                 return SystemInfo.deviceUniqueIdentifier;
@@ -263,7 +249,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             return  _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.platform : "";
 #else
                 string os = "other";
@@ -289,7 +275,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             return  _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.system : "";
 #else
             return SystemInfo.operatingSystem;
@@ -302,7 +288,7 @@ namespace GravitySDK.PC.Utils
             {
                 return 0;
             }
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             return (int) (_wechatGameDeviceInfo?.screenWidth ?? 0);
 #else
             return (int)(UnityEngine.Screen.currentResolution.width);
@@ -315,7 +301,7 @@ namespace GravitySDK.PC.Utils
             {
                 return 0;
             }
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             return (int) (_wechatGameDeviceInfo?.screenHeight ?? 0);
 #else
             return (int)(UnityEngine.Screen.currentResolution.height);
@@ -328,7 +314,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             return _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.brand : "";
 #else
             return SystemInfo.graphicsDeviceVendor;
@@ -341,7 +327,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             return _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.brand : "";
 #else
             return SystemInfo.deviceModel;
@@ -354,7 +340,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if GRAVITY_WECHAT_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             return _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.language : "";
 #else
 switch (Application.systemLanguage)
