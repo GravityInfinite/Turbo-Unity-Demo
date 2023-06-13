@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1315287583, guid: 1fa0dcd38dabb47c58f0ede66c2ff10b, type: 3}
+  m_Name: StarkBuilderSetting
+  m_EditorClassIdentifier: 
+  isDevBuild: 0
+  stripEngineCode: 0
+  appId: tt9a4aecf7057074ae
+  needCompress: 1
+  wasmResourceUrl: http://
+  webglPackagePath: /Users/fei/dev/unity/projects/GravityEngineSDK/Build/webgl/webgl_package-20230612_202350.zip
+  useByteAudioAPI: 0
+  useNewFileSystem: 0
+  wasmMemorySize: 512
+  urlCacheList: []
+  dontCacheFileNames: []
+  apkFileNameBase: main
+  appHost: 2
+  compressMethod: 1
+  runtimeEnv: 0
+  framework: 0
+  architecture: 2
+  miniApkVersion: 0
+  scriptingBackend: 0
+  NativeWhiteListRegex:
+  - com.bytedance.starksdk
+  - _Backup~
