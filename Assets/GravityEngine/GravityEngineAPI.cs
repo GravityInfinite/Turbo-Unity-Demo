@@ -42,6 +42,8 @@ namespace GravityEngine
         {
             public string appid;
             public string accessToken;
+            public string channel;
+            public string aesKey;
             public string clientId;
             public SDKRunMode mode;
             public SDKTimeZone timeZone;
@@ -55,11 +57,13 @@ namespace GravityEngine
             public bool validatesDomainName; // 是否验证证书域名，默认true
             private string instanceName; // 实例名
 
-            public Token(string appId, string accessToken, string clientId, SDKRunMode mode = SDKRunMode.NORMAL, SDKTimeZone timeZone = SDKTimeZone.Local, string timeZoneId = null, string instanceName = null)
+            public Token(string appId, string accessToken, string clientId, string channel, string aesKey, SDKRunMode mode = SDKRunMode.NORMAL, SDKTimeZone timeZone = SDKTimeZone.Local, string timeZoneId = null, string instanceName = null)
             {
                 this.appid = appId.Replace(" ", "");
                 this.accessToken = accessToken.Replace(" ", "");
                 this.clientId = clientId.Replace(" ", "");
+                this.channel = channel.Replace(" ", "");
+                this.aesKey = aesKey.Replace(" ", "");
                 this.mode = mode;
                 this.timeZone = timeZone;
                 this.timeZoneId = timeZoneId;
@@ -145,7 +149,7 @@ namespace GravityEngine
         /// </summary>
         /// <param name="firstId">访客 ID</param>
         /// <param name="appId">项目 ID(可选)</param>
-        public static void Identify(string firstId, string appId = "")
+        private static void Identify(string firstId, string appId = "")
         {
             if (tracking_enabled)
             {
@@ -395,6 +399,11 @@ namespace GravityEngine
                 {"$adn_type", "wechat"}
             });
             Flush();
+        }
+
+        public static void TrackBytedanceAdShowEvent(string currentAccessToken)
+        {
+            
         }
 
         /// <summary>
@@ -1152,11 +1161,11 @@ namespace GravityEngine
         }
 
         /// <summary>
-        /// 设置允许上报数据到服务器的网络类型.（只支持Android/iOS）
+        /// 设置允许上报数据到服务器的网络类型.（只支持Android/iOS）暂时不支持
         /// </summary>
         /// <param name="networkType">网络类型</param>
         /// <param name="appId">项目 ID(可选)</param>
-        public static void SetNetworkType(NetworkType networkType, string appId =  "")
+        private static void SetNetworkType(NetworkType networkType, string appId =  "")
         {
             if (tracking_enabled)
             {
@@ -1231,12 +1240,12 @@ namespace GravityEngine
 
         /// <summary>
         /// 三方数据共享
-        /// 通过与三方系统共享TA账号体系，打通三方数据
+        /// 通过与三方系统共享引力账号体系，打通三方数据 暂时不支持
         /// </summary>
         /// <param name="shareType">三方系统类型</param>
-        /// <param name="properties">三方系统自定义属性（部分系统自定义属性的设置是覆盖式更新，所以需要将自定义属性传入TA SDK，此属性将会与TA账号体系一并传入三方系统）</param>
+        /// <param name="properties">三方系统自定义属性（部分系统自定义属性的设置是覆盖式更新，所以需要将自定义属性传入引力 SDK，此属性将会与引力账号体系一并传入三方系统）</param>
         /// <param name="appId">项目 ID</param>
-        public static void EnableThirdPartySharing(TAThirdPartyShareType shareType, Dictionary<string, object> properties = null, string appId = "")
+        private static void EnableThirdPartySharing(GEThirdPartyShareType shareType, Dictionary<string, object> properties = null, string appId = "")
         {
             if (tracking_enabled)
             {
@@ -1270,11 +1279,13 @@ namespace GravityEngine
         /// <param name="accessToken">项目token</param>
         /// <param name="clientId">用户唯一ID</param>
         /// <param name="mode">SDK运行模式</param>
-        public static void StartGravityEngine(string appId, string accessToken, string clientId, SDKRunMode mode)
+        /// <param name="channel">用户渠道（选填）</param>
+        /// <param name="aesKey">原生平台AES秘钥，目前只有Android平台需要填写</param>
+        public static void StartGravityEngine(string appId, string accessToken, string clientId, SDKRunMode mode, string channel="base_channel", string aesKey="")
         {
             GravityEngineAPI.SDKTimeZone timeZone = GravityEngineAPI.SDKTimeZone.Local;
             GravityEngineAPI.Token token =
-                new GravityEngineAPI.Token(appId, accessToken, clientId, mode, timeZone);
+                new GravityEngineAPI.Token(appId, accessToken, clientId, channel, aesKey, mode, timeZone);
             GravityEngineAPI.Token[] tokens = new GravityEngineAPI.Token[1];
             tokens[0] = token;
             GravityEngineAPI.StartGravityEngine(tokens);
@@ -1340,9 +1351,9 @@ namespace GravityEngine
                             GE_Log.EnableLog(token.mode == SDKRunMode.DEBUG);
                             GravityEngineWrapper.EnableLog(token.mode == SDKRunMode.DEBUG);
                             
-                            GE_Log.d("GravityEngine start with APPID: " + token.appid + ", SERVER_URL: " + GravitySDKConstant.SERVER_URL + ", MODE: " + token.mode);
+                            GE_Log.d("GravityEngine start with APPID 2: " + token.appid + ", SERVER_URL: " + GravitySDKConstant.SERVER_URL + ", MODE: " + token.mode);
                             
-                            Turbo.InitSDK(token.accessToken, token.clientId);
+                            Turbo.InitSDK(token.accessToken, token.clientId, token.channel);
                             GravityEngineWrapper.ShareInstance(token, _sGravityEngineAPI);
                             GravityEngineWrapper.SetNetworkType(_sGravityEngineAPI.networkType);
                         }
@@ -1386,9 +1397,9 @@ namespace GravityEngine
         /// <param name="wxUnionId"></param>        微信union id（微信小程序和小游戏选填）
         /// <param name="actionResult"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
         {
-            GravityEngineWrapper.Register(name, version, wxOpenId, wxUnionId, actionResult);
+            GravityEngineWrapper.Register(name, version, wxOpenId, wxUnionId, registerCallback);
         }
 
         public static void test()

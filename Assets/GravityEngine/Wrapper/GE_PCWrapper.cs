@@ -1,5 +1,5 @@
-﻿#if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_ANDROID_GAME_MODE || GRAVITY_IOS_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
-// #if false
+﻿// #if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_IOS_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
+#if false
 using System;
 using System.Collections.Generic;
 using GravityEngine.Utils;

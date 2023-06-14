@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace GravityEngine.Utils
 {
     // 三方数据共享类型
-    public enum TAThirdPartyShareType
+    public enum GEThirdPartyShareType
     {
         NONE = 0,
         APPSFLYER = 1 << 0, // AppsFlyer

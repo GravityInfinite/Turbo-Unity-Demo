@@ -12,6 +12,7 @@ namespace GravityEngine.Wrapper
         public static MonoBehaviour sMono;
         private static IDynamicSuperProperties mDynamicSuperProperties;
         private static IAutoTrackEventCallback mAutoTrackEventCallback;
+        private static IRegisterCallback mRegisterCallback;
 
         private static System.Random rnd = new System.Random();
 
@@ -26,6 +27,7 @@ namespace GravityEngine.Wrapper
 
         public static void ShareInstance(GravityEngineAPI.Token token, MonoBehaviour mono, bool initRequired = true)
         {
+            GE_Log.d("LPF_TEST share instance");
             sMono = mono;
             if (initRequired) init(token);
         }
@@ -298,15 +300,16 @@ namespace GravityEngine.Wrapper
             calibrateTimeWithNtp(ntpServer);
         }
 
-        public static void EnableThirdPartySharing(TAThirdPartyShareType shareType, Dictionary<string, object> properties = null, string appId = "")
+        public static void EnableThirdPartySharing(GEThirdPartyShareType shareType, Dictionary<string, object> properties = null, string appId = "")
         {
             if (null == properties) properties = new Dictionary<string, object>();
             enableThirdPartySharing(shareType, serilize(properties), appId);
         }
 
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
         {
-            register(name, version, wxOpenId, wxUnionId, actionResult);
+            mRegisterCallback = registerCallback;
+            register(name, version, wxOpenId, wxUnionId, registerCallback);
         }
     }
 }

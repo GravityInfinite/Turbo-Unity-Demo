@@ -11,6 +11,7 @@ namespace GravitySDK.PC.GravityTurbo
         private const string TurboHost = "https://backend.gravity-engine.com";
         private static string _accessToken;
         private static string _clientID;
+        private static string _channel;
 
         private static void GlobalCheck()
         {
@@ -28,12 +29,14 @@ namespace GravitySDK.PC.GravityTurbo
         /// <summary>
         /// 初始化turbo SDK必须参数（每次启动都需要调用）
         /// </summary>
-        /// <param name="accessToken"></param> 项目通行证，在：网站后台-->管理中心-->应用列表中找到Access Token列 复制（首次使用可能需要先新增应用）
-        /// <param name="clientId"></param> 用户唯一标识，如微信小程序/小游戏的openid、Android ID、iOS的IDFA、或业务侧自行生成的唯一用户ID均可
-        public static void InitSDK(string accessToken, string clientId)
+        /// <param name="accessToken">项目通行证，在：网站后台-->管理中心-->应用列表中找到Access Token列 复制（首次使用可能需要先新增应用）</param> 
+        /// <param name="clientId">用户唯一标识，如微信小程序/小游戏的openid、Android ID、iOS的IDFA、或业务侧自行生成的唯一用户ID均可</param>
+        /// <param name="channel">用户渠道</param>
+        public static void InitSDK(string accessToken, string clientId, string channel)
         {
             _accessToken = accessToken;
             _clientID = clientId;
+            _channel = channel;
             GlobalCheck();
             Debug.Log("turbo init success");
         }
@@ -53,7 +56,7 @@ namespace GravitySDK.PC.GravityTurbo
             {
                 {"client_id", _clientID},
                 {"name", name},
-                {"channel", "base_channel"},
+                {"channel", _channel},
                 {"version", version},
                 {"wx_openid", wxOpenId},
                 {"wx_unionid", wxUnionId},
@@ -89,6 +92,11 @@ namespace GravitySDK.PC.GravityTurbo
         public static String GetClientId()
         {
             return _clientID;
+        }
+        
+        public static String GetChannel()
+        {
+            return _channel;
         }
     }
 }

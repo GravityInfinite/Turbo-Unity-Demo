@@ -14,7 +14,7 @@ using WeChatWASM;
 using StarkSDKSpace;
 #endif
 
-public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
+public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IRegisterCallback
 {
     public GUISkin skin;
     private const int Margin = 20;
@@ -32,6 +32,19 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         };
     }
     
+    public void onFailed(string errorMsg)
+    {
+        Debug.Log("register failed  with message " + errorMsg);
+    }
+
+    public void onSuccess()
+    {
+        Debug.Log("register success");
+        Debug.Log("register call end");
+        // 建议在此执行一次Flush
+        GravityEngineAPI.Flush();
+    }
+    
     private void Start()
     {
 #if GRAVITY_WECHAT_GAME_MODE
@@ -40,6 +53,11 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         StarkSDK.Init();
         StarkSDK.API.SetContainerInitCallback((env =>
         {
+            Debug.Log("stark init end");
+            foreach (var item in env.GetLaunchOptionsSync().Query)
+            {
+                Debug.Log("key is " + item.Key + " value is " + item.Value);
+            }
             StarkUIManager.ShowToastLong("stark init end " + env + " ::: " + env.GetLaunchOptionsSync().Query);
         }));
 #endif
@@ -82,9 +100,10 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             string appId = "16209157";
             string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
             string clientId = "1234567890067";
-            
+            string aesKey = "k7ZjSgc1Z8j551UJUNLlWA==";
+
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
+            GravityEngineAPI.StartGravityEngine(appId, accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi", aesKey);
             // 原生app开启自动采集，并设置自定属性
             GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, new Dictionary<string, object>()
             {
@@ -110,14 +129,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         if (GUILayout.Button("Register", GUILayout.Height(Height)))
         {
             Debug.Log("register clicked");
-            GravityEngineAPI.Register("name_123", 1, "your_wx_openid_111", "your_wx_unionid",
-                request =>
-                {
-                    Debug.Log("register call end");
-                    Debug.Log(request.downloadHandler.text);
-                    // 建议在此执行一次Flush
-                    GravityEngineAPI.Flush();
-                });
+            GravityEngineAPI.Register("name_123", 1, "your_openid_111", "your_wx_unionid", this);
         }
         GUILayout.EndHorizontal();
 
@@ -340,5 +352,5 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         
         GUILayout.EndScrollView();
         GUILayout.EndArea();
-    }    
+    }
 }
