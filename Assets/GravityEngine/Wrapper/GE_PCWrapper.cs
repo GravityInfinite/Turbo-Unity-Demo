@@ -1,5 +1,5 @@
-﻿// #if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_IOS_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
-#if false
+﻿#if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_IOS_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
+// #if false
 using System;
 using System.Collections.Generic;
 using GravityEngine.Utils;
@@ -108,12 +108,6 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.Track(eventName, propertiesDic, dateTime, timeZone, appId);
         }
 
-        private static void trackForAll(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone)
-        {
-            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.TrackForAll(eventName, propertiesDic, dateTime, timeZone);
-        }
-
         private static void setSuperProperties(string superProperties, string appId)
         {
             Dictionary<string, object> superPropertiesDic = GE_MiniJson.Deserialize(superProperties);
@@ -138,10 +132,6 @@ namespace GravityEngine.Wrapper
         private static void timeEvent(string eventName, string appId)
         {
             GravityPCSDK.TimeEvent(eventName,appId);
-        }
-        private static void timeEventForAll(string eventName)
-        {
-            GravityPCSDK.TimeEventForAll(eventName);
         }
 
         private static void userSet(string properties, string appId)
@@ -268,11 +258,6 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.SetTrackStatus((GE_TRACK_STATUS)status, appId);
         }
 
-        private static string createLightInstance()
-        {
-            return GravityPCSDK.CreateLightInstance();
-        }
-
         private static string getTimeString(DateTime dateTime)
         {
             return GravityPCSDK.TimeString(dateTime);
@@ -396,14 +381,20 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.CalibrateTimeWithNtp(ntpServer);
         }
 
-        private static void enableThirdPartySharing(TAThirdPartyShareType shareType, string properties, string appId)
+        private static void enableThirdPartySharing(GEThirdPartyShareType shareType, string properties, string appId)
         {
             GravitySDKLogger.Print("Third Party Sharing is not support on PC: " + shareType + ", " + properties + ", "+ appId);
         }
 
-        private static void register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
+        private static void register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
         {
-            GravityPCSDK.Register(name, version, wxOpenId, wxUnionId, actionResult);
+            
+            GravityPCSDK.Register(name, version, wxOpenId, wxUnionId, registerCallback);
+        }
+        
+        public static void getBytedanceEcpmRecords(string wxOpenId, string mpId)
+        {
+            GravityPCSDK.GetBytedanceEcpmRecords(wxOpenId, mpId);
         }
     }
 }

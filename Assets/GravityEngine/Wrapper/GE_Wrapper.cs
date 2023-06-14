@@ -113,12 +113,6 @@ namespace GravityEngine.Wrapper
             track(eventName, getFinalEventProperties(properties), datetime, timeZone, appId);
         }
 
-        public static void TrackForAll(string eventName, Dictionary<string, object> properties, DateTime datetime, TimeZoneInfo timeZone)
-        {
-            GE_PropertiesChecker.CheckString(eventName);
-            trackForAll(eventName, getFinalEventProperties(properties), datetime, timeZone);
-        }
-
         public static void SetSuperProperties(Dictionary<string, object> superProperties, string appId)
         {
             GE_PropertiesChecker.CheckProperties(superProperties);
@@ -141,12 +135,6 @@ namespace GravityEngine.Wrapper
         {
             GE_PropertiesChecker.CheckString(eventName);
             timeEvent(eventName, appId);
-        }
-
-        public static void TimeEventForAll(string eventName)
-        {
-            GE_PropertiesChecker.CheckString(eventName);
-            timeEventForAll(eventName);
         }
 
         public static Dictionary<string, object> GetSuperProperties(string appId)
@@ -310,6 +298,11 @@ namespace GravityEngine.Wrapper
         {
             mRegisterCallback = registerCallback;
             register(name, version, wxOpenId, wxUnionId, registerCallback);
+        }
+        
+        public static void GetBytedanceEcpmRecords(string wxOpenId, string mpId)
+        {
+            getBytedanceEcpmRecords(wxOpenId, mpId);
         }
     }
 }

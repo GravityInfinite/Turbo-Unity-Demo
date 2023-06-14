@@ -145,6 +145,11 @@ namespace GravitySDK.PC.Utils
             return GetDateTime(dateTime, timeZone).ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
         
+        public static string FormatDateTimeWithFormat(DateTime dateTime, TimeZoneInfo timeZone, string format)
+        {
+            return GetDateTime(dateTime, timeZone).ToString(format, CultureInfo.InvariantCulture);
+        }
+        
         // 不考虑时区，只获取utc时间戳
         public static long FormatDateTimeToUtcTimestamp(DateTime dateTime)
         {

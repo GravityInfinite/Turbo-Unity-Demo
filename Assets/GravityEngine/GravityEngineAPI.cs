@@ -401,9 +401,9 @@ namespace GravityEngine
             Flush();
         }
 
-        public static void TrackBytedanceAdShowEvent(string currentAccessToken)
+        public static void TrackBytedanceAdShowEvent(string wxOpenId, string mpId)
         {
-            
+            GravityEngineWrapper.GetBytedanceEcpmRecords(wxOpenId, mpId);
         }
 
         /// <summary>
@@ -481,30 +481,6 @@ namespace GravityEngine
         }
 
         /// <summary>
-        /// track 事件及事件属性，并指定 #event_time #zone_offset 属性. 该事件会先缓存在本地，达到触发上报条件或者主动调用 Flush 时会上报到服务器. 支持所有实例~
-        /// </summary>
-        /// <param name="eventName">事件名称</param>
-        /// <param name="properties">事件属性</param>
-        /// <param name="date">事件时间</param>
-        /// <param name="timeZone">事件时区</param>
-        private static void TrackForAll(string eventName, Dictionary<string, object> properties, DateTime date, TimeZoneInfo timeZone)
-        {
-            if (tracking_enabled)
-            {
-                GravityEngineWrapper.TrackForAll(eventName, properties, date, timeZone);
-            }
-            else
-            {
-                System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { eventName, properties, date, timeZone };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
-                });
-            }
-        }
-        
-        /// <summary>
         /// 主动触发上报缓存事件到服务器. 
         /// </summary>
         /// <param name="appId">项目 ID(可选)</param>
@@ -536,8 +512,8 @@ namespace GravityEngine
                 { "$scene_name", scene.name },
                 { "$scene_path", scene.path }
             };
-            TrackForAll("$SceneLoaded", properties, DateTime.Now, null);
-            TimeEventForAll("$SceneUnloaded");
+            Track("$SceneLoaded", properties, DateTime.Now, null);
+            TimeEvent("$SceneUnloaded");
         }
 
         /// <summary>
@@ -550,7 +526,7 @@ namespace GravityEngine
                 { "$scene_name", scene.name },
                 { "$scene_path", scene.path }
             };
-            TrackForAll("$SceneUnloaded", properties, DateTime.Now, null);
+            Track("$SceneUnloaded", properties, DateTime.Now, null);
         }
 
         /// <summary>
@@ -675,28 +651,7 @@ namespace GravityEngine
                 });
             }
         }
-
-        /// <summary>
-        /// 记录事件时长. 调用 TimeEvent 为某事件开始计时，当 track 传该事件时，SDK 会在在事件属性中加入 #duration 这一属性来表示事件时长，单位为秒.
-        /// </summary>
-        /// <param name="eventName">事件名称</param>
-        private static void TimeEventForAll(string eventName)
-        {
-            if (tracking_enabled)
-            {
-                GravityEngineWrapper.TimeEventForAll(eventName);
-            }
-            else
-            {
-                System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { eventName };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
-                });
-            }
-        }
-
+        
         /// <summary>
         /// 设置用户属性. 该接口上传的属性将会覆盖原有的属性值.
         /// </summary>

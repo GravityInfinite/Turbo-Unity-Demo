@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using GravityEngine;
+using GravityEngine.Utils;
 using GravitySDK.PC.TaskManager;
+using GravitySDK.PC.Utils;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -42,7 +45,7 @@ namespace GravitySDK.PC.GravityTurbo
         }
 
         public static void Register(string name, int version, string wxOpenId, string wxUnionId,
-            Dictionary<string, string> wxLaunchQuery, Action<UnityWebRequest> actionResult,
+            Dictionary<string, string> wxLaunchQuery, IRegisterCallback registerCallback,
             UnityWebRequestMgr.Callback callback)
         {
             // check params
@@ -81,7 +84,36 @@ namespace GravitySDK.PC.GravityTurbo
 
             UnityWebRequestMgr.Instance.Post(
                 TurboHost + "/event_center/api/v1/user/register/?access_token=" + _accessToken,
-                registerRequestDir, actionResult, callback);
+                registerRequestDir, (request =>
+                {
+                    string responseText = request.downloadHandler.text;
+                    Dictionary<string, object> res = GE_MiniJson.Deserialize(responseText);
+                    Debug.Log("response is " + responseText + " " + res);
+                    if (res!=null)
+                    {
+                        if (res.TryGetValue("code", out var re))
+                        {
+                            var code = (int) re;
+                            if (code == 0)
+                            {
+                                registerCallback?.onSuccess();
+                                return;
+                            }
+                        }
+                    }
+                    registerCallback?.onFailed("code is not 0, failed with msg " + res?["msg"]);
+                }), callback);
+        }
+
+        public static void GetBytedanceEcpmRecords(string wxOpenId, string mpId, string dateHourStr)
+        {
+            UnityWebRequestMgr.Instance.Get(TurboHost + "/event_center/api/v1/event/dy/get_ecpm/?access_token=" +
+                                            _accessToken + "&open_id=" + wxOpenId + "&mp_id=" + mpId + "&date_hour=" +
+                                            dateHourStr, request =>
+            {
+                Debug.Log("get ecpm done " + request.downloadHandler.text);
+            });
+
         }
 
         public static String GetAccessToken()

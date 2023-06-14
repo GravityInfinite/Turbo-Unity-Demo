@@ -792,6 +792,7 @@ namespace GravitySDK.PC.Main
             UserDelete();
             OptTracking(false);
         }
+        // 这个不支持校准时间
         public string TimeString(DateTime dateTime)
         {
             return GravitySDKUtil.FormatDateTime(dateTime, mConfig.TimeZone());

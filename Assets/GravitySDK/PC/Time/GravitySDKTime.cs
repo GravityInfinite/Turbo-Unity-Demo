@@ -28,6 +28,18 @@ namespace GravitySDK.PC.Time
             }
         }
         
+        public string GetTimeWithFormat(TimeZoneInfo timeZone, string format)
+        {
+            if (timeZone == null)
+            {
+                return GravitySDKUtil.FormatDateTimeWithFormat(mDate, mTimeZone, format);
+            }
+            else
+            {
+                return GravitySDKUtil.FormatDateTimeWithFormat(mDate, timeZone, format);
+            }
+        }
+        
         public long GetDateTimeUtcTimestamp()
         {
             return GravitySDKUtil.FormatDateTimeToUtcTimestamp(mDate);

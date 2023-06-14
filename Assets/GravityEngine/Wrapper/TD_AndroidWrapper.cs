@@ -1,5 +1,5 @@
-﻿// #if (UNITY_ANDROID && !(UNITY_EDITOR))
-#if true
+﻿#if (UNITY_ANDROID && !(UNITY_EDITOR))
+// #if true
 using System;
 using System.Collections.Generic;
 using GravityEngine.Utils;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GravityEngine;
 using GravityEngine.Wrapper;
 using GravitySDK.PC.Config;
 using GravitySDK.PC.Constant;
@@ -26,79 +27,21 @@ namespace GravitySDK.PC.Main
         {
 
         }
-        private static readonly Dictionary<string, GravitySDKInstance> Instances = new Dictionary<string, GravitySDKInstance>();
-        private static readonly Dictionary<string, GravitySDKInstance> LightInstances = new Dictionary<string, GravitySDKInstance>();
-        private static string CurrentAppid;
+        private static GravitySDKInstance currentInstance;
 
         private static GravitySDKInstance GetInstance(string appId)
         {
-            GravitySDKInstance instance = null;
-            if (!string.IsNullOrEmpty(appId))
-            {
-                appId = appId.Replace(" ", "");
-                if (LightInstances.ContainsKey(appId))
-                {
-                    instance = LightInstances[appId];
-                }
-                else if (Instances.ContainsKey(appId))
-                {
-                    instance = Instances[appId];
-                }
-            }
-            if (instance == null)
-            {
-                instance = Instances[CurrentAppid];
-            }
-            return instance;
+            return currentInstance;
         }
-
-        public static GravitySDKInstance CurrentInstance()
-        {
-            GravitySDKInstance instance = Instances[CurrentAppid];
-            return instance;
-        }
-
+        
         public static GravitySDKInstance Init(string appId, string server, string instanceName, GravitySDKConfig config = null, MonoBehaviour mono = null)
         {
-            if (GravitySDKUtil.IsEmptyString(appId))
+            if (currentInstance==null)
             {
-                GravitySDKLogger.Print("appId is empty");
-                return null;
+                currentInstance = new GravitySDKInstance(appId, server, instanceName, config, mono);
             }
-            GravitySDKInstance instance = null;
-            if (!string.IsNullOrEmpty(instanceName))
-            {
-                if (Instances.ContainsKey(instanceName))
-                {
-                    instance = Instances[instanceName];
-                }
-                else
-                {
-                    instance = new GravitySDKInstance(appId, server, instanceName, config, mono);
-                    if (string.IsNullOrEmpty(CurrentAppid))
-                    {
-                        CurrentAppid = instanceName;
-                    }
-                    Instances[instanceName] = instance;
-                }
-            }
-            else
-            {
-                if (Instances.ContainsKey(appId))
-                {
-                    instance = Instances[appId];
-                }
-                else
-                {
-                    instance = new GravitySDKInstance(appId, server, null, config, mono);
-                    if (string.IsNullOrEmpty(CurrentAppid))
-                    {
-                        CurrentAppid = appId;
-                    }
-                    Instances[appId] = instance;
-                }
-            }
-            return instance;
+
+            return currentInstance;
         }
         /// <summary>
         /// 设置访客ID
@@ -186,13 +129,6 @@ namespace GravitySDK.PC.Main
         {
             GetInstance(appId).Track(eventName, properties, date, timeZone);
         }
-        public static void TrackForAll(string eventName, Dictionary<string, object> properties, DateTime date, TimeZoneInfo timeZone)
-        {
-            foreach (string appId in Instances.Keys)
-            {
-                GetInstance(appId).Track(eventName, properties, date, timeZone);
-            }
-        }
         public static void Track(GravitySDKEventData analyticsEvent,string appId = "")
         {
             GetInstance(appId).Track(analyticsEvent);
@@ -227,13 +163,6 @@ namespace GravitySDK.PC.Main
         public static void TimeEvent(string eventName,string appId="")
         {
             GetInstance(appId).TimeEvent(eventName);
-        }
-        public static void TimeEventForAll(string eventName)
-        {
-            foreach (string appId in Instances.Keys)
-            {
-                GetInstance(appId).TimeEvent(eventName);
-            }
         }
         /// <summary>
         /// 暂停事件的计时
@@ -351,27 +280,13 @@ namespace GravitySDK.PC.Main
             GetInstance(appId).OptTrackingAndDeleteUser();
         }
         /// <summary>
-        /// 创建轻实例
-        /// </summary>
-        /// <returns></returns>
-        public static string CreateLightInstance()
-        {
-            string randomID = System.Guid.NewGuid().ToString("N");
-            GravitySDKInstance lightInstance = GravitySDKInstance.CreateLightInstance();
-            LightInstances[randomID] = lightInstance;
-            return randomID;
-        }
-        /// <summary>
         /// 通过时间戳校准时间
         /// </summary>
         /// <param name="timestamp"></param>
         public static void CalibrateTime(long timestamp)
         {
             GravitySDKTimestampCalibration timestampCalibration = new GravitySDKTimestampCalibration(timestamp);
-            foreach (KeyValuePair<string, GravitySDKInstance> kv in Instances)
-            {
-                kv.Value.SetTimeCalibratieton(timestampCalibration);
-            }
+            GetInstance("").SetTimeCalibratieton(timestampCalibration);
         }
         /// <summary>
         /// 通过NTP服务器校准时间
@@ -380,10 +295,7 @@ namespace GravitySDK.PC.Main
         public static void CalibrateTimeWithNtp(string ntpServer)
         {
             GravitySDKNTPCalibration ntpCalibration = new GravitySDKNTPCalibration(ntpServer);
-            foreach (KeyValuePair<string, GravitySDKInstance> kv in Instances)
-            {
-                kv.Value.SetTimeCalibratieton(ntpCalibration);
-            }
+            GetInstance("").SetTimeCalibratieton(ntpCalibration);
         }
 
         /// <summary>
@@ -416,7 +328,7 @@ namespace GravitySDK.PC.Main
             return GetInstance(appId).TimeString(dateTime);
         }
         
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId, Action<UnityWebRequest> actionResult)
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
@@ -425,7 +337,7 @@ namespace GravitySDK.PC.Main
 #else
             Dictionary<string, string> wxLaunchQuery = new Dictionary<string, string>();
 #endif
-            Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, actionResult, () =>
+            Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, registerCallback, () =>
             {
                 // 自动采集注册事件
                 Track("$MPRegister");
@@ -439,6 +351,12 @@ namespace GravitySDK.PC.Main
                 });
                 Flush();
             });
+        }
+
+        public static void GetBytedanceEcpmRecords(string wxOpenId, string mpId)
+        {
+            string dateHourStr = GetTime(DateTime.MinValue).GetTimeWithFormat(null, "yyyy-MM-dd HH");
+            Turbo.GetBytedanceEcpmRecords(wxOpenId, mpId, dateHourStr);
         }
     }
 }
