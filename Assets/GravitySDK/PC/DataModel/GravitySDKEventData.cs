@@ -7,20 +7,25 @@ using UnityEngine;
 
 namespace GravitySDK.PC.DataModel
 {
-    public class GravitySDKEventData:GravitySDKBaseData
+    public class GravitySDKEventData : GravitySDKBaseData
     {
         private DateTime mEventTime;
+
         private TimeZoneInfo mTimeZone;
+
         //事件持续时长
         private float mDuration;
+
         public void SetEventTime(DateTime dateTime)
         {
             this.mEventTime = dateTime;
         }
+
         public void SetTimeZone(TimeZoneInfo timeZone)
         {
             this.mTimeZone = timeZone;
         }
+
         //public DateTime EventTime()
         //{
         //    return this.mEventTime;
@@ -29,16 +34,20 @@ namespace GravitySDK.PC.DataModel
         {
             return mEventTime;
         }
+
         public GravitySDKEventData(string eventName) : base(eventName)
         {
         }
 
-        public GravitySDKEventData(GravitySDKTimeInter time, string eventName):base(time,eventName)
+        public GravitySDKEventData(GravitySDKTimeInter time, string eventName) : base(time, eventName)
         {
         }
-        public GravitySDKEventData(GravitySDKTimeInter time, string eventName, Dictionary<string, object> properties):base(time,eventName,properties)
-        {            
+
+        public GravitySDKEventData(GravitySDKTimeInter time, string eventName, Dictionary<string, object> properties) :
+            base(time, eventName, properties)
+        {
         }
+
         public void SetDuration(float duration)
         {
             this.mDuration = duration;
@@ -57,10 +66,12 @@ namespace GravitySDK.PC.DataModel
             {
                 data[GravitySDKConstant.EVENT_NAME] = this.EventName();
             }
+
             if (!string.IsNullOrEmpty(this.AccountID()))
             {
                 data[GravitySDKConstant.ACCOUNT_ID] = this.AccountID();
             }
+
             data[GravitySDKConstant.UUID] = this.UUID();
             Dictionary<string, object> properties = this.Properties();
             properties[GravitySDKConstant.ZONE_OFFSET] = this.EventTime().GetZoneOffset(this.mTimeZone);
@@ -68,8 +79,9 @@ namespace GravitySDK.PC.DataModel
             {
                 properties[GravitySDKConstant.DURATION] = mDuration;
             }
+
             data[GravitySDKConstant.PROPERTIES] = properties;
-            
+
             return data;
         }
     }

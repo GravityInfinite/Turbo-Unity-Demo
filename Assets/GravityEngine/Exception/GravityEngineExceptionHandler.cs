@@ -7,7 +7,6 @@ namespace GravityEngine
 {
     public class GravityEngineExceptionHandler
     {
-
         //是否退出程序当异常发生时
         public static bool IsQuitWhenException = false;
 
@@ -48,7 +47,7 @@ namespace GravityEngine
             }
             catch
             {
-            }            
+            }
         }
 
         public static void RegisterGEExceptionHandler(Dictionary<string, object> properties)
@@ -69,7 +68,7 @@ namespace GravityEngine
             }
         }
 
-        public static void UnRegisterGEExceptionHandler ()
+        public static void UnRegisterGEExceptionHandler()
         {
             //清除异常处理委托
             try
@@ -81,38 +80,40 @@ namespace GravityEngine
             {
             }
         }
-    
-    
-        private static void _LogHandler( string logString, string stackTrace, LogType type )
+
+
+        private static void _LogHandler(string logString, string stackTrace, LogType type)
         {
-            if( type == LogType.Error || type == LogType.Exception || type == LogType.Assert )
+            if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
             {
                 //发送异常日志
-                string reasonStr = "exception_type: " + type.ToString() + " <br> " + "exception_message: " + logString + " <br> " + "stack_trace: " + stackTrace + " <br> " ; 
-                Dictionary<string, object> properties = new Dictionary<string, object>(){
+                string reasonStr = "exception_type: " + type.ToString() + " <br> " + "exception_message: " + logString +
+                                   " <br> " + "stack_trace: " + stackTrace + " <br> ";
+                Dictionary<string, object> properties = new Dictionary<string, object>()
+                {
                     {GravitySDKConstant.CRASH_REASON, reasonStr}
                 };
                 properties = MergeProperties(properties);
                 GravityEngineAPI.Track(GravitySDKConstant.CRASH_EVENT, properties);
 
                 //退出程序，bug反馈程序重启主程序
-                if ( IsQuitWhenException )
+                if (IsQuitWhenException)
                 {
                     Application.Quit();
                 }
             }
         }
 
-        private static void _UncaughtExceptionHandler (object sender, System.UnhandledExceptionEventArgs args)
+        private static void _UncaughtExceptionHandler(object sender, System.UnhandledExceptionEventArgs args)
         {
             if (args == null || args.ExceptionObject == null)
             {
                 return;
             }
-            
+
             try
             {
-                if (args.ExceptionObject.GetType () != typeof(System.Exception))
+                if (args.ExceptionObject.GetType() != typeof(System.Exception))
                 {
                     return;
                 }
@@ -122,19 +123,21 @@ namespace GravityEngine
                 return;
             }
 
-            System.Exception e = (System.Exception)args.ExceptionObject;
+            System.Exception e = (System.Exception) args.ExceptionObject;
 
             //发送异常日志
-            string reasonStr = "exception_type: " + e.GetType().Name + " <br> " + "exception_message: " + e.Message + " <br> " + "stack_trace: " + e.StackTrace + " <br> " ; 
-            
-            Dictionary<string, object> properties = new Dictionary<string, object>(){
+            string reasonStr = "exception_type: " + e.GetType().Name + " <br> " + "exception_message: " + e.Message +
+                               " <br> " + "stack_trace: " + e.StackTrace + " <br> ";
+
+            Dictionary<string, object> properties = new Dictionary<string, object>()
+            {
                 {GravitySDKConstant.CRASH_REASON, reasonStr}
             };
             properties = MergeProperties(properties);
             GravityEngineAPI.Track(GravitySDKConstant.CRASH_EVENT, properties);
 
             //退出程序，bug反馈程序重启主程序
-            if ( IsQuitWhenException )
+            if (IsQuitWhenException)
             {
                 Application.Quit();
             }
@@ -142,10 +145,10 @@ namespace GravityEngine
 
         private static Dictionary<string, object> MergeProperties(Dictionary<string, object> properties)
         {
-
             if (mEventCallback is IAutoTrackEventCallback)
             {
-                Dictionary<string, object> callbackProperties = mEventCallback.AutoTrackEventCallback((int)AUTO_TRACK_EVENTS.APP_CRASH, properties);
+                Dictionary<string, object> callbackProperties =
+                    mEventCallback.AutoTrackEventCallback((int) AUTO_TRACK_EVENTS.APP_CRASH, properties);
                 foreach (var item in callbackProperties)
                 {
                     if (!properties.ContainsKey(item.Key))

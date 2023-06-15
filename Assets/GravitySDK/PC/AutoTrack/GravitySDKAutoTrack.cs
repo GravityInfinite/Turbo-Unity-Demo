@@ -84,7 +84,7 @@ namespace GravitySDK.PC.AutoTrack
 
             GravityPCSDK.FlushImmediately();
         }
-        
+
         public void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties, string appId)
         {
             SetAutoTrackProperties(events, properties);

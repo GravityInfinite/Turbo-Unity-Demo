@@ -29,14 +29,17 @@ namespace GravitySDK.PC.TaskManager
             return mSingleTask;
         }
 
-        private void Awake() {
+        private void Awake()
+        {
             mSingleTask = this;
         }
 
-        private void Start() {
+        private void Start()
+        {
         }
 
-        private void Update() {
+        private void Update()
+        {
             if (requestList.Count > 0 && !isWaiting)
             {
                 WaitOne();
@@ -51,6 +54,7 @@ namespace GravitySDK.PC.TaskManager
         {
             isWaiting = true;
         }
+
         /// <summary>
         /// 释放信号
         /// </summary>
@@ -58,14 +62,15 @@ namespace GravitySDK.PC.TaskManager
         {
             isWaiting = false;
         }
+
         public void SyncInvokeAllTask()
         {
-
         }
 
-        public void StartRequest(GravitySDKBaseRequest mRequest, ResponseHandle responseHandle, int batchSize, string appId)
+        public void StartRequest(GravitySDKBaseRequest mRequest, ResponseHandle responseHandle, int batchSize,
+            string appId)
         {
-            lock(_locker)
+            lock (_locker)
             {
                 requestList.Add(mRequest);
                 responseHandleList.Add(responseHandle);
@@ -74,33 +79,35 @@ namespace GravitySDK.PC.TaskManager
             }
         }
 
-        private void StartRequestSendData() 
+        private void StartRequestSendData()
         {
             if (requestList.Count > 0)
             {
                 GravitySDKBaseRequest mRequest;
                 ResponseHandle responseHandle;
                 IList<Dictionary<string, object>> list;
-                lock(_locker)
+                lock (_locker)
                 {
                     mRequest = requestList[0];
                     responseHandle = responseHandleList[0];
                     list = GravitySDKFileJson.DequeueBatchTrackingData(batchSizeList[0], appIdList[0]);
                 }
-                if (mRequest != null) 
+
+                if (mRequest != null)
                 {
-                    if (list.Count>0)
+                    if (list.Count > 0)
                     {
-                        this.StartCoroutine(this.SendData(mRequest, responseHandle, list));                        
+                        this.StartCoroutine(this.SendData(mRequest, responseHandle, list));
                     }
                     else
                     {
-                        if (responseHandle != null) 
+                        if (responseHandle != null)
                         {
                             responseHandle(null);
                         }
                     }
-                    lock(_locker)
+
+                    lock (_locker)
                     {
                         requestList.RemoveAt(0);
                         responseHandleList.RemoveAt(0);
@@ -108,12 +115,13 @@ namespace GravitySDK.PC.TaskManager
                         appIdList.RemoveAt(0);
                     }
                 }
-
             }
         }
-        private IEnumerator SendData(GravitySDKBaseRequest mRequest, ResponseHandle responseHandle, IList<Dictionary<string, object>> list) {
+
+        private IEnumerator SendData(GravitySDKBaseRequest mRequest, ResponseHandle responseHandle,
+            IList<Dictionary<string, object>> list)
+        {
             yield return mRequest.SendData_2(responseHandle, list);
         }
     }
 }
-

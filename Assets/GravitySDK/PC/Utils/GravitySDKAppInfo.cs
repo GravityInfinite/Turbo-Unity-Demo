@@ -14,8 +14,10 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-            return GravitySDKPublicConfig.Version() ;
+
+            return GravitySDKPublicConfig.Version();
         }
+
         //SDK名称
         public static string LibName()
         {
@@ -23,8 +25,10 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
+
             return GravitySDKPublicConfig.Name();
         }
+
         //app版本号
         public static string AppVersion()
         {
@@ -32,8 +36,10 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
+
             return Application.version;
         }
+
         //app唯一标识 包名
         public static string AppIdentifier()
         {
@@ -41,8 +47,8 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
+
             return Application.identifier;
         }
-     
     }
 }

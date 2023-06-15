@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace GravitySDK.PC.Time
 {
     public interface GravitySDKTimeInter

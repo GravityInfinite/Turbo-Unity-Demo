@@ -25,8 +25,8 @@ namespace GravitySDK.PC.Main
     {
         private GravityPCSDK()
         {
-
         }
+
         private static GravitySDKInstance _instance;
         private static readonly object Locker = new object();
 
@@ -34,19 +34,22 @@ namespace GravitySDK.PC.Main
         {
             return _instance;
         }
-        
+
         // 要早于GetInstance调用
-        public static GravitySDKInstance Init(string appId, string server, string instanceName, GravitySDKConfig config = null, MonoBehaviour mono = null)
+        public static GravitySDKInstance Init(string appId, string server, string instanceName,
+            GravitySDKConfig config = null, MonoBehaviour mono = null)
         {
             lock (Locker)
             {
-                if (_instance==null)
+                if (_instance == null)
                 {
                     _instance = new GravitySDKInstance(appId, server, instanceName, config, mono);
-                }    
+                }
             }
+
             return _instance;
         }
+
         /// <summary>
         /// 设置访客ID
         /// </summary>
@@ -69,6 +72,7 @@ namespace GravitySDK.PC.Main
         {
             return GetInstance().DistinctId();
         }
+
         /// <summary>
         /// 设置账号ID
         /// </summary>
@@ -77,6 +81,7 @@ namespace GravitySDK.PC.Main
         {
             GetInstance().Login(accountID);
         }
+
         /// <summary>
         /// 获取账号ID
         /// </summary>
@@ -85,6 +90,7 @@ namespace GravitySDK.PC.Main
         {
             return GetInstance().AccountID();
         }
+
         /// <summary>
         ///清空账号ID
         /// </summary>
@@ -116,42 +122,51 @@ namespace GravitySDK.PC.Main
         {
             GetInstance().Track(eventName);
         }
+
         public static void Track(string eventName, Dictionary<string, object> properties)
         {
-            GetInstance().Track(eventName,properties);
+            GetInstance().Track(eventName, properties);
         }
+
         public static void Track(string eventName, Dictionary<string, object> properties, DateTime date)
         {
             GetInstance().Track(eventName, properties, date);
         }
-        public static void Track(string eventName, Dictionary<string, object> properties, DateTime date, TimeZoneInfo timeZone)
+
+        public static void Track(string eventName, Dictionary<string, object> properties, DateTime date,
+            TimeZoneInfo timeZone)
         {
             GetInstance().Track(eventName, properties, date, timeZone);
         }
+
         public static void Track(GravitySDKEventData analyticsEvent)
         {
             GetInstance().Track(analyticsEvent);
         }
 
-        public static void Flush ()
+        public static void Flush()
         {
             GetInstance().Flush();
         }
-        public static void FlushImmediately ()
+
+        public static void FlushImmediately()
         {
             GetInstance().FlushImmediately();
         }
+
         public static void SetSuperProperties(Dictionary<string, object> superProperties)
         {
             GetInstance().SetSuperProperties(superProperties);
         }
+
         public static void UnsetSuperProperty(string propertyKey)
         {
             GetInstance().UnsetSuperProperty(propertyKey);
         }
+
         public static Dictionary<string, object> SuperProperties()
         {
-           return GetInstance().SuperProperties();
+            return GetInstance().SuperProperties();
         }
 
         public static void ClearSuperProperties()
@@ -163,6 +178,7 @@ namespace GravitySDK.PC.Main
         {
             GetInstance().TimeEvent(eventName);
         }
+
         /// <summary>
         /// 暂停事件的计时
         /// </summary>
@@ -172,94 +188,117 @@ namespace GravitySDK.PC.Main
         {
             GetInstance().PauseTimeEvent(status, eventName);
         }
+
         public static void UserSet(Dictionary<string, object> properties)
         {
             GetInstance().UserSet(properties);
         }
+
         public static void UserSet(Dictionary<string, object> properties, DateTime dateTime)
         {
             GetInstance().UserSet(properties, dateTime);
         }
+
         public static void UserUnset(string propertyKey)
         {
             GetInstance().UserUnset(propertyKey);
         }
+
         public static void UserUnset(string propertyKey, DateTime dateTime)
         {
-            GetInstance().UserUnset(propertyKey,dateTime);
+            GetInstance().UserUnset(propertyKey, dateTime);
         }
+
         public static void UserUnset(List<string> propertyKeys)
         {
             GetInstance().UserUnset(propertyKeys);
         }
+
         public static void UserUnset(List<string> propertyKeys, DateTime dateTime)
         {
-            GetInstance().UserUnset(propertyKeys,dateTime);
+            GetInstance().UserUnset(propertyKeys, dateTime);
         }
+
         public static void UserSetOnce(Dictionary<string, object> properties)
         {
             GetInstance().UserSetOnce(properties);
         }
+
         public static void UserSetOnce(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance().UserSetOnce(properties,dateTime);
+            GetInstance().UserSetOnce(properties, dateTime);
         }
+
         public static void UserAdd(Dictionary<string, object> properties)
         {
             GetInstance().UserAdd(properties);
         }
+
         public static void UserAdd(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance().UserAdd(properties,dateTime);
+            GetInstance().UserAdd(properties, dateTime);
         }
+
         public static void UserNumberMin(Dictionary<string, object> properties)
         {
             GetInstance().UserNumberMin(properties);
         }
+
         public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance().UserNumberMin(properties,dateTime);
+            GetInstance().UserNumberMin(properties, dateTime);
         }
+
         public static void UserNumberMax(Dictionary<string, object> properties)
         {
             GetInstance().UserNumberMax(properties);
         }
+
         public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance().UserNumberMax(properties,dateTime);
+            GetInstance().UserNumberMax(properties, dateTime);
         }
+
         public static void UserAppend(Dictionary<string, object> properties)
         {
             GetInstance().UserAppend(properties);
         }
+
         public static void UserAppend(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance().UserAppend(properties,dateTime);
+            GetInstance().UserAppend(properties, dateTime);
         }
+
         public static void UserUniqAppend(Dictionary<string, object> properties)
         {
             GetInstance().UserUniqAppend(properties);
         }
+
         public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance().UserUniqAppend(properties,dateTime);
+            GetInstance().UserUniqAppend(properties, dateTime);
         }
+
         public static void UserDelete()
         {
             GetInstance().UserDelete();
         }
+
         public static void UserDelete(DateTime dateTime)
         {
             GetInstance().UserDelete(dateTime);
         }
+
         public static void SetDynamicSuperProperties(IDynamicSuperProperties_PC dynamicSuperProperties)
         {
             GetInstance().SetDynamicSuperProperties(dynamicSuperProperties);
         }
+
         public static void SetTrackStatus(GE_TRACK_STATUS status)
         {
             GetInstance().SetTrackStatus(status);
         }
+
         /*
         停止或开启数据上报,默认是开启状态,设置为停止时还会清空本地的访客ID,账号ID,静态公共属性
         其中true表示可以上报数据,false表示停止数据上报
@@ -268,16 +307,19 @@ namespace GravitySDK.PC.Main
         {
             GetInstance().OptTracking(optTracking);
         }
+
         //是否暂停数据上报,默认是正常上报状态,其中true表示可以上报数据,false表示暂停数据上报
         public static void EnableTracking(bool isEnable)
         {
             GetInstance().EnableTracking(isEnable);
         }
+
         //停止数据上报
         public static void OptTrackingAndDeleteUser()
         {
             GetInstance().OptTrackingAndDeleteUser();
         }
+
         /// <summary>
         /// 通过时间戳校准时间
         /// </summary>
@@ -287,6 +329,7 @@ namespace GravitySDK.PC.Main
             GravitySDKTimestampCalibration timestampCalibration = new GravitySDKTimestampCalibration(timestamp);
             GetInstance().SetTimeCalibratieton(timestampCalibration);
         }
+
         /// <summary>
         /// 通过NTP服务器校准时间
         /// </summary>
@@ -305,6 +348,7 @@ namespace GravitySDK.PC.Main
         {
             return GravitySDKDeviceInfo.DeviceID();
         }
+
         /// <summary>
         ///
         /// 是否打开客户端日志
@@ -314,20 +358,24 @@ namespace GravitySDK.PC.Main
         {
             GravitySDKPublicConfig.SetIsPrintLog(isEnable);
         }
+
         public static void SetLibName(string name)
         {
             GravitySDKPublicConfig.SetName(name);
         }
+
         public static void SetLibVersion(string versionCode)
         {
             GravitySDKPublicConfig.SetVersion(versionCode);
         }
+
         public static string TimeString(DateTime dateTime)
         {
             return GetInstance().TimeString(dateTime);
         }
-        
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
+
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId,
+            IRegisterCallback registerCallback)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             var wxLaunchQuery = WX.GetLaunchOptionsSync().query;

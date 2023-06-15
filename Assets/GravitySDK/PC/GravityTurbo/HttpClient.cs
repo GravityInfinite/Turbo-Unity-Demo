@@ -90,7 +90,8 @@ namespace GravitySDK.PC.GravityTurbo
         /// <param name="actionResult">处理返回结果的委托,处理请求对象</param>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public void Post(string serverURL, Dictionary<string, object> requestBody, Action<UnityWebRequest> actionResult, Callback callback=null)
+        public void Post(string serverURL, Dictionary<string, object> requestBody, Action<UnityWebRequest> actionResult,
+            Callback callback = null)
         {
             StartCoroutine(_Post(serverURL, requestBody, actionResult, callback));
         }
@@ -117,7 +118,8 @@ namespace GravitySDK.PC.GravityTurbo
         /// <param name="requestBody">发送的结构体</param>
         /// <param name="actionResult">处理返回结果的委托</param>
         /// <returns></returns>
-        IEnumerator _Post(string serverURL, Dictionary<string, object> requestBody, Action<UnityWebRequest> actionResult, Callback callback)
+        IEnumerator _Post(string serverURL, Dictionary<string, object> requestBody,
+            Action<UnityWebRequest> actionResult, Callback callback)
         {
             var uwr = new UnityWebRequest(serverURL, "POST");
 

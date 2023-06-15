@@ -27,7 +27,7 @@ namespace GravitySDK.PC.Time
                 return GravitySDKUtil.FormatDateTime(mDate, timeZone);
             }
         }
-        
+
         public string GetTimeWithFormat(TimeZoneInfo timeZone, string format)
         {
             if (timeZone == null)
@@ -39,7 +39,7 @@ namespace GravitySDK.PC.Time
                 return GravitySDKUtil.FormatDateTimeWithFormat(mDate, timeZone, format);
             }
         }
-        
+
         public long GetDateTimeUtcTimestamp()
         {
             return GravitySDKUtil.FormatDateTimeToUtcTimestamp(mDate);
@@ -57,5 +57,4 @@ namespace GravitySDK.PC.Time
             }
         }
     }
-
 }

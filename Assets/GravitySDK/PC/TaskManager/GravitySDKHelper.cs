@@ -18,17 +18,20 @@ namespace GravitySDK.PC.TaskManager
             return mSingleTask;
         }
 
-        private void Awake() {
+        private void Awake()
+        {
             mSingleTask = this;
         }
 
-        private void Start() {
+        private void Start()
+        {
         }
 
-        private void Update() {
+        private void Update()
+        {
         }
-        
-        
+
+
         public delegate void Callback(int a);
 
         public void t()
@@ -43,9 +46,7 @@ namespace GravitySDK.PC.TaskManager
                 GravitySDKLogger.Print("wait and run for " + waitMills);
                 yield return new WaitForSeconds(waitMills);
                 GravitySDKLogger.Print("wait and run");
-                
             }
         }
     }
 }
-

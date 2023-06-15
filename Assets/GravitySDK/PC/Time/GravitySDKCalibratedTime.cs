@@ -10,14 +10,15 @@ namespace GravitySDK.PC.Time
         private long mSystemElapsedRealtime;
         private TimeZoneInfo mTimeZone;
         private DateTime mDate;
-        public GravitySDKCalibratedTime(GravitySDKTimeCalibration calibrateTimeInter,TimeZoneInfo timeZoneInfo)
+
+        public GravitySDKCalibratedTime(GravitySDKTimeCalibration calibrateTimeInter, TimeZoneInfo timeZoneInfo)
         {
             this.mCalibratedTime = calibrateTimeInter;
             this.mTimeZone = timeZoneInfo;
             this.mDate = mCalibratedTime.NowDate(); // 这个时间，是已经校准过的时间，事件发生的时间
             GravitySDKLogger.Print("CurrentDate = " + this.mDate.ToString("UTC yyyy-MM-dd HH:mm:ss.fff"));
         }
-        
+
         public string GetTime(TimeZoneInfo timeZone)
         {
             if (timeZone == null)
@@ -29,7 +30,7 @@ namespace GravitySDK.PC.Time
                 return GravitySDKUtil.FormatDateTime(mDate, timeZone);
             }
         }
-        
+
         public string GetTimeWithFormat(TimeZoneInfo timeZone, string format)
         {
             if (timeZone == null)
@@ -41,7 +42,7 @@ namespace GravitySDK.PC.Time
                 return GravitySDKUtil.FormatDateTimeWithFormat(mDate, timeZone, format);
             }
         }
-        
+
         public long GetDateTimeUtcTimestamp()
         {
             return GravitySDKUtil.FormatDateTimeToUtcTimestamp(mDate);
@@ -59,5 +60,4 @@ namespace GravitySDK.PC.Time
             }
         }
     }
-
 }

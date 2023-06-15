@@ -13,9 +13,10 @@ namespace GravitySDK.PC.Utils
     {
         public GravitySDKUtil()
         {
-
         }
+
         public static List<string> DisPresetProperties = GravitySDKUtil.GetDisPresetProperties();
+
         /*
          *判断是否为有效URL
          */
@@ -23,6 +24,7 @@ namespace GravitySDK.PC.Utils
         {
             return !(url == null || url.Length == 0 || !url.Contains("http") || !url.Contains("https"));
         }
+
         /*
          * 判断字符串是否为空
          */
@@ -30,6 +32,7 @@ namespace GravitySDK.PC.Utils
         {
             return (str == null || str.Length == 0);
         }
+
         public static Dictionary<string, object> DeviceInfo()
         {
             Dictionary<string, object> deviceInfo = new Dictionary<string, object>();
@@ -49,12 +52,13 @@ namespace GravitySDK.PC.Utils
             deviceInfo[GravitySDKConstant.APP_BUNDLEID] = GravitySDKAppInfo.AppIdentifier();
             return deviceInfo;
         }
+
         // 禁用的预置属性
         private static List<string> GetDisPresetProperties()
         {
             List<string> properties = new List<string>();
-            
-            TextAsset textAsset = Resources.Load<TextAsset>("ge_public_config"); 
+
+            TextAsset textAsset = Resources.Load<TextAsset>("ge_public_config");
             if (textAsset != null && textAsset.text != null)
             {
                 XmlDocument xmlDoc = new XmlDocument();
@@ -62,18 +66,18 @@ namespace GravitySDK.PC.Utils
                 xmlDoc.LoadXml(textAsset.text);
                 XmlNode root = xmlDoc.SelectSingleNode("resources");
                 //遍历节点
-                for (int i=0; i<root.ChildNodes.Count; i++)
+                for (int i = 0; i < root.ChildNodes.Count; i++)
                 {
                     XmlNode x1 = root.ChildNodes[i];
                     if (x1.NodeType == XmlNodeType.Element)
                     {
                         XmlElement e1 = x1 as XmlElement;
-                        if (e1.HasAttributes) 
+                        if (e1.HasAttributes)
                         {
                             string name = e1.GetAttribute("name");
                             if (name == "GEDisPresetProperties" && e1.HasChildNodes)
                             {
-                                for (int j=0; j<e1.ChildNodes.Count; j++)
+                                for (int j = 0; j < e1.ChildNodes.Count; j++)
                                 {
                                     XmlNode x2 = e1.ChildNodes[j];
                                     if (x2.NodeType == XmlNodeType.Element)
@@ -86,16 +90,19 @@ namespace GravitySDK.PC.Utils
                     }
                 }
             }
+
             return properties;
         }
+
         //随机数持久化,作为访客ID的备选
         public static string RandomID(bool persistent = true)
         {
             string randomID = null;
             if (persistent)
             {
-                randomID = (string)GravitySDKFile.GetData(GravitySDKConstant.RANDOM_ID, typeof(string));
+                randomID = (string) GravitySDKFile.GetData(GravitySDKConstant.RANDOM_ID, typeof(string));
             }
+
             if (string.IsNullOrEmpty(randomID))
             {
                 randomID = System.Guid.NewGuid().ToString("N");
@@ -104,8 +111,10 @@ namespace GravitySDK.PC.Utils
                     GravitySDKFile.SaveData(GravitySDKConstant.RANDOM_ID, randomID);
                 }
             }
+
             return randomID;
         }
+
         //获取时区偏移
         public static double ZoneOffset(DateTime dateTime, TimeZoneInfo timeZone)
         {
@@ -120,6 +129,7 @@ namespace GravitySDK.PC.Utils
                 success = false;
                 //GravitySDKLogger.Print("ZoneOffset: TimeSpan get failed : " + e.Message);
             }
+
             try
             {
                 if (timeZone.IsDaylightSavingTime(dateTime))
@@ -133,23 +143,26 @@ namespace GravitySDK.PC.Utils
                 success = false;
                 //GravitySDKLogger.Print("ZoneOffset: IsDaylightSavingTime get failed : " + e.Message);
             }
+
             if (success == false)
             {
                 timeSpan = TimeZone.CurrentTimeZone.GetUtcOffset(dateTime);
             }
+
             return timeSpan.TotalHours;
         }
+
         //时间格式化，转换成字符串的时候会考虑时区
         public static string FormatDateTime(DateTime dateTime, TimeZoneInfo timeZone)
         {
             return GetDateTime(dateTime, timeZone).ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
-        
+
         public static string FormatDateTimeWithFormat(DateTime dateTime, TimeZoneInfo timeZone, string format)
         {
             return GetDateTime(dateTime, timeZone).ToString(format, CultureInfo.InvariantCulture);
         }
-        
+
         // 不考虑时区，只获取utc时间戳
         public static long FormatDateTimeToUtcTimestamp(DateTime dateTime)
         {
@@ -173,7 +186,8 @@ namespace GravitySDK.PC.Utils
             // Debug.Log("lpf_test2 " + " error " + ((DateTimeOffset) currentDateTime).ToUnixTimeMilliseconds() +
             //           " error2 " + ((DateTimeOffset) d1).ToUnixTimeMilliseconds() + // right
             //           " right " + milliseconds + " m1 " + m1 + " m2 " + m2 + " m3 " + m3);
-            return new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();;
+            return new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+            ;
         }
 
         private static DateTime GetDateTime(DateTime dateTime, TimeZoneInfo timeZone)
@@ -190,6 +204,7 @@ namespace GravitySDK.PC.Utils
                 success = false;
                 //GravitySDKLogger.Print("FormatDate - TimeSpan get failed : " + e.Message);
             }
+
             try
             {
                 if (timeZone.IsDaylightSavingTime(dateTime))
@@ -203,13 +218,16 @@ namespace GravitySDK.PC.Utils
                 success = false;
                 //GravitySDKLogger.Print("FormatDate: IsDaylightSavingTime get failed : " + e.Message);
             }
+
             if (success == false)
             {
                 timeSpan = TimeZone.CurrentTimeZone.GetUtcOffset(dateTime);
             }
+
             DateTime dateNew = univDateTime + timeSpan;
             return dateNew;
         }
+
         //向Dictionary添加Dictionary
         public static void AddDictionary(Dictionary<string, object> originalDic, Dictionary<string, object> subDic)
         {
@@ -218,11 +236,12 @@ namespace GravitySDK.PC.Utils
                 originalDic[kv.Key] = kv.Value;
             }
         }
+
         //获取时间戳
         public static long GetTimeStamp()
         {
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return Convert.ToInt64(ts.TotalMilliseconds);
-        }     
+        }
     }
 }

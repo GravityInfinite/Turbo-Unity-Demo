@@ -41,7 +41,7 @@ namespace GravitySDK.PC.Storage
             string mEventIndexID = prefix + "EventIndexID";
             return PlayerPrefs.HasKey(mEventIndexID) ? PlayerPrefs.GetInt(mEventIndexID) : 0;
         }
-        
+
         // 保存时间起始ID
         private static void SaveEventIndexID(int indexID, string prefix)
         {
@@ -55,22 +55,29 @@ namespace GravitySDK.PC.Storage
             List<Dictionary<string, object>> batch = new List<Dictionary<string, object>>();
             int dataIndex = EventIndexID(prefix);
             int maxIndex = EventAutoIncrementingID(prefix) - 1;
-            while (batch.Count < batchSize && dataIndex <= maxIndex) {
+            while (batch.Count < batchSize && dataIndex <= maxIndex)
+            {
                 String trackingKey = prefix + "Event" + dataIndex.ToString();
-                if (PlayerPrefs.HasKey(trackingKey)) {
-                    try {
-                        Dictionary<string, object> data = GravitySDKJSON.Deserialize(PlayerPrefs.GetString(trackingKey));
+                if (PlayerPrefs.HasKey(trackingKey))
+                {
+                    try
+                    {
+                        Dictionary<string, object>
+                            data = GravitySDKJSON.Deserialize(PlayerPrefs.GetString(trackingKey));
                         data.Remove("id");
                         batch.Add(data);
                     }
-                    catch (Exception e) {
-                        GravitySDKLogger.Print("There was an error processing " + trackingKey + " from the internal object pool: " + e);
+                    catch (Exception e)
+                    {
+                        GravitySDKLogger.Print("There was an error processing " + trackingKey +
+                                               " from the internal object pool: " + e);
                         PlayerPrefs.DeleteKey(trackingKey);
                     }
                 }
+
                 dataIndex++;
             }
-            
+
             return batch;
         }
 
@@ -80,14 +87,18 @@ namespace GravitySDK.PC.Storage
             int deletedCount = 0;
             int dataIndex = EventIndexID(prefix);
             int maxIndex = EventAutoIncrementingID(prefix) - 1;
-            while (deletedCount < batchSize && dataIndex <= maxIndex) {
-                String trackingKey = prefix + "Event" + dataIndex.ToString();    
-                if (PlayerPrefs.HasKey(trackingKey)) {
+            while (deletedCount < batchSize && dataIndex <= maxIndex)
+            {
+                String trackingKey = prefix + "Event" + dataIndex.ToString();
+                if (PlayerPrefs.HasKey(trackingKey))
+                {
                     PlayerPrefs.DeleteKey(trackingKey);
                     deletedCount++;
                 }
+
                 dataIndex++;
             }
+
             SaveEventIndexID(dataIndex, prefix);
 
             int eventCount = EventAutoIncrementingID(prefix) - EventIndexID(prefix);

@@ -179,23 +179,24 @@ namespace GravitySDK.PC.Utils
         /// - 'light': 浅色主题;
         /// </summary>
         public string theme;
-        
+
         public string networkType;
     }
 
     public class GravitySDKDeviceInfo
     {
         private static WechatGameDeviceInfo _wechatGameDeviceInfo;
-        
+
         public static void SetWechatGameDeviceInfo(WechatGameDeviceInfo wechatGameDeviceInfo)
         {
             _wechatGameDeviceInfo = wechatGameDeviceInfo;
         }
-        
+
         public static void SetNetworkType(string networkType)
         {
             _wechatGameDeviceInfo.networkType = networkType;
         }
+
         //设备ID
         public static string DeviceID()
         {
@@ -203,23 +204,26 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-            #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
-                return RandomDeviceID();
-            #else
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
+            return RandomDeviceID();
+#else
                 return SystemInfo.deviceUniqueIdentifier;
-            #endif
+#endif
         }
+
         //随机数持久化,作为设备ID的备选(WebGL获取不到设备ID)
         private static string RandomDeviceID()
         {
-            string randomID = (string)GravitySDKFile.GetData(GravitySDKConstant.RANDOM_DEVICE_ID, typeof(string));
+            string randomID = (string) GravitySDKFile.GetData(GravitySDKConstant.RANDOM_DEVICE_ID, typeof(string));
             if (string.IsNullOrEmpty(randomID))
             {
                 randomID = System.Guid.NewGuid().ToString("N");
                 GravitySDKFile.SaveData(GravitySDKConstant.RANDOM_DEVICE_ID, randomID);
             }
+
             return randomID;
         }
+
         //网络类型
         public static string NetworkType()
         {
@@ -230,18 +234,20 @@ namespace GravitySDK.PC.Utils
 #if GRAVITY_WECHAT_GAME_MODE
             return  _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.networkType : "";
 #else
-                string networkType = "NULL";
-                if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork)
-                {
-                    networkType = "Mobile";
-                }
-                else if (Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
-                {
-                    networkType = "WIFI";
-                }
-                return networkType;
+            string networkType = "NULL";
+            if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork)
+            {
+                networkType = "Mobile";
+            }
+            else if (Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
+            {
+                networkType = "WIFI";
+            }
+
+            return networkType;
 #endif
         }
+
         //os类型
         public static string OS()
         {
@@ -250,7 +256,7 @@ namespace GravitySDK.PC.Utils
                 return "";
             }
 #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
-            return  _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.platform : "";
+            return _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.platform : "";
 #else
                 string os = "other";
                 if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.Linux)
@@ -268,6 +274,7 @@ namespace GravitySDK.PC.Utils
                 return os;
 #endif
         }
+
         //OS版本信息
         public static string OSVersion()
         {
@@ -276,11 +283,12 @@ namespace GravitySDK.PC.Utils
                 return "";
             }
 #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
-            return  _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.system : "";
+            return _wechatGameDeviceInfo != null ? _wechatGameDeviceInfo.system : "";
 #else
             return SystemInfo.operatingSystem;
 #endif
         }
+
         //屏幕宽度
         public static int ScreenWidth()
         {
@@ -294,6 +302,7 @@ namespace GravitySDK.PC.Utils
             return (int)(UnityEngine.Screen.currentResolution.width);
 #endif
         }
+
         //屏幕高度
         public static int ScreenHeight()
         {
@@ -307,6 +316,7 @@ namespace GravitySDK.PC.Utils
             return (int)(UnityEngine.Screen.currentResolution.height);
 #endif
         }
+
         //显卡厂商名称
         public static string Manufacture()
         {
@@ -320,6 +330,7 @@ namespace GravitySDK.PC.Utils
             return SystemInfo.graphicsDeviceVendor;
 #endif
         }
+
         //设备型号
         public static string DeviceModel()
         {
@@ -333,6 +344,7 @@ namespace GravitySDK.PC.Utils
             return SystemInfo.deviceModel;
 #endif
         }
+
         //本机语言
         public static string MachineLanguage()
         {
@@ -435,8 +447,6 @@ switch (Application.systemLanguage)
             };
             return "";
 #endif
-            
         }
     }
 }
-

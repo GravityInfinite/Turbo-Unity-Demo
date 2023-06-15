@@ -48,7 +48,8 @@ public class WeChatGameAutoTrack : MonoBehaviour
             StarkSDK.API.GetStarkAppLifeCycle().OnShow += (scene, query, refererInfo) =>
             {
                 GravitySDKLogger.Print("bytedance game on show");
-                GravityEngineAPI.TrackMPShow(query, "" + scene, GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_SHOW.ToString()));
+                GravityEngineAPI.TrackMPShow(query, "" + scene,
+                    GetAutoTrackProperties(AUTO_TRACK_EVENTS.MP_SHOW.ToString()));
             };
 #endif
         }
@@ -118,7 +119,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
 
             _mAutoTrackProperties[AUTO_TRACK_EVENTS.MP_HIDE.ToString()] = properties;
         }
-        
+
         if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHARE))
         {
             if (_mAutoTrackProperties.ContainsKey(AUTO_TRACK_EVENTS.MP_SHARE.ToString()))
@@ -129,7 +130,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
 
             _mAutoTrackProperties[AUTO_TRACK_EVENTS.MP_SHARE.ToString()] = properties;
         }
-        
+
         if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES))
         {
             if (_mAutoTrackProperties.ContainsKey(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES.ToString()))

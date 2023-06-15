@@ -65,7 +65,7 @@ namespace GravitySDK.PC.GravityTurbo
                 {"wx_unionid", wxUnionId},
                 {"ad_data", wxLaunchQuery},
             };
-            
+
             if (wxLaunchQuery.ContainsKey("turbo_promoted_object_id"))
             {
                 string value;
@@ -77,9 +77,10 @@ namespace GravitySDK.PC.GravityTurbo
                 {
                     Debug.Log("no promoted object id");
                 }
+
                 registerRequestDir["promoted_object_id"] = value ?? "";
             }
-            
+
             Debug.Log(registerRequestDir.ToString());
 
             UnityWebRequestMgr.Instance.Post(
@@ -89,7 +90,7 @@ namespace GravitySDK.PC.GravityTurbo
                     string responseText = request.downloadHandler.text;
                     Dictionary<string, object> res = GE_MiniJson.Deserialize(responseText);
                     Debug.Log("response is " + responseText + " " + res);
-                    if (res!=null)
+                    if (res != null)
                     {
                         if (res.TryGetValue("code", out var re))
                         {
@@ -101,6 +102,7 @@ namespace GravitySDK.PC.GravityTurbo
                             }
                         }
                     }
+
                     registerCallback?.onFailed("code is not 0, failed with msg " + res?["msg"]);
                 }), callback);
         }
@@ -109,23 +111,20 @@ namespace GravitySDK.PC.GravityTurbo
         {
             UnityWebRequestMgr.Instance.Get(TurboHost + "/event_center/api/v1/event/dy/get_ecpm/?access_token=" +
                                             _accessToken + "&open_id=" + wxOpenId + "&mp_id=" + mpId + "&date_hour=" +
-                                            dateHourStr, request =>
-            {
-                Debug.Log("get ecpm done " + request.downloadHandler.text);
-            });
-
+                                            dateHourStr,
+                request => { Debug.Log("get ecpm done " + request.downloadHandler.text); });
         }
 
         public static String GetAccessToken()
         {
             return _accessToken;
         }
-        
+
         public static String GetClientId()
         {
             return _clientID;
         }
-        
+
         public static String GetChannel()
         {
             return _channel;

@@ -12,11 +12,13 @@ using GravitySDK.PC.GravityTurbo;
 
 namespace GravitySDK.PC.Request
 {
-    public class GravitySDKNormalRequest:GravitySDKBaseRequest
+    public class GravitySDKNormalRequest : GravitySDKBaseRequest
     {
-        public GravitySDKNormalRequest(string appId, string url, IList<Dictionary<string, object>> data) :base(appId, url,data)
+        public GravitySDKNormalRequest(string appId, string url, IList<Dictionary<string, object>> data) : base(appId,
+            url, data)
         {
         }
+
         public GravitySDKNormalRequest(string appId, string url) : base(appId, url)
         {
         }
@@ -25,7 +27,7 @@ namespace GravitySDK.PC.Request
         {
             this.SetData(data);
             string uri = this.URL();
-            
+
             Dictionary<string, object> param = new Dictionary<string, object>();
             param[GravitySDKConstant.APPID] = this.APPID();
             param["event_list"] = this.Data();
@@ -46,8 +48,8 @@ namespace GravitySDK.PC.Request
                 // Request and wait for the desired page.
                 yield return webRequest.SendWebRequest();
 
-                Dictionary<string,object> resultDict = null;
-                #if UNITY_2020_1_OR_NEWER
+                Dictionary<string, object> resultDict = null;
+#if UNITY_2020_1_OR_NEWER
                 switch (webRequest.result)
                 {
                     case UnityWebRequest.Result.ConnectionError:
@@ -57,13 +59,14 @@ namespace GravitySDK.PC.Request
                         break;
                     case UnityWebRequest.Result.Success:
                         GravitySDKLogger.Print("Response : " + webRequest.downloadHandler.text);
-                        if (!string.IsNullOrEmpty(webRequest.downloadHandler.text)) 
+                        if (!string.IsNullOrEmpty(webRequest.downloadHandler.text))
                         {
                             resultDict = GravitySDKJSON.Deserialize(webRequest.downloadHandler.text);
-                        } 
+                        }
+
                         break;
                 }
-                #else
+#else
                 if (webRequest.isHttpError || webRequest.isNetworkError)
                 {
                     GravitySDKLogger.Print("Error response : " + webRequest.error);
@@ -76,22 +79,23 @@ namespace GravitySDK.PC.Request
                         resultDict = GravitySDKJSON.Deserialize(webRequest.downloadHandler.text);
                     }
                 }
-                #endif
-                if (responseHandle != null) 
+#endif
+                if (responseHandle != null)
                 {
                     // 用户还没注册成功时，返回2000，此时不能删除本地事件
-                    if (resultDict != null) 
+                    if (resultDict != null)
                     {
                         resultDict.Add("flush_count", data.Count);
                         int code = Convert.ToInt32(resultDict["code"]);
                         resultDict.Add("is_response_error",
                             resultDict.ContainsKey("code") && (code == 2000 || code != 0));
-                        
                     }
+
                     responseHandle(resultDict);
                 }
             }
         }
+
         private static string Encode(string inputStr)
         {
             byte[] inputBytes = Encoding.UTF8.GetBytes(inputStr);
@@ -103,6 +107,5 @@ namespace GravitySDK.PC.Request
                 return Convert.ToBase64String(output);
             }
         }
-
     }
 }

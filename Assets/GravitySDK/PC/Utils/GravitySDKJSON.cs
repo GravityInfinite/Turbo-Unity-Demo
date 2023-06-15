@@ -3,6 +3,7 @@
  * I modified it so that it could be used for TD limitations.
  */
 // using UnityEngine;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,21 +13,21 @@ using System.Globalization;
 
 namespace GravitySDK.PC.Utils
 {
-	/* Based on the JSON parser from 
-	 * http://techblog.procurios.nl/k/618/news/view/14605/14863/How-do-I-write-my-own-parser-for-JSON.html
-	 * 
-	 * I simplified it so that it doesn't throw exceptions
-	 * and can be used in Unity iPhone with maximum code stripping.
-	 */
-	/// <summary>
-	/// This class encodes and decodes JSON strings.
-	/// Spec. details, see http://www.json.org/
-	/// 
-	/// JSON uses Arrays and Objects. These correspond here to the datatypes ArrayList and Hashtable.
-	/// All numbers are parsed to floats.
-	/// </summary>
-	public class GravitySDKJSON
-	{
+    /* Based on the JSON parser from 
+     * http://techblog.procurios.nl/k/618/news/view/14605/14863/How-do-I-write-my-own-parser-for-JSON.html
+     * 
+     * I simplified it so that it doesn't throw exceptions
+     * and can be used in Unity iPhone with maximum code stripping.
+     */
+    /// <summary>
+    /// This class encodes and decodes JSON strings.
+    /// Spec. details, see http://www.json.org/
+    /// 
+    /// JSON uses Arrays and Objects. These correspond here to the datatypes ArrayList and Hashtable.
+    /// All numbers are parsed to floats.
+    /// </summary>
+    public class GravitySDKJSON
+    {
         /// <summary>
         /// Parses the string json into a value
         /// </summary>
@@ -120,6 +121,7 @@ namespace GravitySDK.PC.Utils
                             {
                                 return null;
                             }
+
                             // ditch the colon
                             json.Read();
 
@@ -176,10 +178,12 @@ namespace GravitySDK.PC.Utils
                     case TOKEN.STRING:
                         string str = ParseString();
                         DateTime dateTime;
-                        if (DateTime.TryParseExact(str, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+                        if (DateTime.TryParseExact(str, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture,
+                                DateTimeStyles.None, out dateTime))
                         {
                             return dateTime;
                         }
+
                         return str;
                     case TOKEN.NUMBER:
                         return ParseNumber();
@@ -209,7 +213,6 @@ namespace GravitySDK.PC.Utils
                 bool parsing = true;
                 while (parsing)
                 {
-
                     if (json.Peek() == -1)
                     {
                         parsing = false;
@@ -260,9 +263,10 @@ namespace GravitySDK.PC.Utils
                                         hex[i] = NextChar;
                                     }
 
-                                    s.Append((char)Convert.ToInt32(new string(hex), 16));
+                                    s.Append((char) Convert.ToInt32(new string(hex), 16));
                                     break;
                             }
+
                             break;
                         default:
                             s.Append(c);
@@ -304,18 +308,12 @@ namespace GravitySDK.PC.Utils
 
             char PeekChar
             {
-                get
-                {
-                    return Convert.ToChar(json.Peek());
-                }
+                get { return Convert.ToChar(json.Peek()); }
             }
 
             char NextChar
             {
-                get
-                {
-                    return Convert.ToChar(json.Read());
-                }
+                get { return Convert.ToChar(json.Read()); }
             }
 
             string NextWord
@@ -443,7 +441,7 @@ namespace GravitySDK.PC.Utils
                 }
                 else if (value is bool)
                 {
-                    builder.Append((bool)value ? "true" : "false");
+                    builder.Append((bool) value ? "true" : "false");
                 }
                 else if ((asList = value as IList) != null)
                 {
@@ -455,7 +453,7 @@ namespace GravitySDK.PC.Utils
                 }
                 else if (value is char)
                 {
-                    SerializeString(new string((char)value, 1));
+                    SerializeString(new string((char) value, 1));
                 }
                 else
                 {
@@ -549,6 +547,7 @@ namespace GravitySDK.PC.Utils
                                 builder.Append("\\u");
                                 builder.Append(codepoint.ToString("x4"));
                             }
+
                             break;
                     }
                 }
@@ -563,23 +562,24 @@ namespace GravitySDK.PC.Utils
                 // Previously floats and doubles lost precision too.
                 if (value is float)
                 {
-                    builder.Append(((float)value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+                    builder.Append(((float) value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
                 }
                 else if (value is int
-                  || value is uint
-                  || value is long
-                  || value is sbyte
-                  || value is byte
-                  || value is short
-                  || value is ushort
-                  || value is ulong)
+                         || value is uint
+                         || value is long
+                         || value is sbyte
+                         || value is byte
+                         || value is short
+                         || value is ushort
+                         || value is ulong)
                 {
                     builder.Append(value);
                 }
                 else if (value is double
-                  || value is decimal)
+                         || value is decimal)
                 {
-                    builder.Append(Convert.ToDouble(value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+                    builder.Append(Convert.ToDouble(value)
+                        .ToString("R", System.Globalization.CultureInfo.InvariantCulture));
                 }
                 else if (value is DateTime)
                 {
@@ -594,6 +594,7 @@ namespace GravitySDK.PC.Utils
                         // builder.Append(dateTime.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.CultureInfo.InvariantCulture));
                         builder.Append(((DateTimeOffset) dateTime).ToUnixTimeMilliseconds());
                     }
+
                     builder.Append('\"');
                 }
                 else

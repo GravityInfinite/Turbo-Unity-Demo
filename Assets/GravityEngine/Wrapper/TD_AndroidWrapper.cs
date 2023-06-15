@@ -1,4 +1,5 @@
 ﻿// #if (UNITY_ANDROID && !(UNITY_EDITOR))
+
 #if true
 using System;
 using System.Collections.Generic;
@@ -38,10 +39,12 @@ namespace GravityEngine.Wrapper
             {
                 GE_Log.w("GravityEngine: unexpected exception: " + e);
             }
+
             return null;
         }
 
-        private static string getTimeString(DateTime dateTime) {
+        private static string getTimeString(DateTime dateTime)
+        {
             long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
 
             DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -51,8 +54,11 @@ namespace GravityEngine.Wrapper
             return getInstance().Call<string>("getTimeString", date);
         }
 
-        private static AndroidJavaObject getInstance() {
-            AndroidJavaObject context = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
+        private static AndroidJavaObject getInstance()
+        {
+            AndroidJavaObject context =
+                new AndroidJavaClass("com.unity3d.player.UnityPlayer")
+                    .GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
             AndroidJavaObject currentInstance;
 
             currentInstance = sdkClass.CallStatic<AndroidJavaObject>("sharedInstance", context, mToken.accessToken);
@@ -60,10 +66,13 @@ namespace GravityEngine.Wrapper
         }
 
 
-        private static void enableLog(bool enable) {
+        private static void enableLog(bool enable)
+        {
             sdkClass.CallStatic("enableTrackLog", enable);
         }
-        private static void setVersionInfo(string libName, string version) {
+
+        private static void setVersionInfo(string libName, string version)
+        {
             sdkClass.CallStatic("setCustomerLibInfo", libName, version);
         }
 
@@ -73,11 +82,14 @@ namespace GravityEngine.Wrapper
 
             mToken = token;
             GE_Log.d("LPF_TEST init 2");
-            AndroidJavaObject context = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
+            AndroidJavaObject context =
+                new AndroidJavaClass("com.unity3d.player.UnityPlayer")
+                    .GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
             AndroidJavaObject config = null;
             if (!string.IsNullOrEmpty(token.GetInstanceName()))
             {
-                config = configClass.CallStatic<AndroidJavaObject>("getInstance", context, token.accessToken, token.GetInstanceName());
+                config = configClass.CallStatic<AndroidJavaObject>("getInstance", context, token.accessToken,
+                    token.GetInstanceName());
                 GE_Log.d("LPF_TEST init 3");
             }
             else
@@ -85,6 +97,7 @@ namespace GravityEngine.Wrapper
                 config = configClass.CallStatic<AndroidJavaObject>("getInstance", context, token.accessToken);
                 GE_Log.d("LPF_TEST init 4");
             }
+
             GE_Log.d("LPF_TEST init 5 " + token + " : " + token.aesKey);
             config.Call("setMode", (int) token.mode);
             GE_Log.d("current aes key is " + token.aesKey);
@@ -93,7 +106,8 @@ namespace GravityEngine.Wrapper
             string timeZoneId = token.getTimeZoneId();
             if (null != timeZoneId && timeZoneId.Length > 0)
             {
-                AndroidJavaObject timeZone = new AndroidJavaClass("java.util.TimeZone").CallStatic<AndroidJavaObject>("getTimeZone", timeZoneId);
+                AndroidJavaObject timeZone =
+                    new AndroidJavaClass("java.util.TimeZone").CallStatic<AndroidJavaObject>("getTimeZone", timeZoneId);
                 if (null != timeZone)
                 {
                     config.Call("setDefaultTimeZone", timeZone);
@@ -103,7 +117,8 @@ namespace GravityEngine.Wrapper
             if (token.enableEncrypt)
             {
                 config.Call("enableEncrypt", true);
-                AndroidJavaObject secreteKey = new AndroidJavaObject("cn.gravity.android.encrypt.TDSecreteKey", token.encryptPublicKey, token.encryptVersion, "AES", "RSA");
+                AndroidJavaObject secreteKey = new AndroidJavaObject("cn.gravity.android.encrypt.TDSecreteKey",
+                    token.encryptPublicKey, token.encryptVersion, "AES", "RSA");
                 config.Call("setSecretKey", secreteKey);
             }
 
@@ -137,11 +152,13 @@ namespace GravityEngine.Wrapper
             AndroidJavaObject tz = null;
             if (null != timeZone && null != timeZone.Id && timeZone.Id.Length > 0)
             {
-                tz = new AndroidJavaClass("java.util.TimeZone").CallStatic<AndroidJavaObject>("getTimeZone", timeZone.Id);
+                tz = new AndroidJavaClass("java.util.TimeZone").CallStatic<AndroidJavaObject>("getTimeZone",
+                    timeZone.Id);
             }
+
             getInstance().Call("track", eventName, getJSONObject(properties), date, tz);
         }
-        
+
         private static void track(string eventName, string properties)
         {
             getInstance().Call("track", eventName, getJSONObject(properties));
@@ -171,14 +188,15 @@ namespace GravityEngine.Wrapper
                 string superPropertiesString = superPropertyObject.Call<string>("toString");
                 result = GE_MiniJson.Deserialize(superPropertiesString);
             }
+
             return result;
         }
-        
+
         private static void timeEvent(string eventName)
         {
             getInstance().Call("timeEvent", eventName);
         }
-        
+
         private static void identify(string uniqueId)
         {
             getInstance().Call("identify", uniqueId);
@@ -222,7 +240,7 @@ namespace GravityEngine.Wrapper
         private static void userUnset(List<string> properties, DateTime dateTime)
         {
             Dictionary<string, object> finalProperties = new Dictionary<string, object>();
-            foreach(string s in properties)
+            foreach (string s in properties)
             {
                 finalProperties.Add(s, 0);
             }
@@ -239,7 +257,7 @@ namespace GravityEngine.Wrapper
         {
             getInstance().Call("user_increment", getJSONObject(properties), getDate(dateTime));
         }
-        
+
         private static void userNumberMax(string properties)
         {
             getInstance().Call("user_max", getJSONObject(properties));
@@ -249,7 +267,7 @@ namespace GravityEngine.Wrapper
         {
             getInstance().Call("user_max", getJSONObject(properties), getDate(dateTime));
         }
-        
+
         private static void userNumberMin(string properties)
         {
             getInstance().Call("user_min", getJSONObject(properties));
@@ -306,7 +324,8 @@ namespace GravityEngine.Wrapper
             getInstance().Call("setDynamicSuperPropertiesTracker", listenerAdapter);
         }
 
-        private static void setNetworkType(GravityEngineAPI.NetworkType networkType) {
+        private static void setNetworkType(GravityEngineAPI.NetworkType networkType)
+        {
             switch (networkType)
             {
                 case GravityEngineAPI.NetworkType.DEFAULT:
@@ -323,8 +342,9 @@ namespace GravityEngine.Wrapper
 
         private static void enableAutoTrack(AUTO_TRACK_EVENTS events, string properties)
         {
-            Dictionary<string, object> propertiesNew = new Dictionary<string, object>() {
-                { "autoTrackType", (int)events}
+            Dictionary<string, object> propertiesNew = new Dictionary<string, object>()
+            {
+                {"autoTrackType", (int) events}
             };
             getInstance().Call("enableAutoTrackForUnity", GE_MiniJson.Serialize(propertiesNew));
             propertiesNew["properties"] = GE_MiniJson.Deserialize(properties);
@@ -334,16 +354,18 @@ namespace GravityEngine.Wrapper
         private static void enableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback eventCallback)
         {
             AutoTrackListenerAdapter listenerAdapter = new AutoTrackListenerAdapter();
-            Dictionary<string, object> properties = new Dictionary<string, object>() {
-                { "autoTrackType", (int)events}
+            Dictionary<string, object> properties = new Dictionary<string, object>()
+            {
+                {"autoTrackType", (int) events}
             };
             getInstance().Call("enableAutoTrackForUnity", GE_MiniJson.Serialize(properties), listenerAdapter);
         }
 
         private static void setAutoTrackProperties(AUTO_TRACK_EVENTS events, string properties)
         {
-            Dictionary<string, object> propertiesNew = new Dictionary<string, object>() {
-                { "autoTrackType", (int)events}
+            Dictionary<string, object> propertiesNew = new Dictionary<string, object>()
+            {
+                {"autoTrackType", (int) events}
             };
             propertiesNew["properties"] = GE_MiniJson.Deserialize(properties);
 
@@ -370,6 +392,7 @@ namespace GravityEngine.Wrapper
                     trackStatus = javaClass.GetStatic<AndroidJavaObject>("NORMAL");
                     break;
             }
+
             getInstance().Call("setTrackStatus", trackStatus);
         }
 
@@ -414,17 +437,24 @@ namespace GravityEngine.Wrapper
             string getDynamicSuperPropertiesString();
         }
 
-        private class DynamicListenerAdapter : AndroidJavaProxy {
-            public DynamicListenerAdapter() : base("cn.gravity.android.GravityEngineSDK$DynamicSuperPropertiesTracker") {}
+        private class DynamicListenerAdapter : AndroidJavaProxy
+        {
+            public DynamicListenerAdapter() : base("cn.gravity.android.GravityEngineSDK$DynamicSuperPropertiesTracker")
+            {
+            }
+
             public string getDynamicSuperPropertiesString()
             {
                 Dictionary<string, object> ret;
-                if (GravityEngineWrapper.mDynamicSuperProperties != null) {
+                if (GravityEngineWrapper.mDynamicSuperProperties != null)
+                {
                     ret = GravityEngineWrapper.mDynamicSuperProperties.GetDynamicSuperProperties();
-                } 
-                else {
+                }
+                else
+                {
                     ret = new Dictionary<string, object>();
                 }
+
                 return GE_MiniJson.Serialize(ret);
             }
         }
@@ -435,24 +465,35 @@ namespace GravityEngine.Wrapper
             string eventCallback(int type, string properties);
         }
 
-        private class AutoTrackListenerAdapter : AndroidJavaProxy {
-            public AutoTrackListenerAdapter() : base("cn.gravity.android.GravityEngineSDK$AutoTrackEventListenerForUnity") {}
+        private class AutoTrackListenerAdapter : AndroidJavaProxy
+        {
+            public AutoTrackListenerAdapter() : base(
+                "cn.gravity.android.GravityEngineSDK$AutoTrackEventListenerForUnity")
+            {
+            }
+
             string eventCallback(int type, string properties)
             {
                 Dictionary<string, object> ret;
-                if (GravityEngineWrapper.mAutoTrackEventCallback != null) {
+                if (GravityEngineWrapper.mAutoTrackEventCallback != null)
+                {
                     Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
                     ret = GravityEngineWrapper.mAutoTrackEventCallback.AutoTrackEventCallback(type, propertiesDic);
-                } 
-                else {
+                }
+                else
+                {
                     ret = new Dictionary<string, object>();
                 }
+
                 return GE_MiniJson.Serialize(ret);
             }
         }
-        
-        private class RegisterListenerAdapter : AndroidJavaProxy {
-            public RegisterListenerAdapter() : base("cn.gravity.android.RegisterCallback") {}
+
+        private class RegisterListenerAdapter : AndroidJavaProxy
+        {
+            public RegisterListenerAdapter() : base("cn.gravity.android.RegisterCallback")
+            {
+            }
 
             void onFailed(string errorMsg)
             {
@@ -470,16 +511,17 @@ namespace GravityEngine.Wrapper
                 }
             }
         }
-        
-        private static void register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
+
+        private static void register(string name, int version, string wxOpenId, string wxUnionId,
+            IRegisterCallback registerCallback)
         {
             RegisterListenerAdapter listenerAdapter = new RegisterListenerAdapter();
-            getInstance().Call("register", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(), listenerAdapter);
+            getInstance().Call("register", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(),
+                listenerAdapter);
         }
-        
+
         private static void getBytedanceEcpmRecords(string wxOpenId, string mpId)
         {
-            
         }
     }
 }

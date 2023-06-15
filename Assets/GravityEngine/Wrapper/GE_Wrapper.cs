@@ -16,7 +16,8 @@ namespace GravityEngine.Wrapper
 
         private static System.Random rnd = new System.Random();
 
-        private static string serilize<T>(Dictionary<string, T> data) {
+        private static string serilize<T>(Dictionary<string, T> data)
+        {
             return GE_MiniJson.Serialize(data, getTimeString);
         }
 
@@ -85,7 +86,8 @@ namespace GravityEngine.Wrapper
             if (null != mDynamicSuperProperties)
             {
                 Dictionary<string, object> finalProperties = new Dictionary<string, object>();
-                GE_PropertiesChecker.MergeProperties(mDynamicSuperProperties.GetDynamicSuperProperties(), finalProperties);
+                GE_PropertiesChecker.MergeProperties(mDynamicSuperProperties.GetDynamicSuperProperties(),
+                    finalProperties);
                 GE_PropertiesChecker.MergeProperties(properties, finalProperties);
                 return serilize(finalProperties);
             }
@@ -93,8 +95,8 @@ namespace GravityEngine.Wrapper
             {
                 return serilize(properties);
             }
-
         }
+
         public static void Track(string eventName, Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckString(eventName);
@@ -107,7 +109,8 @@ namespace GravityEngine.Wrapper
             track(eventName, getFinalEventProperties(properties), datetime);
         }
 
-        public static void Track(string eventName, Dictionary<string, object> properties, DateTime datetime, TimeZoneInfo timeZone)
+        public static void Track(string eventName, Dictionary<string, object> properties, DateTime datetime,
+            TimeZoneInfo timeZone)
         {
             GE_PropertiesChecker.CheckString(eventName);
             track(eventName, getFinalEventProperties(properties), datetime, timeZone);
@@ -189,7 +192,7 @@ namespace GravityEngine.Wrapper
             GE_PropertiesChecker.CheckProperties(properties);
             userAdd(serilize(properties), dateTime);
         }
-        
+
         public static void UserNumberMin(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
@@ -201,7 +204,7 @@ namespace GravityEngine.Wrapper
             GE_PropertiesChecker.CheckProperties(properties);
             userNumberMin(serilize(properties), dateTime);
         }
-        
+
         public static void UserNumberMax(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
@@ -226,13 +229,13 @@ namespace GravityEngine.Wrapper
             userAppend(serilize(properties), dateTime);
         }
 
-        public static void UserUniqAppend(Dictionary<string, object> properties) 
+        public static void UserUniqAppend(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
             userUniqAppend(serilize(properties));
         }
 
-        public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime) 
+        public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime)
         {
             GE_PropertiesChecker.CheckProperties(properties);
             userUniqAppend(serilize(properties), dateTime);
@@ -269,6 +272,7 @@ namespace GravityEngine.Wrapper
             {
                 GE_Log.d("GE.Wrapper - Cannot set dynamic super properties due to invalid properties.");
             }
+
             mDynamicSuperProperties = dynamicSuperProperties;
             setDynamicSuperProperties(dynamicSuperProperties);
         }
@@ -288,22 +292,23 @@ namespace GravityEngine.Wrapper
             calibrateTimeWithNtp(ntpServer);
         }
 
-        public static void EnableThirdPartySharing(GEThirdPartyShareType shareType, Dictionary<string, object> properties = null)
+        public static void EnableThirdPartySharing(GEThirdPartyShareType shareType,
+            Dictionary<string, object> properties = null)
         {
             if (null == properties) properties = new Dictionary<string, object>();
             enableThirdPartySharing(shareType, serilize(properties));
         }
 
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId,
+            IRegisterCallback registerCallback)
         {
             mRegisterCallback = registerCallback;
             register(name, version, wxOpenId, wxUnionId, registerCallback);
         }
-        
+
         public static void GetBytedanceEcpmRecords(string wxOpenId, string mpId)
         {
             getBytedanceEcpmRecords(wxOpenId, mpId);
         }
     }
 }
-

@@ -7,26 +7,28 @@ using UnityEngine;
 
 namespace GravitySDK.PC.DataModel
 {
-    public class GravitySDKUserData:GravitySDKBaseData
+    public class GravitySDKUserData : GravitySDKBaseData
     {
-        
         private TimeZoneInfo mTimeZone;
+
         public void SetTimeZone(TimeZoneInfo timeZone)
         {
             this.mTimeZone = timeZone;
         }
-        public GravitySDKUserData(GravitySDKTimeInter time,string eventName, Dictionary<string,object> properties)
+
+        public GravitySDKUserData(GravitySDKTimeInter time, string eventName, Dictionary<string, object> properties)
         {
             this.SetTime(time);
             this.SetBaseData(eventName);
             this.SetProperties(properties);
         }
+
         override public Dictionary<string, object> ToDictionary()
         {
             Dictionary<string, object> data = new Dictionary<string, object>();
             data[GravitySDKConstant.TYPE] = "profile";
             // data[GravitySDKConstant.TIME] = GravitySDKUtil.GetTimeStamp();
-            data[GravitySDKConstant.TIME] = this.EventTime().GetDateTimeUtcTimestamp();// 使用默认的time zone
+            data[GravitySDKConstant.TIME] = this.EventTime().GetDateTimeUtcTimestamp(); // 使用默认的time zone
             // Debug.Log("GravityTest user " + this.mTimeZone + " " + data[GravitySDKConstant.TIME] + " " + GravitySDKUtil.GetTimeStamp() + " " +
             //           (float) ((long) data[GravitySDKConstant.TIME] - GravitySDKUtil.GetTimeStamp()) / 1000 / 60);
             data[GravitySDKConstant.DISTINCT_ID] = DistinctID();
@@ -34,10 +36,12 @@ namespace GravitySDK.PC.DataModel
             {
                 data[GravitySDKConstant.EVENT_NAME] = this.EventName();
             }
+
             if (!string.IsNullOrEmpty(AccountID()))
             {
                 data[GravitySDKConstant.ACCOUNT_ID] = AccountID();
             }
+
             data[GravitySDKConstant.UUID] = UUID();
             data[GravitySDKConstant.PROPERTIES] = Properties();
             return data;

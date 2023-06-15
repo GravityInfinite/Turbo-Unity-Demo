@@ -1,4 +1,5 @@
 ﻿// #if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_IOS_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
+
 #if false
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,8 @@ namespace GravityEngine.Wrapper
 
         private static void init(GravityEngineAPI.Token token)
         {
-            GravitySDKConfig config = GravitySDKConfig.GetInstance(token.appid, GravitySDKConstant.SERVER_URL, token.GetInstanceName());
+            GravitySDKConfig config =
+ GravitySDKConfig.GetInstance(token.appid, GravitySDKConstant.SERVER_URL, token.GetInstanceName());
             if (!string.IsNullOrEmpty(token.getTimeZoneId()))
             {
                 try

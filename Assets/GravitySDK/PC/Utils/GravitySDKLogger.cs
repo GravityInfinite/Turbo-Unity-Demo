@@ -10,14 +10,14 @@ namespace GravitySDK.PC.Utils
     {
         public GravitySDKLogger()
         {
-
         }
+
         public static void Print(string str)
         {
             if (GravitySDKPublicConfig.IsPrintLog())
             {
-                Debug.Log("[Turbo Unity_PC_V"+ GravitySDKAppInfo.LibVersion() + "] " + str);
-            }   
+                Debug.Log("[Turbo Unity_PC_V" + GravitySDKAppInfo.LibVersion() + "] " + str);
+            }
         }
     }
 }

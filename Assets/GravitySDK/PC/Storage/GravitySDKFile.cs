@@ -8,14 +8,16 @@ namespace GravitySDK.PC.Storage
 {
     public class GravitySDKFile
     {
-        public static string GetKey(string prefix,string key)
+        public static string GetKey(string prefix, string key)
         {
-            return prefix +"_"+ key;
+            return prefix + "_" + key;
         }
+
         public static void SaveData(string prefix, string key, object value)
         {
             SaveData(GetKey(prefix, key), value);
         }
+
         public static void SaveData(string key, object value)
         {
             if (!string.IsNullOrEmpty(key))
@@ -33,20 +35,21 @@ namespace GravitySDK.PC.Storage
                 {
                     PlayerPrefs.SetString(key, (string)value);
                 }
-                PlayerPrefs.Save();  
+                PlayerPrefs.Save();
 #elif GRAVITY_BYTEDANCE_GAME_MODE
                 if (value.GetType() == typeof(int))
                 {
-                    StarkSDK.API.PlayerPrefs.SetInt(key, (int)value);
+                    StarkSDK.API.PlayerPrefs.SetInt(key, (int) value);
                 }
                 else if (value.GetType() == typeof(float))
                 {
-                    StarkSDK.API.PlayerPrefs.SetFloat(key, (float)value);
+                    StarkSDK.API.PlayerPrefs.SetFloat(key, (float) value);
                 }
                 else if (value.GetType() == typeof(string))
                 {
-                    StarkSDK.API.PlayerPrefs.SetString(key, (string)value);
+                    StarkSDK.API.PlayerPrefs.SetString(key, (string) value);
                 }
+
                 StarkSDK.API.PlayerPrefs.Save();
 #else
                 if (value.GetType() == typeof(int))
@@ -65,6 +68,7 @@ namespace GravitySDK.PC.Storage
 #endif
             }
         }
+
         public static object GetData(string key, Type type)
         {
 #if GRAVITY_WECHAT_GAME_MODE
@@ -99,8 +103,9 @@ namespace GravitySDK.PC.Storage
                 {
                     return StarkSDK.API.PlayerPrefs.GetString(key);
                 }
+
                 StarkSDK.API.PlayerPrefs.Save();
-            }    
+            }
 #else
             if (!string.IsNullOrEmpty(key) && UnityEngine.PlayerPrefs.HasKey(key))
             {
@@ -120,9 +125,9 @@ namespace GravitySDK.PC.Storage
             }
 #endif
             return null;
-
         }
-        public static object GetData(string prefix,string key, Type type)
+
+        public static object GetData(string prefix, string key, Type type)
         {
             key = GetKey(prefix, key);
             return GetData(key, type);
@@ -136,7 +141,7 @@ namespace GravitySDK.PC.Storage
                 if (PlayerPrefs.HasKey(key))
                 {
                     PlayerPrefs.DeleteKey(key);
-                }   
+                }
 #elif GRAVITY_BYTEDANCE_GAME_MODE
                 if (StarkSDK.API.PlayerPrefs.HasKey(key))
                 {
@@ -150,11 +155,11 @@ namespace GravitySDK.PC.Storage
 #endif
             }
         }
-        public static void DeleteData(string prefix,string key)
+
+        public static void DeleteData(string prefix, string key)
         {
             key = GetKey(prefix, key);
             DeleteData(key);
         }
     }
 }
-

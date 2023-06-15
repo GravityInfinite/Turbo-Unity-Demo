@@ -5,6 +5,7 @@ namespace GravityEngine.Utils
     public class GE_Log
     {
         private static bool enableLog;
+
         public static void EnableLog(bool enabled)
         {
             enableLog = enabled;
@@ -14,7 +15,7 @@ namespace GravityEngine.Utils
         {
             if (enableLog)
             {
-                Debug.Log("[Turbo Unity_PC_V"+ GE_PublicConfig.LIB_VERSION + "] " + message);
+                Debug.Log("[Turbo Unity_PC_V" + GE_PublicConfig.LIB_VERSION + "] " + message);
             }
         }
 
@@ -22,7 +23,7 @@ namespace GravityEngine.Utils
         {
             if (enableLog)
             {
-                Debug.LogError("[Turbo Unity_PC_V"+ GE_PublicConfig.LIB_VERSION + "] " + message);
+                Debug.LogError("[Turbo Unity_PC_V" + GE_PublicConfig.LIB_VERSION + "] " + message);
             }
         }
 
@@ -30,7 +31,7 @@ namespace GravityEngine.Utils
         {
             if (enableLog)
             {
-                Debug.LogWarning("[Turbo Unity_PC_V"+ GE_PublicConfig.LIB_VERSION + "] " + message);
+                Debug.LogWarning("[Turbo Unity_PC_V" + GE_PublicConfig.LIB_VERSION + "] " + message);
             }
         }
     }

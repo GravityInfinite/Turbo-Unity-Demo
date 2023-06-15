@@ -10,36 +10,41 @@ namespace GravityEngine.Utils
 
         public static bool IsNumeric(object obj)
         {
-            return obj is sbyte 
-                || obj is byte 
-                || obj is short 
-                || obj is ushort
-                || obj is int 
-                || obj is uint 
-                || obj is long 
-                || obj is ulong 
-                || obj is double 
-                || obj is decimal 
-                || obj is float;
+            return obj is sbyte
+                   || obj is byte
+                   || obj is short
+                   || obj is ushort
+                   || obj is int
+                   || obj is uint
+                   || obj is long
+                   || obj is ulong
+                   || obj is double
+                   || obj is decimal
+                   || obj is float;
         }
+
         public static bool IsString(object obj)
         {
             if (obj == null)
                 return false;
             return obj is string;
         }
-        public static bool IsDictionary(object obj) 
+
+        public static bool IsDictionary(object obj)
         {
             if (obj == null)
                 return false;
             return (obj.GetType().IsGenericType && obj.GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>));
         }
-        public static bool IsList(object obj) 
+
+        public static bool IsList(object obj)
         {
             if (obj == null)
                 return false;
-            return (obj.GetType().IsGenericType && obj.GetType().GetGenericTypeDefinition() == typeof(List<>)) || obj is Array;
+            return (obj.GetType().IsGenericType && obj.GetType().GetGenericTypeDefinition() == typeof(List<>)) ||
+                   obj is Array;
         }
+
         // 检测属性是否合法
         public static bool CheckProperties<V>(Dictionary<string, V> properties)
         {
@@ -47,35 +52,47 @@ namespace GravityEngine.Utils
             {
                 return true;
             }
-            foreach(KeyValuePair<string, V> kv in properties) 
+
+            foreach (KeyValuePair<string, V> kv in properties)
             {
                 if (!CheckString(kv.Key))
                 {
                     return false;
                 }
-                if (!(kv.Value is string || kv.Value is DateTime || kv.Value is bool || IsNumeric(kv.Value) || IsList(kv.Value) || IsDictionary(kv.Value)))
+
+                if (!(kv.Value is string || kv.Value is DateTime || kv.Value is bool || IsNumeric(kv.Value) ||
+                      IsList(kv.Value) || IsDictionary(kv.Value)))
                 {
-                    GE_Log.w("GE.PropertiesChecker - property values must be one of: string, numberic, Boolean, DateTime, Array, Row");
+                    GE_Log.w(
+                        "GE.PropertiesChecker - property values must be one of: string, numberic, Boolean, DateTime, Array, Row");
                     return false;
                 }
-                if (IsString(kv.Value)) 
+
+                if (IsString(kv.Value))
                 {
                     return CheckProperties(kv.Value as string);
                 }
-                if (IsNumeric(kv.Value)) {
+
+                if (IsNumeric(kv.Value))
+                {
                     double number = Convert.ToDouble(kv.Value);
                     return CheckProperties(number);
                 }
-                if (IsList(kv.Value)) {
+
+                if (IsList(kv.Value))
+                {
                     return CheckProperties(kv.Value as List<object>);
                 }
-                if (IsDictionary(kv.Value)) 
+
+                if (IsDictionary(kv.Value))
                 {
                     return CheckProperties(kv.Value as Dictionary<string, object>);
                 }
             }
+
             return true;
         }
+
         // 检测属性是否合法 - Array(Row)
         public static bool CheckProperties(List<object> properties)
         {
@@ -83,28 +100,36 @@ namespace GravityEngine.Utils
             {
                 return true;
             }
-            foreach(object value in properties)
+
+            foreach (object value in properties)
             {
                 if (!(value is string || value is DateTime || value is bool || IsNumeric(value) || IsDictionary(value)))
                 {
-                    GE_Log.w("GE.PropertiesChecker - property values in list must be one of: string, numberic, Boolean, DateTime, Row");
+                    GE_Log.w(
+                        "GE.PropertiesChecker - property values in list must be one of: string, numberic, Boolean, DateTime, Row");
                     return false;
                 }
-                if (IsString(value)) 
+
+                if (IsString(value))
                 {
                     return CheckProperties(value as string);
                 }
-                if (IsNumeric(value)) {
+
+                if (IsNumeric(value))
+                {
                     double number = Convert.ToDouble(value);
                     return CheckProperties(number);
                 }
-                if (IsDictionary(value)) 
+
+                if (IsDictionary(value))
                 {
                     return CheckProperties(value as Dictionary<string, object>);
                 }
             }
+
             return true;
         }
+
         // 检测属性是否合法 - Array
         public static bool CheckProperties(List<string> properties)
         {
@@ -113,34 +138,42 @@ namespace GravityEngine.Utils
                 return true;
             }
 
-            foreach(string value in properties)
+            foreach (string value in properties)
             {
                 if (!CheckString(value))
                 {
                     return false;
                 }
             }
+
             return true;
         }
+
         // 检测属性是否合法 - String
-        public static bool CheckProperties(string properties) 
+        public static bool CheckProperties(string properties)
         {
-            if (properties is string && System.Text.Encoding.UTF8.GetBytes(Convert.ToString(properties)).Length > 2048) {
-                GE_Log.w("GE.PropertiesChecker - the string is too long: " + (string)(object)properties);
+            if (properties is string && System.Text.Encoding.UTF8.GetBytes(Convert.ToString(properties)).Length > 2048)
+            {
+                GE_Log.w("GE.PropertiesChecker - the string is too long: " + (string) (object) properties);
                 return false;
             }
+
             return true;
         }
+
         // 检测属性是否合法 - Number
-        public static bool CheckProperties(double properties) 
+        public static bool CheckProperties(double properties)
         {
             if (properties > 9999999999999.999 || properties < -9999999999999.999)
             {
-                GE_Log.w("GE.PropertiesChecker - number value is invalid: " + properties + ", 数据范围是-9E15至9E15，小数点最多保留3位");
+                GE_Log.w(
+                    "GE.PropertiesChecker - number value is invalid: " + properties + ", 数据范围是-9E15至9E15，小数点最多保留3位");
                 return false;
             }
+
             return true;
         }
+
         public static bool CheckString(string eventName)
         {
             if (string.IsNullOrEmpty(eventName))
@@ -148,16 +181,19 @@ namespace GravityEngine.Utils
                 GE_Log.w("GE.PropertiesChecker - the string is null");
                 return false;
             }
+
             if (keyPattern.IsMatch(eventName))
             {
                 return true;
-            } 
+            }
             else
             {
-                GE_Log.w("GE.PropertiesChecker - the string is invalid for GE: " + eventName + ", " + "事件名和属性名规则: 必须以字母开头，只能包含：数字，字母（忽略大小写）和下划线“_”，长度最大为50个字符。请注意配置时不要带有空格。");
+                GE_Log.w("GE.PropertiesChecker - the string is invalid for GE: " + eventName + ", " +
+                         "事件名和属性名规则: 必须以字母开头，只能包含：数字，字母（忽略大小写）和下划线“_”，长度最大为50个字符。请注意配置时不要带有空格。");
                 return false;
             }
         }
+
         public static void MergeProperties(Dictionary<string, object> source, Dictionary<string, object> dest)
         {
             if (null == source) return;
@@ -166,7 +202,8 @@ namespace GravityEngine.Utils
                 if (dest.ContainsKey(kv.Key))
                 {
                     dest[kv.Key] = kv.Value;
-                } else
+                }
+                else
                 {
                     dest.Add(kv.Key, kv.Value);
                 }
@@ -174,4 +211,3 @@ namespace GravityEngine.Utils
         }
     }
 }
-
