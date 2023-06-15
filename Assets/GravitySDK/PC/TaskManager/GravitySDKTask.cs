@@ -15,8 +15,6 @@ namespace GravitySDK.PC.TaskManager
         private List<GravitySDKBaseRequest> requestList = new List<GravitySDKBaseRequest>();
         private List<ResponseHandle> responseHandleList = new List<ResponseHandle>();
         private List<int> batchSizeList = new List<int>();
-        private List<string> appIdList = new List<string>();
-
 
         private static GravitySDKTask mSingleTask;
 
@@ -67,15 +65,13 @@ namespace GravitySDK.PC.TaskManager
         {
         }
 
-        public void StartRequest(GravitySDKBaseRequest mRequest, ResponseHandle responseHandle, int batchSize,
-            string appId)
+        public void StartRequest(GravitySDKBaseRequest mRequest, ResponseHandle responseHandle, int batchSize)
         {
             lock (_locker)
             {
                 requestList.Add(mRequest);
                 responseHandleList.Add(responseHandle);
                 batchSizeList.Add(batchSize);
-                appIdList.Add(appId);
             }
         }
 
@@ -90,7 +86,7 @@ namespace GravitySDK.PC.TaskManager
                 {
                     mRequest = requestList[0];
                     responseHandle = responseHandleList[0];
-                    list = GravitySDKFileJson.DequeueBatchTrackingData(batchSizeList[0], appIdList[0]);
+                    list = GravitySDKFileJson.DequeueBatchTrackingData(batchSizeList[0]);
                 }
 
                 if (mRequest != null)
@@ -112,7 +108,6 @@ namespace GravitySDK.PC.TaskManager
                         requestList.RemoveAt(0);
                         responseHandleList.RemoveAt(0);
                         batchSizeList.RemoveAt(0);
-                        appIdList.RemoveAt(0);
                     }
                 }
             }

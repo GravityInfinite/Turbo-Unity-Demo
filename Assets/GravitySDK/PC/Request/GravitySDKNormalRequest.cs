@@ -14,12 +14,11 @@ namespace GravitySDK.PC.Request
 {
     public class GravitySDKNormalRequest : GravitySDKBaseRequest
     {
-        public GravitySDKNormalRequest(string appId, string url, IList<Dictionary<string, object>> data) : base(appId,
-            url, data)
+        public GravitySDKNormalRequest(string url, IList<Dictionary<string, object>> data) : base(url, data)
         {
         }
 
-        public GravitySDKNormalRequest(string appId, string url) : base(appId, url)
+        public GravitySDKNormalRequest(string url) : base(url)
         {
         }
 
@@ -29,7 +28,6 @@ namespace GravitySDK.PC.Request
             string uri = this.URL();
 
             Dictionary<string, object> param = new Dictionary<string, object>();
-            param[GravitySDKConstant.APPID] = this.APPID();
             param["event_list"] = this.Data();
             param["client_id"] = Turbo.GetClientId();
             param["flush_time"] = GravitySDKUtil.GetTimeStamp();

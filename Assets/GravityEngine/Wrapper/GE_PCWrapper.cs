@@ -1,6 +1,6 @@
-﻿// #if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_IOS_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
+﻿#if (((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_BYTEDANCE_GAME_MODE) && !GRAVITY_ANDROID_GAME_MODE
 
-#if false
+// #if false
 using System;
 using System.Collections.Generic;
 using GravityEngine.Utils;
@@ -13,9 +13,10 @@ using UnityEngine.Networking;
 
 namespace GravityEngine.Wrapper
 {
-    public partial class GravityEngineWrapper: IDynamicSuperProperties_PC, IAutoTrackEventCallback_PC
+    public partial class GravityEngineWrapper : IDynamicSuperProperties_PC, IAutoTrackEventCallback_PC
     {
         static IAutoTrackEventCallback mEventCallback;
+
         public Dictionary<string, object> GetDynamicSuperProperties_PC()
         {
             if (mDynamicSuperProperties != null)
@@ -28,7 +29,7 @@ namespace GravityEngine.Wrapper
             }
         }
 
-        public Dictionary<string, object> AutoTrackEventCallback_PC(int type, Dictionary<string, object>properties)
+        public Dictionary<string, object> AutoTrackEventCallback_PC(int type, Dictionary<string, object> properties)
         {
             if (mEventCallback != null)
             {
@@ -43,7 +44,7 @@ namespace GravityEngine.Wrapper
         private static void init(GravityEngineAPI.Token token)
         {
             GravitySDKConfig config =
- GravitySDKConfig.GetInstance(token.appid, GravitySDKConstant.SERVER_URL, token.GetInstanceName());
+                GravitySDKConfig.GetInstance(GravitySDKConstant.SERVER_URL, token.GetInstanceName());
             if (!string.IsNullOrEmpty(token.getTimeZoneId()))
             {
                 try
@@ -55,11 +56,13 @@ namespace GravityEngine.Wrapper
                     //GravitySDKLogger.Print("TimeZoneInfo set failed : " + e.Message);
                 }
             }
+
             if (token.mode == GravityEngineAPI.SDKRunMode.DEBUG)
             {
                 config.SetMode(Mode.DEBUG);
             }
-            GravityPCSDK.Init(token.appid, GravitySDKConstant.SERVER_URL, token.GetInstanceName(), config, sMono);
+
+            GravityPCSDK.Init(GravitySDKConstant.SERVER_URL, token.GetInstanceName(), config, sMono);
         }
 
         private static void identify(string uniqueId)
@@ -84,24 +87,25 @@ namespace GravityEngine.Wrapper
 
         private static void flush()
         {
-           GravityPCSDK.Flush();
+            GravityPCSDK.Flush();
         }
 
-        private static void setVersionInfo(string lib_name, string lib_version) {
+        private static void setVersionInfo(string lib_name, string lib_version)
+        {
             GravityPCSDK.SetLibName(lib_name);
             GravityPCSDK.SetLibVersion(lib_version);
         }
-        
+
         private static void track(string eventName, string properties)
-        {  
-            Dictionary<string,object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.Track(eventName,propertiesDic);
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.Track(eventName, propertiesDic);
         }
 
         private static void track(string eventName, string properties, DateTime dateTime)
         {
-            Dictionary<string,object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.Track(eventName,propertiesDic,dateTime);
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.Track(eventName, propertiesDic, dateTime);
         }
 
         private static void track(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone)
@@ -145,7 +149,7 @@ namespace GravityEngine.Wrapper
         private static void userSet(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserSet(propertiesDic,dateTime);
+            GravityPCSDK.UserSet(propertiesDic, dateTime);
         }
 
         private static void userUnset(List<string> properties)
@@ -155,7 +159,7 @@ namespace GravityEngine.Wrapper
 
         private static void userUnset(List<string> properties, DateTime dateTime)
         {
-            GravityPCSDK.UserUnset(properties,dateTime);
+            GravityPCSDK.UserUnset(properties, dateTime);
         }
 
         private static void userSetOnce(string properties)
@@ -167,7 +171,7 @@ namespace GravityEngine.Wrapper
         private static void userSetOnce(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserSetOnce(propertiesDic,dateTime);
+            GravityPCSDK.UserSetOnce(propertiesDic, dateTime);
         }
 
         private static void userAdd(string properties)
@@ -179,9 +183,9 @@ namespace GravityEngine.Wrapper
         private static void userAdd(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserAdd(propertiesDic,dateTime);
+            GravityPCSDK.UserAdd(propertiesDic, dateTime);
         }
-        
+
         private static void userNumberMin(string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
@@ -191,9 +195,9 @@ namespace GravityEngine.Wrapper
         private static void userNumberMin(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserNumberMin(propertiesDic,dateTime);
+            GravityPCSDK.UserNumberMin(propertiesDic, dateTime);
         }
-        
+
         private static void userNumberMax(string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
@@ -203,7 +207,7 @@ namespace GravityEngine.Wrapper
         private static void userNumberMax(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserNumberMax(propertiesDic,dateTime);
+            GravityPCSDK.UserNumberMax(propertiesDic, dateTime);
         }
 
         private static void userDelete()
@@ -225,7 +229,7 @@ namespace GravityEngine.Wrapper
         private static void userAppend(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserAppend(propertiesDic,dateTime);
+            GravityPCSDK.UserAppend(propertiesDic, dateTime);
         }
 
         private static void userUniqAppend(string properties)
@@ -237,15 +241,14 @@ namespace GravityEngine.Wrapper
         private static void userUniqAppend(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserUniqAppend(propertiesDic,dateTime);
+            GravityPCSDK.UserUniqAppend(propertiesDic, dateTime);
         }
 
         private static void setNetworkType(GravityEngineAPI.NetworkType networkType)
         {
-            
         }
 
-        private static string getDeviceId() 
+        private static string getDeviceId()
         {
             return GravityPCSDK.GetDeviceId();
         }
@@ -257,7 +260,7 @@ namespace GravityEngine.Wrapper
 
         private static void setTrackStatus(GE_TRACK_STATUS status)
         {
-            GravityPCSDK.SetTrackStatus((GE_TRACK_STATUS)status);
+            GravityPCSDK.SetTrackStatus((GE_TRACK_STATUS) status);
         }
 
         private static string getTimeString(DateTime dateTime)
@@ -273,14 +276,17 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_INSTALL;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_START) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_START;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_END) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_END;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_CRASH) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_CRASH;
@@ -290,20 +296,23 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHOW;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_HIDE) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_HIDE;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHARE) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHARE;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES;
             }
 #endif
-            
+
             GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, propertiesDic);
         }
 
@@ -314,35 +323,41 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_INSTALL;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_START) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_START;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_END) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_END;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_CRASH) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_CRASH;
             }
 #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
-           if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
+            if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHOW;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_HIDE) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_HIDE;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHARE) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHARE;
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES;
-            } 
+            }
 #endif
             mEventCallback = eventCallback;
             GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, new GravityEngineWrapper());
@@ -355,14 +370,17 @@ namespace GravityEngine.Wrapper
             {
                 GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_INSTALL, propertiesDic);
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_START) != 0)
             {
                 GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_START, propertiesDic);
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_END) != 0)
             {
                 GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_END, propertiesDic);
             }
+
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_CRASH) != 0)
             {
                 GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_CRASH, propertiesDic);
@@ -373,6 +391,7 @@ namespace GravityEngine.Wrapper
         {
             GravityPCSDK.EnableLog(enable);
         }
+
         private static void calibrateTime(long timestamp)
         {
             GravityPCSDK.CalibrateTime(timestamp);
@@ -383,17 +402,12 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.CalibrateTimeWithNtp(ntpServer);
         }
 
-        private static void enableThirdPartySharing(GEThirdPartyShareType shareType, string properties)
+        private static void register(string name, int version, string wxOpenId, string wxUnionId,
+            IRegisterCallback registerCallback)
         {
-            GravitySDKLogger.Print("Third Party Sharing is not support on PC: " + shareType + ", " + properties);
-        }
-
-        private static void register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
-        {
-            
             GravityPCSDK.Register(name, version, wxOpenId, wxUnionId, registerCallback);
         }
-        
+
         private static void getBytedanceEcpmRecords(string wxOpenId, string mpId)
         {
             GravityPCSDK.GetBytedanceEcpmRecords(wxOpenId, mpId);

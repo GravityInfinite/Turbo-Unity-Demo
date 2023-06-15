@@ -95,7 +95,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IRegist
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
-#elif GRAVITY_IOS_GAME_MODE || GRAVITY_ANDROID_GAME_MODE
+#elif GRAVITY_ANDROID_GAME_MODE
             // Android、iOS原生应用示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
@@ -112,8 +112,8 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IRegist
 #elif GRAVITY_BYTEDANCE_GAME_MODE
             // 抖音小游戏示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
-            string accessToken = "gZGljPsq7I4wc3BMvkAUsevQznx1jahi";
-            string clientId = "1234567890067";
+            string accessToken = "z4gcI6n1O52DRibPXZfjvn8w3YVtLUqp";
+            string clientId = "123456";
 
             // 启动引力引擎
             GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);

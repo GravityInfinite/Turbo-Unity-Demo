@@ -80,9 +80,6 @@ namespace GravitySDK.PC.Constant
         //时区偏移
         public static readonly string ZONE_OFFSET = "$zone_offset";
 
-        //appId
-        public static readonly string APPID = "$app_id";
-
         //单条数据唯一标识
         public static readonly string UUID = "$uuid";
 

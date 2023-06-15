@@ -36,14 +36,14 @@ namespace GravitySDK.PC.Main
         }
 
         // 要早于GetInstance调用
-        public static GravitySDKInstance Init(string appId, string server, string instanceName,
+        public static GravitySDKInstance Init(string server, string instanceName,
             GravitySDKConfig config = null, MonoBehaviour mono = null)
         {
             lock (Locker)
             {
                 if (_instance == null)
                 {
-                    _instance = new GravitySDKInstance(appId, server, instanceName, config, mono);
+                    _instance = new GravitySDKInstance(server, instanceName, config, mono);
                 }
             }
 

@@ -26,7 +26,6 @@ namespace GravitySDK.PC.Main
 
     public class GravitySDKInstance
     {
-        private string mAppid;
         private string mServer;
         protected string mDistinctID;
         protected string mAccountID;
@@ -78,11 +77,7 @@ namespace GravitySDK.PC.Main
             DefaultTrackState();
         }
 
-        public GravitySDKInstance(string appId, string server) : this(appId, server, null, null)
-        {
-        }
-
-        public GravitySDKInstance(string appId, string server, string instanceName, GravitySDKConfig config,
+        public GravitySDKInstance(string server, string instanceName, GravitySDKConfig config,
             MonoBehaviour mono = null)
         {
             this.mMono = mono;
@@ -90,7 +85,7 @@ namespace GravitySDK.PC.Main
             mResponseHandle = delegate(Dictionary<string, object> result) { mTask.Release(); };
             if (config == null)
             {
-                this.mConfig = GravitySDKConfig.GetInstance(appId, server, instanceName);
+                this.mConfig = GravitySDKConfig.GetInstance(server, instanceName);
             }
             else
             {
@@ -110,15 +105,14 @@ namespace GravitySDK.PC.Main
                 sMono.StartCoroutine(WaitAndFlush());
             }
 
-            this.mAppid = appId;
             this.mServer = server;
             if (this.mConfig.GetMode() == Mode.NORMAL)
             {
-                this.mRequest = new GravitySDKNormalRequest(appId, this.mConfig.NormalURL());
+                this.mRequest = new GravitySDKNormalRequest(this.mConfig.NormalURL());
             }
             else
             {
-                this.mRequest = new GravitySDKDebugRequest(appId, this.mConfig.NormalURL());
+                this.mRequest = new GravitySDKDebugRequest(this.mConfig.NormalURL());
             }
 
             DefaultData();
@@ -175,18 +169,18 @@ namespace GravitySDK.PC.Main
             if (!string.IsNullOrEmpty(distinctID))
             {
                 this.mDistinctID = distinctID;
-                GravitySDKFile.SaveData(mAppid, GravitySDKConstant.DISTINCT_ID, distinctID);
+                GravitySDKFile.SaveData(GravitySDKConstant.DISTINCT_ID, distinctID);
             }
         }
 
         public virtual string DistinctId()
         {
             this.mDistinctID =
-                (string) GravitySDKFile.GetData(this.mAppid, GravitySDKConstant.DISTINCT_ID, typeof(string));
+                (string) GravitySDKFile.GetData(GravitySDKConstant.DISTINCT_ID, typeof(string));
             if (string.IsNullOrEmpty(this.mDistinctID))
             {
                 this.mDistinctID = GravitySDKUtil.RandomID();
-                GravitySDKFile.SaveData(this.mAppid, GravitySDKConstant.DISTINCT_ID, this.mDistinctID);
+                GravitySDKFile.SaveData(GravitySDKConstant.DISTINCT_ID, this.mDistinctID);
             }
 
             return this.mDistinctID;
@@ -202,14 +196,14 @@ namespace GravitySDK.PC.Main
             if (!string.IsNullOrEmpty(accountID))
             {
                 this.mAccountID = accountID;
-                GravitySDKFile.SaveData(mAppid, GravitySDKConstant.ACCOUNT_ID, accountID);
+                GravitySDKFile.SaveData(GravitySDKConstant.ACCOUNT_ID, accountID);
             }
         }
 
         public virtual string AccountID()
         {
             this.mAccountID =
-                (string) GravitySDKFile.GetData(this.mAppid, GravitySDKConstant.ACCOUNT_ID, typeof(string));
+                (string) GravitySDKFile.GetData(GravitySDKConstant.ACCOUNT_ID, typeof(string));
             return this.mAccountID;
         }
 
@@ -221,13 +215,13 @@ namespace GravitySDK.PC.Main
             }
 
             this.mAccountID = "";
-            GravitySDKFile.DeleteData(this.mAppid, GravitySDKConstant.ACCOUNT_ID);
+            GravitySDKFile.DeleteData(GravitySDKConstant.ACCOUNT_ID);
         }
 
         //TODO
         public virtual void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
-            this.mAutoTrack.EnableAutoTrack(events, properties, mAppid);
+            this.mAutoTrack.EnableAutoTrack(events, properties);
 #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             mWechatGameAutoTrack.EnableAutoTrack(events, properties);
 #endif
@@ -235,7 +229,7 @@ namespace GravitySDK.PC.Main
 
         public virtual void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback_PC eventCallback)
         {
-            this.mAutoTrack.EnableAutoTrack(events, eventCallback, mAppid);
+            this.mAutoTrack.EnableAutoTrack(events, eventCallback);
 #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
             mWechatGameAutoTrack.EnableAutoTrack(events, null);
 #endif
@@ -367,7 +361,7 @@ namespace GravitySDK.PC.Main
             list.Add(data.ToDictionary());
             if (this.mConfig.GetMode() == Mode.NORMAL && this.mRequest.GetType() != typeof(GravitySDKNormalRequest))
             {
-                this.mRequest = new GravitySDKNormalRequest(this.mAppid, this.mConfig.NormalURL());
+                this.mRequest = new GravitySDKNormalRequest(this.mConfig.NormalURL());
             }
 
             if (immediately)
@@ -380,15 +374,13 @@ namespace GravitySDK.PC.Main
                 int count = 0;
                 if (!string.IsNullOrEmpty(this.mConfig.InstanceName()))
                 {
-                    GravitySDKLogger.Print("Save event: " + GravitySDKJSON.Serialize(dataDic) + "\n  AppID: " +
-                                           this.mAppid);
+                    GravitySDKLogger.Print("Save event: " + GravitySDKJSON.Serialize(dataDic));
                     count = GravitySDKFileJson.EnqueueTrackingData(dataDic, this.mConfig.InstanceName());
                 }
                 else
                 {
-                    GravitySDKLogger.Print("Save event: " + GravitySDKJSON.Serialize(dataDic) + "\n  AppID: " +
-                                           this.mAppid);
-                    count = GravitySDKFileJson.EnqueueTrackingData(dataDic, this.mAppid);
+                    GravitySDKLogger.Print("Save event: " + GravitySDKJSON.Serialize(dataDic));
+                    count = GravitySDKFileJson.EnqueueTrackingData(dataDic);
                 }
 
                 if (this.mConfig.GetMode() != Mode.NORMAL || count >= this.mConfig.mUploadSize)
@@ -437,7 +429,7 @@ namespace GravitySDK.PC.Main
                         }
                         else
                         {
-                            eventCount = GravitySDKFileJson.DeleteBatchTrackingData(flushCount, this.mAppid);
+                            eventCount = GravitySDKFileJson.DeleteBatchTrackingData(flushCount);
                         }
                     }
 
@@ -447,14 +439,7 @@ namespace GravitySDK.PC.Main
                         Flush();
                     }
                 };
-                if (!string.IsNullOrEmpty(this.mConfig.InstanceName()))
-                {
-                    mTask.StartRequest(mRequest, responseHandle, batchSize, this.mConfig.InstanceName());
-                }
-                else
-                {
-                    mTask.StartRequest(mRequest, responseHandle, batchSize, this.mAppid);
-                }
+                mTask.StartRequest(mRequest, responseHandle, batchSize);
             }
         }
 
@@ -480,7 +465,7 @@ namespace GravitySDK.PC.Main
                         }
                         else
                         {
-                            eventCount = GravitySDKFileJson.DeleteBatchTrackingData(batchSize, this.mAppid);
+                            eventCount = GravitySDKFileJson.DeleteBatchTrackingData(batchSize);
                         }
                     }
 
@@ -490,14 +475,14 @@ namespace GravitySDK.PC.Main
                         Flush();
                     }
                 };
-                IList<Dictionary<string, object>> list = GravitySDKFileJson.DequeueBatchTrackingData(batchSize, mAppid);
+                IList<Dictionary<string, object>> list = GravitySDKFileJson.DequeueBatchTrackingData(batchSize);
                 if (!string.IsNullOrEmpty(this.mConfig.InstanceName()))
                 {
                     list = GravitySDKFileJson.DequeueBatchTrackingData(batchSize, this.mConfig.InstanceName());
                 }
                 else
                 {
-                    list = GravitySDKFileJson.DequeueBatchTrackingData(batchSize, this.mAppid);
+                    list = GravitySDKFileJson.DequeueBatchTrackingData(batchSize);
                 }
 
                 if (list.Count > 0)
@@ -523,7 +508,7 @@ namespace GravitySDK.PC.Main
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             string propertiesStr =
-                (string) GravitySDKFile.GetData(this.mAppid, GravitySDKConstant.SUPER_PROPERTY, typeof(string));
+                (string) GravitySDKFile.GetData(GravitySDKConstant.SUPER_PROPERTY, typeof(string));
             if (!string.IsNullOrEmpty(propertiesStr))
             {
                 properties = GravitySDKJSON.Deserialize(propertiesStr);
@@ -531,7 +516,7 @@ namespace GravitySDK.PC.Main
 
             GravitySDKUtil.AddDictionary(properties, superProperties);
             this.mSupperProperties = properties;
-            GravitySDKFile.SaveData(this.mAppid, GravitySDKConstant.SUPER_PROPERTY,
+            GravitySDKFile.SaveData(GravitySDKConstant.SUPER_PROPERTY,
                 GravitySDKJSON.Serialize(this.mSupperProperties));
         }
 
@@ -544,7 +529,7 @@ namespace GravitySDK.PC.Main
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             string propertiesStr =
-                (string) GravitySDKFile.GetData(this.mAppid, GravitySDKConstant.SUPER_PROPERTY, typeof(string));
+                (string) GravitySDKFile.GetData(GravitySDKConstant.SUPER_PROPERTY, typeof(string));
             if (!string.IsNullOrEmpty(propertiesStr))
             {
                 properties = GravitySDKJSON.Deserialize(propertiesStr);
@@ -556,14 +541,14 @@ namespace GravitySDK.PC.Main
             }
 
             this.mSupperProperties = properties;
-            GravitySDKFile.SaveData(this.mAppid, GravitySDKConstant.SUPER_PROPERTY,
+            GravitySDKFile.SaveData(GravitySDKConstant.SUPER_PROPERTY,
                 GravitySDKJSON.Serialize(this.mSupperProperties));
         }
 
         public virtual Dictionary<string, object> SuperProperties()
         {
             string propertiesStr =
-                (string) GravitySDKFile.GetData(this.mAppid, GravitySDKConstant.SUPER_PROPERTY, typeof(string));
+                (string) GravitySDKFile.GetData(GravitySDKConstant.SUPER_PROPERTY, typeof(string));
             if (!string.IsNullOrEmpty(propertiesStr))
             {
                 this.mSupperProperties = GravitySDKJSON.Deserialize(propertiesStr);
@@ -580,7 +565,7 @@ namespace GravitySDK.PC.Main
             }
 
             this.mSupperProperties.Clear();
-            GravitySDKFile.DeleteData(this.mAppid, GravitySDKConstant.SUPER_PROPERTY);
+            GravitySDKFile.DeleteData(GravitySDKConstant.SUPER_PROPERTY);
         }
 
         public void TimeEvent(string eventName)
@@ -827,16 +812,16 @@ namespace GravitySDK.PC.Main
         {
             mOptTracking = optTracking;
             int opt = optTracking ? 1 : 0;
-            GravitySDKFile.SaveData(mAppid, GravitySDKConstant.OPT_TRACK, opt);
+            GravitySDKFile.SaveData(GravitySDKConstant.OPT_TRACK, opt);
             if (!optTracking)
             {
-                GravitySDKFile.DeleteData(mAppid, GravitySDKConstant.ACCOUNT_ID);
-                GravitySDKFile.DeleteData(mAppid, GravitySDKConstant.DISTINCT_ID);
-                GravitySDKFile.DeleteData(mAppid, GravitySDKConstant.SUPER_PROPERTY);
+                GravitySDKFile.DeleteData(GravitySDKConstant.ACCOUNT_ID);
+                GravitySDKFile.DeleteData(GravitySDKConstant.DISTINCT_ID);
+                GravitySDKFile.DeleteData(GravitySDKConstant.SUPER_PROPERTY);
                 this.mAccountID = null;
                 this.mDistinctID = null;
                 this.mSupperProperties = new Dictionary<string, object>();
-                GravitySDKFileJson.DeleteAllTrackingData(mAppid);
+                GravitySDKFileJson.DeleteAllTrackingData();
             }
         }
 
@@ -845,13 +830,13 @@ namespace GravitySDK.PC.Main
         {
             mEnableTracking = isEnable;
             int enable = isEnable ? 1 : 0;
-            GravitySDKFile.SaveData(mAppid, GravitySDKConstant.ENABLE_TRACK, enable);
+            GravitySDKFile.SaveData(GravitySDKConstant.ENABLE_TRACK, enable);
         }
 
         private void DefaultTrackState()
         {
-            object enableTrack = GravitySDKFile.GetData(mAppid, GravitySDKConstant.ENABLE_TRACK, typeof(int));
-            object optTrack = GravitySDKFile.GetData(mAppid, GravitySDKConstant.OPT_TRACK, typeof(int));
+            object enableTrack = GravitySDKFile.GetData(GravitySDKConstant.ENABLE_TRACK, typeof(int));
+            object optTrack = GravitySDKFile.GetData(GravitySDKConstant.OPT_TRACK, typeof(int));
             if (enableTrack != null)
             {
                 this.mEnableTracking = ((int) enableTrack) == 1;

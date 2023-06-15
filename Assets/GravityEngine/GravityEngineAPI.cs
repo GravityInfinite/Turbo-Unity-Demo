@@ -1198,31 +1198,6 @@ namespace GravityEngine
         }
 
         /// <summary>
-        /// 三方数据共享
-        /// 通过与三方系统共享引力账号体系，打通三方数据 暂时不支持
-        /// </summary>
-        /// <param name="shareType">三方系统类型</param>
-        /// <param name="properties">三方系统自定义属性（部分系统自定义属性的设置是覆盖式更新，所以需要将自定义属性传入引力 SDK，此属性将会与引力账号体系一并传入三方系统）</param>
-        private static void EnableThirdPartySharing(GEThirdPartyShareType shareType,
-            Dictionary<string, object> properties = null)
-        {
-            if (tracking_enabled)
-            {
-                GravityEngineWrapper.EnableThirdPartySharing(shareType, properties);
-            }
-            else
-            {
-                System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] {shareType};
-                eventCaches.Add(new Dictionary<string, object>()
-                {
-                    {"method", method},
-                    {"parameters", parameters}
-                });
-            }
-        }
-
-        /// <summary>
         /// 获取当前国家/地区代码
         /// 在 ISO 3166 中定义的由两个字母组成的国家/地区代码
         /// </summary>
@@ -1243,12 +1218,11 @@ namespace GravityEngine
         public static void StartGravityEngine(string accessToken, string clientId, SDKRunMode mode,
             string channel = "base_channel", string aesKey = "")
         {
-            GravityEngineAPI.SDKTimeZone timeZone = GravityEngineAPI.SDKTimeZone.Local;
-            GravityEngineAPI.Token token =
-                new GravityEngineAPI.Token(accessToken, clientId, channel, aesKey, mode, timeZone);
-            GravityEngineAPI.Token[] tokens = new GravityEngineAPI.Token[1];
+            SDKTimeZone timeZone = SDKTimeZone.Local;
+            Token token = new Token(accessToken, clientId, channel, aesKey, mode, timeZone);
+            Token[] tokens = new Token[1];
             tokens[0] = token;
-            GravityEngineAPI.StartGravityEngine(tokens);
+            StartGravityEngine(tokens);
         }
 
         /// <summary>

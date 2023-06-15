@@ -8,18 +8,14 @@ namespace GravitySDK.PC.Storage
 {
     public class GravitySDKFile
     {
-        public static string GetKey(string prefix, string key)
+        private static string GetKey(string key)
         {
-            return prefix + "_" + key;
+            return "gravity_" + key;
         }
-
-        public static void SaveData(string prefix, string key, object value)
-        {
-            SaveData(GetKey(prefix, key), value);
-        }
-
+        
         public static void SaveData(string key, object value)
         {
+            key = GetKey(key);// modified by gravity
             if (!string.IsNullOrEmpty(key))
             {
 #if GRAVITY_WECHAT_GAME_MODE
@@ -71,6 +67,7 @@ namespace GravitySDK.PC.Storage
 
         public static object GetData(string key, Type type)
         {
+            key = GetKey(key);// modified by gravity
 #if GRAVITY_WECHAT_GAME_MODE
             if (!string.IsNullOrEmpty(key) && PlayerPrefs.HasKey(key))
             {
@@ -127,14 +124,9 @@ namespace GravitySDK.PC.Storage
             return null;
         }
 
-        public static object GetData(string prefix, string key, Type type)
-        {
-            key = GetKey(prefix, key);
-            return GetData(key, type);
-        }
-
         public static void DeleteData(string key)
         {
+            key = GetKey(key);// modified by gravity
             if (!string.IsNullOrEmpty(key))
             {
 #if GRAVITY_WECHAT_GAME_MODE
@@ -154,12 +146,6 @@ namespace GravitySDK.PC.Storage
                 }
 #endif
             }
-        }
-
-        public static void DeleteData(string prefix, string key)
-        {
-            key = GetKey(prefix, key);
-            DeleteData(key);
         }
     }
 }

@@ -88,13 +88,13 @@ namespace GravitySDK.PC.Config
             return this.mInstanceName;
         }
 
-        public static GravitySDKConfig GetInstance(string token, string server, string instanceName)
+        public static GravitySDKConfig GetInstance(string server, string instanceName)
         {
             lock (Locker)
             {
                 if (_instance == null)
                 {
-                    _instance = new GravitySDKConfig(server, instanceName ?? token);
+                    _instance = new GravitySDKConfig(server, instanceName);
                 }
             }
 

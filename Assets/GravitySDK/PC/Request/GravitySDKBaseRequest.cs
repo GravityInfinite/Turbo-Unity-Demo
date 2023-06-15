@@ -25,31 +25,23 @@ namespace GravitySDK.PC.Request
 
     public abstract class GravitySDKBaseRequest
     {
-        private string mAppid;
         private string mURL;
         private IList<Dictionary<string, object>> mData;
 
-        public GravitySDKBaseRequest(string appId, string url, IList<Dictionary<string, object>> data)
+        public GravitySDKBaseRequest(string url, IList<Dictionary<string, object>> data)
         {
-            mAppid = appId;
             mURL = url;
             mData = data;
         }
 
-        public GravitySDKBaseRequest(string appId, string url)
+        public GravitySDKBaseRequest(string url)
         {
-            mAppid = appId;
             mURL = url;
         }
 
         public void SetData(IList<Dictionary<string, object>> data)
         {
             this.mData = data;
-        }
-
-        public string APPID()
-        {
-            return mAppid;
         }
 
         public string URL()

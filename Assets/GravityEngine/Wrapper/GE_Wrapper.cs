@@ -28,7 +28,6 @@ namespace GravityEngine.Wrapper
 
         public static void ShareInstance(GravityEngineAPI.Token token, MonoBehaviour mono, bool initRequired = true)
         {
-            GE_Log.d("LPF_TEST share instance");
             sMono = mono;
             if (initRequired) init(token);
         }
@@ -290,13 +289,6 @@ namespace GravityEngine.Wrapper
         public static void CalibrateTimeWithNtp(string ntpServer)
         {
             calibrateTimeWithNtp(ntpServer);
-        }
-
-        public static void EnableThirdPartySharing(GEThirdPartyShareType shareType,
-            Dictionary<string, object> properties = null)
-        {
-            if (null == properties) properties = new Dictionary<string, object>();
-            enableThirdPartySharing(shareType, serilize(properties));
         }
 
         public static void Register(string name, int version, string wxOpenId, string wxUnionId,

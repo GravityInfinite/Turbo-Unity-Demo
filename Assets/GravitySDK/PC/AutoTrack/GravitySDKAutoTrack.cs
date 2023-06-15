@@ -85,16 +85,16 @@ namespace GravitySDK.PC.AutoTrack
             GravityPCSDK.FlushImmediately();
         }
 
-        public void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties, string appId)
+        public void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
             SetAutoTrackProperties(events, properties);
             if ((events & AUTO_TRACK_EVENTS.APP_INSTALL) != 0)
             {
-                object result = GravitySDKFile.GetData(appId, GravitySDKConstant.IS_INSTALL, typeof(int));
+                object result = GravitySDKFile.GetData(GravitySDKConstant.IS_INSTALL, typeof(int));
                 if (result == null)
                 {
                     Dictionary<string, object> mProperties = new Dictionary<string, object>(properties);
-                    GravitySDKFile.SaveData(appId, GravitySDKConstant.IS_INSTALL, 1);
+                    GravitySDKFile.SaveData(GravitySDKConstant.IS_INSTALL, 1);
                     if (mAutoTrackProperties.ContainsKey(AUTO_TRACK_EVENTS.APP_INSTALL.ToString()))
                     {
                         GravitySDKUtil.AddDictionary(mProperties,
@@ -127,16 +127,16 @@ namespace GravitySDK.PC.AutoTrack
             mStarted = true;
         }
 
-        public void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback_PC eventCallback, string appId)
+        public void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback_PC eventCallback)
         {
             mAutoTrackEvents = events;
             mEventCallback_PC = eventCallback;
             if ((events & AUTO_TRACK_EVENTS.APP_INSTALL) != 0)
             {
-                object result = GravitySDKFile.GetData(appId, GravitySDKConstant.IS_INSTALL, typeof(int));
+                object result = GravitySDKFile.GetData(GravitySDKConstant.IS_INSTALL, typeof(int));
                 if (result == null)
                 {
-                    GravitySDKFile.SaveData(appId, GravitySDKConstant.IS_INSTALL, 1);
+                    GravitySDKFile.SaveData(GravitySDKConstant.IS_INSTALL, 1);
                     Dictionary<string, object> properties = null;
                     if (mAutoTrackProperties.ContainsKey(AUTO_TRACK_EVENTS.APP_INSTALL.ToString()))
                     {
