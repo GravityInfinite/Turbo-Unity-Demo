@@ -1,5 +1,5 @@
-﻿#if (UNITY_ANDROID && !(UNITY_EDITOR))
-// #if true
+﻿// #if (UNITY_ANDROID && !(UNITY_EDITOR))
+#if true
 using System;
 using System.Collections.Generic;
 using GravityEngine.Utils;
@@ -16,7 +16,6 @@ namespace GravityEngine.Wrapper
         private static readonly AndroidJavaClass sdkClass = new AndroidJavaClass("cn.gravity.android.GravityEngineSDK");
         private static readonly AndroidJavaClass configClass = new AndroidJavaClass("cn.gravity.android.GEConfig");
 
-        private static string default_appId = null;
         private static GravityEngineAPI.Token mToken;
 
         /// <summary>
@@ -49,10 +48,10 @@ namespace GravityEngine.Wrapper
             long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
 
             AndroidJavaObject date = new AndroidJavaObject("java.util.Date", currentMillis);
-            return getInstance(default_appId).Call<string>("getTimeString", date);
+            return getInstance().Call<string>("getTimeString", date);
         }
 
-        private static AndroidJavaObject getInstance(string appId) {
+        private static AndroidJavaObject getInstance() {
             AndroidJavaObject context = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
             AndroidJavaObject currentInstance;
 
@@ -73,10 +72,6 @@ namespace GravityEngine.Wrapper
             GE_Log.d("LPF_TEST init");
 
             mToken = token;
-            if (string.IsNullOrEmpty(default_appId))
-            {
-                default_appId = token.appid;
-            }
             GE_Log.d("LPF_TEST init 2");
             AndroidJavaObject context = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
             AndroidJavaObject config = null;
@@ -115,9 +110,9 @@ namespace GravityEngine.Wrapper
             sdkClass.CallStatic<AndroidJavaObject>("sharedInstance", config);
         }
 
-        private static void flush(string appId)
+        private static void flush()
         {
-            getInstance(appId).Call("flush");
+            getInstance().Call("flush");
         }
 
         private static AndroidJavaObject getDate(DateTime dateTime)
@@ -129,61 +124,48 @@ namespace GravityEngine.Wrapper
             return new AndroidJavaObject("java.util.Date", currentMillis);
         }
 
-        private static void track(string eventName, string properties, DateTime dateTime, string appId)
+        private static void track(string eventName, string properties, DateTime dateTime)
         {
             AndroidJavaObject date = getDate(dateTime);
             AndroidJavaObject tz = null;
-            getInstance(appId).Call("track", eventName, getJSONObject(properties), date, tz);
+            getInstance().Call("track", eventName, getJSONObject(properties), date, tz);
         }
 
-        private static void track(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone, string appId)
+        private static void track(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone)
         {
-            AndroidJavaObject date = getDate(dateTime);
-            AndroidJavaObject tz = null;
-            if (null != timeZone && null != timeZone.Id && timeZone.Id.Length > 0)
-            {
-                tz = new AndroidJavaClass("java.util.TimeZone").CallStatic<AndroidJavaObject>("getTimeZone", timeZone.Id);
-            }
-            getInstance(appId).Call("track", eventName, getJSONObject(properties), date, tz);
-        }
-
-        private static void trackForAll(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone)
-        {
-            string appId = "";
             AndroidJavaObject date = getDate(dateTime);
             AndroidJavaObject tz = null;
             if (null != timeZone && null != timeZone.Id && timeZone.Id.Length > 0)
             {
                 tz = new AndroidJavaClass("java.util.TimeZone").CallStatic<AndroidJavaObject>("getTimeZone", timeZone.Id);
             }
-
-            getInstance(appId).Call("track", eventName, getJSONObject(properties), date, tz);
+            getInstance().Call("track", eventName, getJSONObject(properties), date, tz);
         }
-
-        private static void track(string eventName, string properties, string appId)
+        
+        private static void track(string eventName, string properties)
         {
-            getInstance(appId).Call("track", eventName, getJSONObject(properties));
+            getInstance().Call("track", eventName, getJSONObject(properties));
         }
 
-        private static void setSuperProperties(string superProperties, string appId)
+        private static void setSuperProperties(string superProperties)
         {
-            getInstance(appId).Call("setSuperProperties", getJSONObject(superProperties));
+            getInstance().Call("setSuperProperties", getJSONObject(superProperties));
         }
 
-        private static void unsetSuperProperty(string superPropertyName, string appId)
+        private static void unsetSuperProperty(string superPropertyName)
         {
-            getInstance(appId).Call("unsetSuperProperty", superPropertyName);
+            getInstance().Call("unsetSuperProperty", superPropertyName);
         }
 
-        private static void clearSuperProperty(string appId)
+        private static void clearSuperProperty()
         {
-            getInstance(appId).Call("clearSuperProperties");
+            getInstance().Call("clearSuperProperties");
         }
 
-        private static Dictionary<string, object> getSuperProperties(string appId)
+        private static Dictionary<string, object> getSuperProperties()
         {
             Dictionary<string, object> result = null;
-            AndroidJavaObject superPropertyObject = getInstance(appId).Call<AndroidJavaObject>("getSuperProperties");
+            AndroidJavaObject superPropertyObject = getInstance().Call<AndroidJavaObject>("getSuperProperties");
             if (null != superPropertyObject)
             {
                 string superPropertiesString = superPropertyObject.Call<string>("toString");
@@ -192,57 +174,52 @@ namespace GravityEngine.Wrapper
             return result;
         }
         
-        private static void timeEvent(string eventName, string appId)
+        private static void timeEvent(string eventName)
         {
-            getInstance(appId).Call("timeEvent", eventName);
+            getInstance().Call("timeEvent", eventName);
+        }
+        
+        private static void identify(string uniqueId)
+        {
+            getInstance().Call("identify", uniqueId);
         }
 
-        private static void timeEventForAll(string eventName)
+        private static string getDistinctId()
         {
-            getInstance("").Call("timeEvent", eventName);
+            return getInstance().Call<string>("getDistinctId");
         }
 
-        private static void identify(string uniqueId, string appId)
+        private static void login(string uniqueId)
         {
-            getInstance(appId).Call("identify", uniqueId);
+            getInstance().Call("login", uniqueId);
         }
 
-        private static string getDistinctId(string appId)
+        private static void userSetOnce(string properties)
         {
-            return getInstance(appId).Call<string>("getDistinctId");
+            getInstance().Call("user_setOnce", getJSONObject(properties));
         }
 
-        private static void login(string uniqueId, string appId)
+        private static void userSetOnce(string properties, DateTime dateTime)
         {
-            getInstance(appId).Call("login", uniqueId);
+            getInstance().Call("user_setOnce", getJSONObject(properties), getDate(dateTime));
         }
 
-        private static void userSetOnce(string properties, string appId)
+        private static void userSet(string properties)
         {
-            getInstance(appId).Call("user_setOnce", getJSONObject(properties));
+            getInstance().Call("user_set", getJSONObject(properties));
         }
 
-        private static void userSetOnce(string properties, DateTime dateTime, string appId)
+        private static void userSet(string properties, DateTime dateTime)
         {
-            getInstance(appId).Call("user_setOnce", getJSONObject(properties), getDate(dateTime));
+            getInstance().Call("user_set", getJSONObject(properties), getDate(dateTime));
         }
 
-        private static void userSet(string properties, string appId)
+        private static void userUnset(List<string> properties)
         {
-            getInstance(appId).Call("user_set", getJSONObject(properties));
+            userUnset(properties, DateTime.Now);
         }
 
-        private static void userSet(string properties, DateTime dateTime, string appId)
-        {
-            getInstance(appId).Call("user_set", getJSONObject(properties), getDate(dateTime));
-        }
-
-        private static void userUnset(List<string> properties, string appId)
-        {
-            userUnset(properties, DateTime.Now, appId);
-        }
-
-        private static void userUnset(List<string> properties, DateTime dateTime, string appId)
+        private static void userUnset(List<string> properties, DateTime dateTime)
         {
             Dictionary<string, object> finalProperties = new Dictionary<string, object>();
             foreach(string s in properties)
@@ -250,133 +227,130 @@ namespace GravityEngine.Wrapper
                 finalProperties.Add(s, 0);
             }
 
-            getInstance(appId).Call("user_unset", getJSONObject(GE_MiniJson.Serialize(finalProperties)), getDate(dateTime));
+            getInstance().Call("user_unset", getJSONObject(GE_MiniJson.Serialize(finalProperties)), getDate(dateTime));
         }
 
-        private static void userAdd(string properties, string appId)
+        private static void userAdd(string properties)
         {
-            getInstance(appId).Call("user_increment", getJSONObject(properties));
+            getInstance().Call("user_increment", getJSONObject(properties));
         }
 
-        private static void userAdd(string properties, DateTime dateTime, string appId)
+        private static void userAdd(string properties, DateTime dateTime)
         {
-            getInstance(appId).Call("user_increment", getJSONObject(properties), getDate(dateTime));
+            getInstance().Call("user_increment", getJSONObject(properties), getDate(dateTime));
         }
         
-        private static void userNumberMax(string properties, string appId)
+        private static void userNumberMax(string properties)
         {
-            getInstance(appId).Call("user_max", getJSONObject(properties));
+            getInstance().Call("user_max", getJSONObject(properties));
         }
 
-        private static void userNumberMax(string properties, DateTime dateTime, string appId)
+        private static void userNumberMax(string properties, DateTime dateTime)
         {
-            getInstance(appId).Call("user_max", getJSONObject(properties), getDate(dateTime));
+            getInstance().Call("user_max", getJSONObject(properties), getDate(dateTime));
         }
         
-        private static void userNumberMin(string properties, string appId)
+        private static void userNumberMin(string properties)
         {
-            getInstance(appId).Call("user_min", getJSONObject(properties));
+            getInstance().Call("user_min", getJSONObject(properties));
         }
 
-        private static void userNumberMin(string properties, DateTime dateTime, string appId)
+        private static void userNumberMin(string properties, DateTime dateTime)
         {
-            getInstance(appId).Call("user_min", getJSONObject(properties), getDate(dateTime));
+            getInstance().Call("user_min", getJSONObject(properties), getDate(dateTime));
         }
 
-        private static void userAppend(string properties, string appId)
+        private static void userAppend(string properties)
         {
-            getInstance(appId).Call("user_append", getJSONObject(properties));
+            getInstance().Call("user_append", getJSONObject(properties));
         }
 
-        private static void userAppend(string properties, DateTime dateTime, string appId)
+        private static void userAppend(string properties, DateTime dateTime)
         {
-            getInstance(appId).Call("user_append", getJSONObject(properties), getDate(dateTime));
+            getInstance().Call("user_append", getJSONObject(properties), getDate(dateTime));
         }
 
-        private static void userUniqAppend(string properties, string appId)
+        private static void userUniqAppend(string properties)
         {
-            getInstance(appId).Call("user_uniqAppend", getJSONObject(properties));
+            getInstance().Call("user_uniqAppend", getJSONObject(properties));
         }
 
-        private static void userUniqAppend(string properties, DateTime dateTime, string appId)
+        private static void userUniqAppend(string properties, DateTime dateTime)
         {
-            getInstance(appId).Call("user_uniqAppend", getJSONObject(properties), getDate(dateTime));
+            getInstance().Call("user_uniqAppend", getJSONObject(properties), getDate(dateTime));
         }
 
-        private static void userDelete(string appId)
+        private static void userDelete()
         {
-            getInstance(appId).Call("user_delete");
+            getInstance().Call("user_delete");
         }
 
-        private static void userDelete(DateTime dateTime, string appId)
+        private static void userDelete(DateTime dateTime)
         {
-            getInstance(appId).Call("user_delete", getDate(dateTime));
+            getInstance().Call("user_delete", getDate(dateTime));
         }
 
-        private static void logout(string appId)
+        private static void logout()
         {
-            getInstance(appId).Call("logout");
+            getInstance().Call("logout");
         }
 
         private static string getDeviceId()
         {
-            return getInstance(default_appId).Call<string>("getDeviceId");
+            return getInstance().Call<string>("getDeviceId");
         }
 
-        private static void setDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties, string appId)
+        private static void setDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties)
         {
             DynamicListenerAdapter listenerAdapter = new DynamicListenerAdapter();
-            getInstance(appId).Call("setDynamicSuperPropertiesTracker", listenerAdapter);
+            getInstance().Call("setDynamicSuperPropertiesTracker", listenerAdapter);
         }
 
         private static void setNetworkType(GravityEngineAPI.NetworkType networkType) {
             switch (networkType)
             {
                 case GravityEngineAPI.NetworkType.DEFAULT:
-                    getInstance(default_appId).Call("setNetworkType", 0);
+                    getInstance().Call("setNetworkType", 0);
                     break;
                 case GravityEngineAPI.NetworkType.WIFI:
-                    getInstance(default_appId).Call("setNetworkType", 1);
+                    getInstance().Call("setNetworkType", 1);
                     break;
                 case GravityEngineAPI.NetworkType.ALL:
-                    getInstance(default_appId).Call("setNetworkType", 2);
+                    getInstance().Call("setNetworkType", 2);
                     break;
             }
         }
 
-        private static void enableAutoTrack(AUTO_TRACK_EVENTS events, string properties, string appId)
+        private static void enableAutoTrack(AUTO_TRACK_EVENTS events, string properties)
         {
             Dictionary<string, object> propertiesNew = new Dictionary<string, object>() {
-                { "appId", appId},
                 { "autoTrackType", (int)events}
             };
-            getInstance(appId).Call("enableAutoTrackForUnity", GE_MiniJson.Serialize(propertiesNew));
+            getInstance().Call("enableAutoTrackForUnity", GE_MiniJson.Serialize(propertiesNew));
             propertiesNew["properties"] = GE_MiniJson.Deserialize(properties);
-            getInstance(appId).Call("setAutoTrackPropertiesForUnity", GE_MiniJson.Serialize(propertiesNew));
+            getInstance().Call("setAutoTrackPropertiesForUnity", GE_MiniJson.Serialize(propertiesNew));
         }
 
-        private static void enableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback eventCallback, string appId)
+        private static void enableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback eventCallback)
         {
             AutoTrackListenerAdapter listenerAdapter = new AutoTrackListenerAdapter();
             Dictionary<string, object> properties = new Dictionary<string, object>() {
-                { "appId", appId},
                 { "autoTrackType", (int)events}
             };
-            getInstance(appId).Call("enableAutoTrackForUnity", GE_MiniJson.Serialize(properties), listenerAdapter);
+            getInstance().Call("enableAutoTrackForUnity", GE_MiniJson.Serialize(properties), listenerAdapter);
         }
 
-        private static void setAutoTrackProperties(AUTO_TRACK_EVENTS events, string properties, string appId)
+        private static void setAutoTrackProperties(AUTO_TRACK_EVENTS events, string properties)
         {
             Dictionary<string, object> propertiesNew = new Dictionary<string, object>() {
-                { "appId", appId},
                 { "autoTrackType", (int)events}
             };
             propertiesNew["properties"] = GE_MiniJson.Deserialize(properties);
 
-            getInstance(appId).Call("setAutoTrackPropertiesForUnity", (int) events, GE_MiniJson.Serialize(propertiesNew));
+            getInstance().Call("setAutoTrackPropertiesForUnity", (int) events, GE_MiniJson.Serialize(propertiesNew));
         }
 
-        private static void setTrackStatus(GE_TRACK_STATUS status, string appId)
+        private static void setTrackStatus(GE_TRACK_STATUS status)
         {
             AndroidJavaClass javaClass = new AndroidJavaClass("cn.gravity.android.GravityEngineSDK$GETrackStatus");
             AndroidJavaObject trackStatus;
@@ -396,27 +370,27 @@ namespace GravityEngine.Wrapper
                     trackStatus = javaClass.GetStatic<AndroidJavaObject>("NORMAL");
                     break;
             }
-            getInstance(appId).Call("setTrackStatus", trackStatus);
+            getInstance().Call("setTrackStatus", trackStatus);
         }
 
-        private static void optOutTracking(string appId)
+        private static void optOutTracking()
         {
-            getInstance(appId).Call("optOutTracking");
+            getInstance().Call("optOutTracking");
         }
 
-        private static void optOutTrackingAndDeleteUser(string appId)
+        private static void optOutTrackingAndDeleteUser()
         {
-            getInstance(appId).Call("optOutTrackingAndDeleteUser");
+            getInstance().Call("optOutTrackingAndDeleteUser");
         }
 
-        private static void optInTracking(string appId)
+        private static void optInTracking()
         {
-            getInstance(appId).Call("optInTracking");
+            getInstance().Call("optInTracking");
         }
 
-        private static void enableTracking(bool enabled, string appId)
+        private static void enableTracking(bool enabled)
         {
-            getInstance(appId).Call("enableTracking", enabled);
+            getInstance().Call("enableTracking", enabled);
         }
 
         private static void calibrateTime(long timestamp)
@@ -429,9 +403,9 @@ namespace GravityEngine.Wrapper
             sdkClass.CallStatic("calibrateTimeWithNtp", ntpServer);
         }
 
-        private static void enableThirdPartySharing(GEThirdPartyShareType shareType, string properties, string appId)
+        private static void enableThirdPartySharing(GEThirdPartyShareType shareType, string properties)
         {
-            getInstance(appId).Call("enableThirdPartySharing", (int) shareType, getJSONObject(properties));
+            getInstance().Call("enableThirdPartySharing", (int) shareType, getJSONObject(properties));
         }
 
         //动态公共属性
@@ -500,7 +474,12 @@ namespace GravityEngine.Wrapper
         private static void register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
         {
             RegisterListenerAdapter listenerAdapter = new RegisterListenerAdapter();
-            getInstance(default_appId).Call("register", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(), listenerAdapter);
+            getInstance().Call("register", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(), listenerAdapter);
+        }
+        
+        private static void getBytedanceEcpmRecords(string wxOpenId, string mpId)
+        {
+            
         }
     }
 }

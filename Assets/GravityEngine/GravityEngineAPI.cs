@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using GravitySDK.PC.GravityTurbo;
@@ -37,17 +38,19 @@ namespace GravityEngine
     public class GravityEngineAPI : MonoBehaviour
     {
         #region settings
+
         [System.Serializable]
         public struct Token
         {
-            public string appid;
             public string accessToken;
             public string channel;
             public string aesKey;
             public string clientId;
             public SDKRunMode mode;
             public SDKTimeZone timeZone;
+
             public string timeZoneId;
+
             // 加密 仅支持Android/iOS
             public bool enableEncrypt; // 开启加密传输，默认false
             public int encryptVersion; // 密钥版本号
@@ -57,9 +60,10 @@ namespace GravityEngine
             public bool validatesDomainName; // 是否验证证书域名，默认true
             private string instanceName; // 实例名
 
-            public Token(string appId, string accessToken, string clientId, string channel, string aesKey, SDKRunMode mode = SDKRunMode.NORMAL, SDKTimeZone timeZone = SDKTimeZone.Local, string timeZoneId = null, string instanceName = null)
+            public Token(string accessToken, string clientId, string channel, string aesKey,
+                SDKRunMode mode = SDKRunMode.NORMAL, SDKTimeZone timeZone = SDKTimeZone.Local, string timeZoneId = null,
+                string instanceName = null)
             {
-                this.appid = appId.Replace(" ", "");
                 this.accessToken = accessToken.Replace(" ", "");
                 this.clientId = clientId.Replace(" ", "");
                 this.channel = channel.Replace(" ", "");
@@ -77,6 +81,7 @@ namespace GravityEngine
                 {
                     instanceName = instanceName.Replace(" ", "");
                 }
+
                 this.instanceName = instanceName;
             }
 
@@ -104,6 +109,7 @@ namespace GravityEngine
                     default:
                         break;
                 }
+
                 return null;
             }
         }
@@ -132,15 +138,12 @@ namespace GravityEngine
             ALL = 3
         }
 
-        [Header("Configuration")]
-        [Tooltip("是否手动初始化SDK")]
+        [Header("Configuration")] [Tooltip("是否手动初始化SDK")]
         public bool startManually = true;
 
-        [Tooltip("设置网络类型")]
-        public NetworkType networkType = NetworkType.DEFAULT;
+        [Tooltip("设置网络类型")] public NetworkType networkType = NetworkType.DEFAULT;
 
-        [Tooltip("项目相关配置, APP ID 会在项目申请时给出")]
-        public Token[] tokens = new Token[1];
+        [Tooltip("项目相关配置, APP ID 会在项目申请时给出")] public Token[] tokens = new Token[1];
 
         #endregion
 
@@ -148,20 +151,20 @@ namespace GravityEngine
         /// 设置自定义访客 ID，用于替换系统生成的访客 ID
         /// </summary>
         /// <param name="firstId">访客 ID</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        private static void Identify(string firstId, string appId = "")
+        private static void Identify(string firstId)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.Identify(firstId, appId);
+                GravityEngineWrapper.Identify(firstId);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { firstId, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {firstId};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -170,13 +173,13 @@ namespace GravityEngine
         /// 返回当前的访客 ID.
         /// </summary>
         /// <returns>访客 ID</returns>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static string GetDistinctId(string appId = "")
+        public static string GetDistinctId()
         {
             if (tracking_enabled)
             {
-                return GravityEngineWrapper.GetDistinctId(appId);
+                return GravityEngineWrapper.GetDistinctId();
             }
+
             return null;
         }
 
@@ -184,20 +187,20 @@ namespace GravityEngine
         /// 设置账号 ID. 该方法不会上传用户登录事件，仅仅会保存AccountID做后续的上报.
         /// </summary>
         /// <param name="account">账号 ID</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void Login(string account, string appId = "")
+        public static void Login(string account)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.Login(account, appId);
+                GravityEngineWrapper.Login(account);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { account, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {account};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -205,20 +208,20 @@ namespace GravityEngine
         /// <summary>
         /// 清空账号 ID. 该方法不会上传用户登出事件.
         /// </summary>
-        /// <param name="appId">项目 ID(可选) </param>
-        public static void Logout(string appId = "")
+        public static void Logout()
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.Logout(appId);
+                GravityEngineWrapper.Logout();
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] { };
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -228,8 +231,7 @@ namespace GravityEngine
         /// </summary>
         /// <param name="events">自动采集事件</param>
         /// <param name="properties">自动采集事件扩展属性(可选)</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties = null, string appId = "")
+        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties = null)
         {
             if (tracking_enabled)
             {
@@ -238,16 +240,18 @@ namespace GravityEngine
                     properties = new Dictionary<string, object>();
                 }
 
-                GravityEngineWrapper.EnableAutoTrack(events, properties, appId);
+                GravityEngineWrapper.EnableAutoTrack(events, properties);
                 // C#异常捕获提前，包含所有端
                 if ((events & AUTO_TRACK_EVENTS.APP_CRASH) != 0 && !GE_PublicConfig.DisableCSharpException)
                 {
                     GravityEngineExceptionHandler.RegisterGEExceptionHandler(properties);
                 }
+
                 if ((events & AUTO_TRACK_EVENTS.APP_SCENE_LOAD) != 0)
                 {
                     SceneManager.sceneLoaded += GravityEngineAPI.OnSceneLoaded;
                 }
+
                 if ((events & AUTO_TRACK_EVENTS.APP_SCENE_UNLOAD) != 0)
                 {
                     SceneManager.sceneUnloaded += GravityEngineAPI.OnSceneUnloaded;
@@ -256,25 +260,25 @@ namespace GravityEngine
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { events, properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {events, properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
-        
+
         /// <summary>
         /// 设置自动采集扩展属性.
         /// </summary>
         /// <param name="events">自动采集事件</param>
         /// <param name="properties">自动采集事件扩展属性</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void SetAutoTrackProperties(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties, string appId = "")
+        public static void SetAutoTrackProperties(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.SetAutoTrackProperties(events, properties, appId);
+                GravityEngineWrapper.SetAutoTrackProperties(events, properties);
                 // C#异常捕获提前，包含所有端
                 if ((events & AUTO_TRACK_EVENTS.APP_CRASH) != 0 && !GE_PublicConfig.DisableCSharpException)
                 {
@@ -284,10 +288,11 @@ namespace GravityEngine
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { events, properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {events, properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -297,7 +302,8 @@ namespace GravityEngine
         /// </summary>
         /// <param name="query"></param>
         /// <param name="scene"></param>
-        private static void TrackMPEvent(string eventName, Dictionary<string, string> query, string scene, Dictionary<string, object> properties)
+        private static void TrackMPEvent(string eventName, Dictionary<string, string> query, string scene,
+            Dictionary<string, object> properties)
         {
             // join query's key and value with =, and join all query with &, ignore the last &
             string queryStr = "";
@@ -311,6 +317,7 @@ namespace GravityEngine
             {
                 properties = new Dictionary<string, object>();
             }
+
             properties.Add("$url_query", queryStr);
             properties.Add("$scene", "" + scene);
             Track(eventName, properties);
@@ -332,7 +339,8 @@ namespace GravityEngine
         /// </summary>
         /// <param name="query"></param>
         /// <param name="scene"></param>
-        public static void TrackMPShow(Dictionary<string, string> query, string scene, Dictionary<string, object> properties)
+        public static void TrackMPShow(Dictionary<string, string> query, string scene,
+            Dictionary<string, object> properties)
         {
             TrackMPEvent(GravitySDKConstant.MP_SHOW, query, scene, properties);
             // $MPHide开始计时
@@ -346,7 +354,7 @@ namespace GravityEngine
         {
             Track(GravitySDKConstant.MP_HIDE, properties);
         }
-        
+
         /// <summary>
         /// 上报微信小游戏分享事件 MPShare
         /// </summary>
@@ -354,7 +362,7 @@ namespace GravityEngine
         {
             Track(GravitySDKConstant.MP_SHARE, properties);
         }
-        
+
         /// <summary>
         /// 上报微信小游戏添加收藏事件 MPAddFavorites
         /// </summary>
@@ -362,7 +370,7 @@ namespace GravityEngine
         {
             Track(GravitySDKConstant.MP_ADD_FAVORITES, properties);
         }
-        
+
         /// <summary>
         /// 上报微信小游戏付费事件 PayEvent
         /// </summary>
@@ -384,7 +392,7 @@ namespace GravityEngine
             });
             Flush();
         }
-        
+
         /// <summary>
         /// 上报微信小游戏广告观看事件 AdShow
         /// </summary>
@@ -413,7 +421,7 @@ namespace GravityEngine
         {
             Track("$MPLogin");
         }
-        
+
         /// <summary>
         /// 上报微信小游戏退出登录事件 $MPLogout
         /// </summary>
@@ -426,10 +434,9 @@ namespace GravityEngine
         /// track 简单事件. 该事件会先缓存在本地，达到触发上报条件或者主动调用 Flush 时会上报到服务器.
         /// </summary>
         /// <param name="eventName">事件名称</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void Track(string eventName, string appId = "")
+        public static void Track(string eventName)
         {
-            Track(eventName, null, appId);
+            Track(eventName, null);
         }
 
         /// <summary>
@@ -437,24 +444,24 @@ namespace GravityEngine
         /// </summary>
         /// <param name="eventName">事件名称</param>
         /// <param name="properties">Properties</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void Track(string eventName, Dictionary<string, object> properties, string appId = "")
+        public static void Track(string eventName, Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.Track(eventName, properties, appId);
+                GravityEngineWrapper.Track(eventName, properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { eventName, properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {eventName, properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
-        
+
         /// <summary>
         /// track 事件及事件属性，并指定 $event_time #zone_offset 属性. 该事件会先缓存在本地，达到触发上报条件或者主动调用 Flush 时会上报到服务器.
         /// </summary>
@@ -462,20 +469,21 @@ namespace GravityEngine
         /// <param name="properties">事件属性</param>
         /// <param name="date">事件时间</param>
         /// <param name="timeZone">事件时区</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void Track(string eventName, Dictionary<string, object> properties, DateTime date, TimeZoneInfo timeZone, string appId = "")
+        public static void Track(string eventName, Dictionary<string, object> properties, DateTime date,
+            TimeZoneInfo timeZone)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.Track(eventName, properties, date, timeZone, appId);
+                GravityEngineWrapper.Track(eventName, properties, date, timeZone);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { eventName, properties, date, timeZone, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {eventName, properties, date, timeZone};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -483,20 +491,20 @@ namespace GravityEngine
         /// <summary>
         /// 主动触发上报缓存事件到服务器. 
         /// </summary>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void Flush(string appId = "")
+        public static void Flush()
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.Flush(appId);
+                GravityEngineWrapper.Flush();
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] { };
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -508,9 +516,10 @@ namespace GravityEngine
         /// <param name="mode">场景加载模式</param>
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Dictionary<string, object> properties = new Dictionary<string, object>() {
-                { "$scene_name", scene.name },
-                { "$scene_path", scene.path }
+            Dictionary<string, object> properties = new Dictionary<string, object>()
+            {
+                {"$scene_name", scene.name},
+                {"$scene_path", scene.path}
             };
             Track("$SceneLoaded", properties, DateTime.Now, null);
             TimeEvent("$SceneUnloaded");
@@ -522,9 +531,10 @@ namespace GravityEngine
         /// <param name="scene">场景对象</param>
         public static void OnSceneUnloaded(Scene scene)
         {
-            Dictionary<string, object> properties = new Dictionary<string, object>() {
-                { "$scene_name", scene.name },
-                { "$scene_path", scene.path }
+            Dictionary<string, object> properties = new Dictionary<string, object>()
+            {
+                {"$scene_name", scene.name},
+                {"$scene_path", scene.path}
             };
             Track("$SceneUnloaded", properties, DateTime.Now, null);
         }
@@ -533,20 +543,20 @@ namespace GravityEngine
         /// 设置公共事件属性. 公共事件属性指的就是每个事件都会带有的属性.
         /// </summary>
         /// <param name="superProperties">公共事件属性</param>
-        /// <param name="appId">项目 ID（可选）</param>
-        public static void SetSuperProperties(Dictionary<string, object> superProperties, string appId = "")
+        public static void SetSuperProperties(Dictionary<string, object> superProperties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.SetSuperProperties(superProperties, appId);
+                GravityEngineWrapper.SetSuperProperties(superProperties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { superProperties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {superProperties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -555,20 +565,20 @@ namespace GravityEngine
         /// 删除某个公共事件属性.
         /// </summary>
         /// <param name="property">属性名称</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UnsetSuperProperty(string property, string appId  = "")
+        public static void UnsetSuperProperty(string property)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UnsetSuperProperty(property, appId);
+                GravityEngineWrapper.UnsetSuperProperty(property);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { property, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {property};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -577,33 +587,33 @@ namespace GravityEngine
         /// 返回当前公共事件属性.
         /// </summary>
         /// <returns>公共事件属性</returns>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static Dictionary<string, object> GetSuperProperties(string appId = "")
+        public static Dictionary<string, object> GetSuperProperties()
         {
             if (tracking_enabled)
             {
-                return GravityEngineWrapper.GetSuperProperties(appId);
+                return GravityEngineWrapper.GetSuperProperties();
             }
+
             return null;
         }
 
         /// <summary>
         /// 清空公共事件属性.
         /// </summary>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void ClearSuperProperties(string appId = "")
+        public static void ClearSuperProperties()
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.ClearSuperProperty(appId);
+                GravityEngineWrapper.ClearSuperProperty();
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] { };
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -612,20 +622,20 @@ namespace GravityEngine
         /// Sets the dynamic super properties.
         /// </summary>
         /// <param name="dynamicSuperProperties">Dynamic super properties interface.</param>
-        /// <param name="appId">App ID (optional).</param>
-        public static void SetDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties, string appId = "")
+        public static void SetDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.SetDynamicSuperProperties(dynamicSuperProperties, appId);
+                GravityEngineWrapper.SetDynamicSuperProperties(dynamicSuperProperties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { dynamicSuperProperties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {dynamicSuperProperties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -634,42 +644,42 @@ namespace GravityEngine
         /// 记录事件时长. 调用 TimeEvent 为某事件开始计时，当 track 传该事件时，SDK 会在在事件属性中加入 #duration 这一属性来表示事件时长，单位为秒.
         /// </summary>
         /// <param name="eventName">事件名称</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void TimeEvent(string eventName, string appId = "")
+        public static void TimeEvent(string eventName)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.TimeEvent(eventName, appId);
+                GravityEngineWrapper.TimeEvent(eventName);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { eventName, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {eventName};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
-        
+
         /// <summary>
         /// 设置用户属性. 该接口上传的属性将会覆盖原有的属性值.
         /// </summary>
         /// <param name="properties">用户属性</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserSet(Dictionary<string, object> properties, string appId = "")
+        public static void UserSet(Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserSet(properties, appId);
+                GravityEngineWrapper.UserSet(properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -679,20 +689,20 @@ namespace GravityEngine
         /// </summary>
         /// <param name="properties">用户属性</param>
         /// <param name="dateTime">用户属性设置的时间</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserSet(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserSet(Dictionary<string, object> properties, DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserSet(properties, dateTime, appId);
+                GravityEngineWrapper.UserSet(properties, dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties , dateTime, appId};
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties, dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -701,12 +711,11 @@ namespace GravityEngine
         /// 重置一个用户属性.
         /// </summary>
         /// <param name="property">用户属性名称</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserUnset(string property, string appId = "")
+        public static void UserUnset(string property)
         {
             List<string> properties = new List<string>();
             properties.Add(property);
-            UserUnset(properties, appId);
+            UserUnset(properties);
         }
 
 
@@ -714,23 +723,22 @@ namespace GravityEngine
         /// 重置一组用户属性
         /// </summary>
         /// <param name="properties">用户属性列表</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserUnset(List<string> properties, string appId = "")
+        public static void UserUnset(List<string> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserUnset(properties, appId);
+                GravityEngineWrapper.UserUnset(properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
-
         }
 
         /// <summary>
@@ -738,20 +746,20 @@ namespace GravityEngine
         /// </summary>
         /// <param name="properties">用户属性列表</param>
         /// <param name="dateTime">操作时间</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserUnset(List<string> properties, DateTime dateTime, string appId = "")
+        public static void UserUnset(List<string> properties, DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserUnset(properties, dateTime, appId);
+                GravityEngineWrapper.UserUnset(properties, dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, dateTime, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties, dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -760,23 +768,22 @@ namespace GravityEngine
         /// 设置用户属性. 当该属性之前已经有值的时候，将会忽略这条信息.
         /// </summary>
         /// <param name="properties">用户属性</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserSetOnce(Dictionary<string, object> properties, string appId = "")
+        public static void UserSetOnce(Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserSetOnce(properties, appId);
+                GravityEngineWrapper.UserSetOnce(properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
-
         }
 
         /// <summary>
@@ -784,23 +791,22 @@ namespace GravityEngine
         /// </summary>
         /// <param name="properties">用户属性</param>
         /// <param name="dateTime">操作时间</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserSetOnce(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserSetOnce(Dictionary<string, object> properties, DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserSetOnce(properties, dateTime, appId);
+                GravityEngineWrapper.UserSetOnce(properties, dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, dateTime,appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties, dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
-
         }
 
         /// <summary>
@@ -808,34 +814,33 @@ namespace GravityEngine
         /// </summary>
         /// <param name="property">属性名称</param>
         /// <param name="value">数值</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserAdd(string property, object value, string appId = "")
+        public static void UserAdd(string property, object value)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>()
             {
-                { property, value }
+                {property, value}
             };
-            UserAdd(properties, appId);
+            UserAdd(properties);
         }
 
         /// <summary>
         /// 对数值类用户属性进行累加. 如果属性还未被设置，则会赋值 0 后再进行计算.
         /// </summary>
         /// <param name="properties">用户属性</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserAdd(Dictionary<string, object> properties, string appId = "")
+        public static void UserAdd(Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserAdd(properties, appId);
+                GravityEngineWrapper.UserAdd(properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -845,57 +850,56 @@ namespace GravityEngine
         /// </summary>
         /// <param name="properties">用户属性</param>
         /// <param name="dateTime">操作时间</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserAdd(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserAdd(Dictionary<string, object> properties, DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserAdd(properties, dateTime, appId);
+                GravityEngineWrapper.UserAdd(properties, dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, dateTime, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties, dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
-        
+
         /// <summary>
         /// 对数值类用户属性取最小值. 如果属性还未被设置，则会赋值 0 后再进行计算.
         /// </summary>
         /// <param name="property">属性名称</param>
         /// <param name="value">数值</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserNumberMin(string property, object value, string appId = "")
+        public static void UserNumberMin(string property, object value)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>()
             {
-                { property, value }
+                {property, value}
             };
-            UserNumberMin(properties, appId);
+            UserNumberMin(properties);
         }
-        
+
         /// <summary>
         /// 对数值类用户属性取最小值. 如果属性还未被设置，则会赋值 0 后再进行计算.
         /// </summary>
         /// <param name="properties">用户属性</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserNumberMin(Dictionary<string, object> properties, string appId = "")
+        public static void UserNumberMin(Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserNumberMin(properties, appId);
+                GravityEngineWrapper.UserNumberMin(properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -905,57 +909,56 @@ namespace GravityEngine
         /// </summary>
         /// <param name="properties">用户属性</param>
         /// <param name="dateTime">操作时间</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserNumberMin(properties, dateTime, appId);
+                GravityEngineWrapper.UserNumberMin(properties, dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, dateTime, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties, dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
-        
+
         /// <summary>
         /// 对数值类用户属性取最大值. 如果属性还未被设置，则会赋值 0 后再进行计算.
         /// </summary>
         /// <param name="property">属性名称</param>
         /// <param name="value">数值</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserNumberMax(string property, object value, string appId = "")
+        public static void UserNumberMax(string property, object value)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>()
             {
-                { property, value }
+                {property, value}
             };
-            UserNumberMax(properties, appId);
+            UserNumberMax(properties);
         }
-        
+
         /// <summary>
         /// 对数值类用户属性取最大值. 如果属性还未被设置，则会赋值 0 后再进行计算.
         /// </summary>
         /// <param name="properties">用户属性</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserNumberMax(Dictionary<string, object> properties, string appId = "")
+        public static void UserNumberMax(Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserNumberMax(properties, appId);
+                GravityEngineWrapper.UserNumberMax(properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -965,20 +968,20 @@ namespace GravityEngine
         /// </summary>
         /// <param name="properties">用户属性</param>
         /// <param name="dateTime">操作时间</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserNumberMax(properties, dateTime, appId);
+                GravityEngineWrapper.UserNumberMax(properties, dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, dateTime, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties, dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -987,20 +990,20 @@ namespace GravityEngine
         /// 对 List 类型的用户属性进行追加.
         /// </summary>
         /// <param name="properties">用户属性</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserAppend(Dictionary<string, object> properties, string appId = "")
+        public static void UserAppend(Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserAppend(properties, appId);
+                GravityEngineWrapper.UserAppend(properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1010,20 +1013,20 @@ namespace GravityEngine
         /// </summary>
         /// <param name="properties">用户属性</param>
         /// <param name="dateTime">操作时间</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserAppend(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserAppend(Dictionary<string, object> properties, DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserAppend(properties, dateTime, appId);
+                GravityEngineWrapper.UserAppend(properties, dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, dateTime, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties, dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1032,20 +1035,20 @@ namespace GravityEngine
         /// 对 List 类型的用户属性进行去重追加.
         /// </summary>
         /// <param name="properties">用户属性</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserUniqAppend(Dictionary<string, object> properties, string appId = "")
+        public static void UserUniqAppend(Dictionary<string, object> properties)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserUniqAppend(properties, appId);
+                GravityEngineWrapper.UserUniqAppend(properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1055,20 +1058,20 @@ namespace GravityEngine
         /// </summary>
         /// <param name="properties">用户属性</param>
         /// <param name="dateTime">操作时间</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserUniqAppend(properties, dateTime, appId);
+                GravityEngineWrapper.UserUniqAppend(properties, dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { properties, dateTime, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {properties, dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1076,20 +1079,20 @@ namespace GravityEngine
         /// <summary>
         /// 删除用户数据. 之后再查询该名用户的用户属性，将为空字典，但该用户产生的事件仍然可以被查询到
         /// </summary>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserDelete(string appId = "")
+        public static void UserDelete()
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserDelete(appId);
+                GravityEngineWrapper.UserDelete();
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] { };
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1097,20 +1100,20 @@ namespace GravityEngine
         /// <summary>
         /// 删除用户数据并指定操作时间.
         /// </summary>
-        /// <param name="appId">项目 ID(可选)</param>
-        public static void UserDelete(DateTime dateTime, string appId = "")
+        public static void UserDelete(DateTime dateTime)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.UserDelete(dateTime, appId);
+                GravityEngineWrapper.UserDelete(dateTime);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { dateTime, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {dateTime};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1119,8 +1122,7 @@ namespace GravityEngine
         /// 设置允许上报数据到服务器的网络类型.（只支持Android/iOS）暂时不支持
         /// </summary>
         /// <param name="networkType">网络类型</param>
-        /// <param name="appId">项目 ID(可选)</param>
-        private static void SetNetworkType(NetworkType networkType, string appId =  "")
+        private static void SetNetworkType(NetworkType networkType)
         {
             if (tracking_enabled)
             {
@@ -1129,10 +1131,11 @@ namespace GravityEngine
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { networkType, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {networkType};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1146,7 +1149,8 @@ namespace GravityEngine
             if (tracking_enabled)
             {
                 return GravityEngineWrapper.GetDeviceId();
-            } 
+            }
+
             return null;
         }
 
@@ -1154,20 +1158,20 @@ namespace GravityEngine
         /// 设置数据上报状态
         /// </summary>
         /// <param name="status">上报状态，详见 GE_TRACK_STATUS 定义</param>
-        /// <param name="appId">项目ID</param>
-        public static void SetTrackStatus(GE_TRACK_STATUS status, string appId = "")
+        public static void SetTrackStatus(GE_TRACK_STATUS status)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.SetTrackStatus(status, appId);
+                GravityEngineWrapper.SetTrackStatus(status);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { status, appId };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {status};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1199,20 +1203,21 @@ namespace GravityEngine
         /// </summary>
         /// <param name="shareType">三方系统类型</param>
         /// <param name="properties">三方系统自定义属性（部分系统自定义属性的设置是覆盖式更新，所以需要将自定义属性传入引力 SDK，此属性将会与引力账号体系一并传入三方系统）</param>
-        /// <param name="appId">项目 ID</param>
-        private static void EnableThirdPartySharing(GEThirdPartyShareType shareType, Dictionary<string, object> properties = null, string appId = "")
+        private static void EnableThirdPartySharing(GEThirdPartyShareType shareType,
+            Dictionary<string, object> properties = null)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.EnableThirdPartySharing(shareType, properties, appId);
+                GravityEngineWrapper.EnableThirdPartySharing(shareType, properties);
             }
             else
             {
                 System.Reflection.MethodBase method = System.Reflection.MethodBase.GetCurrentMethod();
-                object[] parameters = new object[] { shareType };
-                eventCaches.Add(new Dictionary<string, object>() {
-                    { "method", method},
-                    { "parameters", parameters}
+                object[] parameters = new object[] {shareType};
+                eventCaches.Add(new Dictionary<string, object>()
+                {
+                    {"method", method},
+                    {"parameters", parameters}
                 });
             }
         }
@@ -1230,17 +1235,17 @@ namespace GravityEngine
         /// <summary>
         /// 手动初始化 Gravity Engine SDK
         /// </summary>
-        /// <param name="appId">项目ID</param>
         /// <param name="accessToken">项目token</param>
         /// <param name="clientId">用户唯一ID</param>
         /// <param name="mode">SDK运行模式</param>
         /// <param name="channel">用户渠道（选填）</param>
         /// <param name="aesKey">原生平台AES秘钥，目前只有Android平台需要填写</param>
-        public static void StartGravityEngine(string appId, string accessToken, string clientId, SDKRunMode mode, string channel="base_channel", string aesKey="")
+        public static void StartGravityEngine(string accessToken, string clientId, SDKRunMode mode,
+            string channel = "base_channel", string aesKey = "")
         {
             GravityEngineAPI.SDKTimeZone timeZone = GravityEngineAPI.SDKTimeZone.Local;
             GravityEngineAPI.Token token =
-                new GravityEngineAPI.Token(appId, accessToken, clientId, channel, aesKey, mode, timeZone);
+                new GravityEngineAPI.Token(accessToken, clientId, channel, aesKey, mode, timeZone);
             GravityEngineAPI.Token[] tokens = new GravityEngineAPI.Token[1];
             tokens[0] = token;
             GravityEngineAPI.StartGravityEngine(tokens);
@@ -1295,23 +1300,21 @@ namespace GravityEngine
                 {
                     tokens = _sGravityEngineAPI.tokens;
                 }
+
                 try
                 {
                     for (int i = 0; i < tokens.Length; i++)
                     {
                         Token token = tokens[i];
-                        if (!string.IsNullOrEmpty(token.appid))
-                        {
-                            token.appid = token.appid.Replace(" ", "");
-                            GE_Log.EnableLog(token.mode == SDKRunMode.DEBUG);
-                            GravityEngineWrapper.EnableLog(token.mode == SDKRunMode.DEBUG);
-                            
-                            GE_Log.d("GravityEngine start with APPID 2: " + token.appid + ", SERVER_URL: " + GravitySDKConstant.SERVER_URL + ", MODE: " + token.mode);
-                            
-                            Turbo.InitSDK(token.accessToken, token.clientId, token.channel);
-                            GravityEngineWrapper.ShareInstance(token, _sGravityEngineAPI);
-                            GravityEngineWrapper.SetNetworkType(_sGravityEngineAPI.networkType);
-                        }
+                        GE_Log.EnableLog(token.mode == SDKRunMode.DEBUG);
+                        GravityEngineWrapper.EnableLog(token.mode == SDKRunMode.DEBUG);
+
+                        GE_Log.d("GravityEngine start with SERVER_URL: " + GravitySDKConstant.SERVER_URL +
+                                 ", MODE: " + token.mode);
+
+                        Turbo.InitSDK(token.accessToken, token.clientId, token.channel);
+                        GravityEngineWrapper.ShareInstance(token, _sGravityEngineAPI);
+                        GravityEngineWrapper.SetNetworkType(_sGravityEngineAPI.networkType);
                     }
                 }
                 catch
@@ -1352,7 +1355,8 @@ namespace GravityEngine
         /// <param name="wxUnionId"></param>        微信union id（微信小程序和小游戏选填）
         /// <param name="actionResult"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
+        public static void Register(string name, int version, string wxOpenId, string wxUnionId,
+            IRegisterCallback registerCallback)
         {
             GravityEngineWrapper.Register(name, version, wxOpenId, wxUnionId, registerCallback);
         }
@@ -1365,6 +1369,7 @@ namespace GravityEngine
         #endregion
 
         #region internal
+
         private static void FlushEventCaches()
         {
             List<Dictionary<string, object>> tmpEventCaches = new List<Dictionary<string, object>>(eventCaches);
@@ -1373,8 +1378,8 @@ namespace GravityEngine
             {
                 if (eventCache.ContainsKey("method") && eventCache.ContainsKey("parameters"))
                 {
-                    System.Reflection.MethodBase method = (System.Reflection.MethodBase)eventCache["method"];
-                    object[] parameters = (object[])eventCache["parameters"];
+                    System.Reflection.MethodBase method = (System.Reflection.MethodBase) eventCache["method"];
+                    object[] parameters = (object[]) eventCache["parameters"];
                     method.Invoke(null, parameters);
                 }
             }
@@ -1386,14 +1391,14 @@ namespace GravityEngine
             {
                 _sGravityEngineAPI = this;
                 DontDestroyOnLoad(gameObject);
-            } 
+            }
             else
             {
                 Destroy(gameObject);
                 return;
             }
 
-            if (this.startManually == false) 
+            if (this.startManually == false)
             {
                 GravityEngineAPI.StartGravityEngine();
             }
@@ -1415,6 +1420,7 @@ namespace GravityEngine
         private static GravityEngineAPI _sGravityEngineAPI;
         private static bool tracking_enabled = false;
         private static List<Dictionary<string, object>> eventCaches = new List<Dictionary<string, object>>();
+
         #endregion
     }
 }

@@ -123,14 +123,6 @@ namespace GravitySDK.PC.Main
             // 挂在采集器，开启App的自动采集
             GameObject mGravitySDKAutoTrack = new GameObject("GravitySDKAutoTrack", typeof(GravitySDKAutoTrack));
             this.mAutoTrack = (GravitySDKAutoTrack) mGravitySDKAutoTrack.GetComponent(typeof(GravitySDKAutoTrack));
-            if (!string.IsNullOrEmpty(instanceName))
-            {
-                this.mAutoTrack.SetAppId(instanceName);
-            }
-            else
-            {
-                this.mAutoTrack.SetAppId(this.mAppid);
-            }
             UnityEngine.Object.DontDestroyOnLoad(mGravitySDKAutoTrack);
 
 #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
@@ -140,11 +132,7 @@ namespace GravitySDK.PC.Main
             UnityEngine.Object.DontDestroyOnLoad(mWechatGameAutoTrackObj);
 #endif
         }
-        public static GravitySDKInstance CreateLightInstance()
-        {
-            GravitySDKInstance lightInstance = new LightGravitySDKInstance(mCurrentInstance.mAppid, mCurrentInstance.mServer, mCurrentInstance.mConfig, sMono);
-            return lightInstance;
-        }
+        
         public GravitySDKTimeInter GetTime(DateTime dateTime)
         {
             GravitySDKTimeInter time = null;

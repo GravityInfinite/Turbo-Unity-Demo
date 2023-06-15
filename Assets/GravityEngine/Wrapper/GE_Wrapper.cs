@@ -42,40 +42,40 @@ namespace GravityEngine.Wrapper
             setVersionInfo("Unity", version);
         }
 
-        public static void Identify(string uniqueId, string appId)
+        public static void Identify(string uniqueId)
         {
-            identify(uniqueId, appId);
+            identify(uniqueId);
         }
 
-        public static string GetDistinctId(string appId)
+        public static string GetDistinctId()
         {
-            return getDistinctId(appId);
+            return getDistinctId();
         }
 
-        public static void Login(string accountId, string appId)
+        public static void Login(string accountId)
         {
-            login(accountId, appId);
+            login(accountId);
         }
 
-        public static void Logout(string appId)
+        public static void Logout()
         {
-            logout(appId);
+            logout();
         }
 
-        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties, string appId)
+        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
-            enableAutoTrack(events, serilize(properties), appId);
+            enableAutoTrack(events, serilize(properties));
         }
 
-        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback eventCallback, string appId)
+        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback eventCallback)
         {
             mAutoTrackEventCallback = eventCallback;
-            enableAutoTrack(events, eventCallback, appId);
+            enableAutoTrack(events, eventCallback);
         }
 
-        public static void SetAutoTrackProperties(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties, string appId)
+        public static void SetAutoTrackProperties(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
-            setAutoTrackProperties(events, serilize(properties), appId);
+            setAutoTrackProperties(events, serilize(properties));
         }
 
         private static string getFinalEventProperties(Dictionary<string, object> properties)
@@ -95,162 +95,162 @@ namespace GravityEngine.Wrapper
             }
 
         }
-        public static void Track(string eventName, Dictionary<string, object> properties, string appId)
+        public static void Track(string eventName, Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckString(eventName);
-            track(eventName, getFinalEventProperties(properties), appId);
+            track(eventName, getFinalEventProperties(properties));
         }
 
-        public static void Track(string eventName, Dictionary<string, object> properties, DateTime datetime, string appId)
+        public static void Track(string eventName, Dictionary<string, object> properties, DateTime datetime)
         {
             GE_PropertiesChecker.CheckString(eventName);
-            track(eventName, getFinalEventProperties(properties), datetime, appId);
+            track(eventName, getFinalEventProperties(properties), datetime);
         }
 
-        public static void Track(string eventName, Dictionary<string, object> properties, DateTime datetime, TimeZoneInfo timeZone, string appId)
+        public static void Track(string eventName, Dictionary<string, object> properties, DateTime datetime, TimeZoneInfo timeZone)
         {
             GE_PropertiesChecker.CheckString(eventName);
-            track(eventName, getFinalEventProperties(properties), datetime, timeZone, appId);
+            track(eventName, getFinalEventProperties(properties), datetime, timeZone);
         }
 
-        public static void SetSuperProperties(Dictionary<string, object> superProperties, string appId)
+        public static void SetSuperProperties(Dictionary<string, object> superProperties)
         {
             GE_PropertiesChecker.CheckProperties(superProperties);
-            setSuperProperties(serilize(superProperties), appId);
+            setSuperProperties(serilize(superProperties));
         }
 
-        public static void UnsetSuperProperty(string superPropertyName, string appId)
+        public static void UnsetSuperProperty(string superPropertyName)
         {
             GE_PropertiesChecker.CheckString(superPropertyName);
-            unsetSuperProperty(superPropertyName, appId);
+            unsetSuperProperty(superPropertyName);
         }
 
-        public static void ClearSuperProperty(string appId)
+        public static void ClearSuperProperty()
         {
-            clearSuperProperty(appId);
+            clearSuperProperty();
         }
 
 
-        public static void TimeEvent(string eventName, string appId)
+        public static void TimeEvent(string eventName)
         {
             GE_PropertiesChecker.CheckString(eventName);
-            timeEvent(eventName, appId);
+            timeEvent(eventName);
         }
 
-        public static Dictionary<string, object> GetSuperProperties(string appId)
+        public static Dictionary<string, object> GetSuperProperties()
         {
-            return getSuperProperties(appId);
+            return getSuperProperties();
         }
 
-        public static void UserSet(Dictionary<string, object> properties, string appId)
-        {
-            GE_PropertiesChecker.CheckProperties(properties);
-            userSet(serilize(properties), appId);
-        }
-
-        public static void UserSet(Dictionary<string, object> properties, DateTime dateTime, string appId)
+        public static void UserSet(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userSet(serilize(properties), dateTime, appId);
+            userSet(serilize(properties));
         }
 
-        public static void UserSetOnce(Dictionary<string, object> properties, string appId)
+        public static void UserSet(Dictionary<string, object> properties, DateTime dateTime)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userSetOnce(serilize(properties), appId);
+            userSet(serilize(properties), dateTime);
         }
 
-        public static void UserSetOnce(Dictionary<string, object> properties, DateTime dateTime, string appId)
+        public static void UserSetOnce(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userSetOnce(serilize(properties), dateTime, appId);
+            userSetOnce(serilize(properties));
         }
 
-        public static void UserUnset(List<string> properties, string appId)
+        public static void UserSetOnce(Dictionary<string, object> properties, DateTime dateTime)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userUnset(properties, appId);
+            userSetOnce(serilize(properties), dateTime);
         }
 
-        public static void UserUnset(List<string> properties, DateTime dateTime, string appId)
+        public static void UserUnset(List<string> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userUnset(properties, dateTime, appId);
+            userUnset(properties);
         }
 
-        public static void UserAdd(Dictionary<string, object> properties, string appId)
+        public static void UserUnset(List<string> properties, DateTime dateTime)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userAdd(serilize(properties), appId);
+            userUnset(properties, dateTime);
         }
 
-        public static void UserAdd(Dictionary<string, object> properties, DateTime dateTime, string appId)
+        public static void UserAdd(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userAdd(serilize(properties), dateTime, appId);
+            userAdd(serilize(properties));
+        }
+
+        public static void UserAdd(Dictionary<string, object> properties, DateTime dateTime)
+        {
+            GE_PropertiesChecker.CheckProperties(properties);
+            userAdd(serilize(properties), dateTime);
         }
         
-        public static void UserNumberMin(Dictionary<string, object> properties, string appId)
+        public static void UserNumberMin(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userNumberMin(serilize(properties), appId);
+            userNumberMin(serilize(properties));
         }
 
-        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime, string appId)
+        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userNumberMin(serilize(properties), dateTime, appId);
+            userNumberMin(serilize(properties), dateTime);
         }
         
-        public static void UserNumberMax(Dictionary<string, object> properties, string appId)
+        public static void UserNumberMax(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userNumberMax(serilize(properties), appId);
+            userNumberMax(serilize(properties));
         }
 
-        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime, string appId)
+        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userNumberMax(serilize(properties), dateTime, appId);
+            userNumberMax(serilize(properties), dateTime);
         }
 
-        public static void UserAppend(Dictionary<string, object> properties, string appId)
+        public static void UserAppend(Dictionary<string, object> properties)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userAppend(serilize(properties), appId);
+            userAppend(serilize(properties));
         }
 
-        public static void UserAppend(Dictionary<string, object> properties, DateTime dateTime, string appId)
+        public static void UserAppend(Dictionary<string, object> properties, DateTime dateTime)
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userAppend(serilize(properties), dateTime, appId);
+            userAppend(serilize(properties), dateTime);
         }
 
-        public static void UserUniqAppend(Dictionary<string, object> properties, string appId) 
+        public static void UserUniqAppend(Dictionary<string, object> properties) 
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userUniqAppend(serilize(properties), appId);
+            userUniqAppend(serilize(properties));
         }
 
-        public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime, string appId) 
+        public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime) 
         {
             GE_PropertiesChecker.CheckProperties(properties);
-            userUniqAppend(serilize(properties), dateTime, appId);
+            userUniqAppend(serilize(properties), dateTime);
         }
 
-        public static void UserDelete(string appId)
+        public static void UserDelete()
         {
-            userDelete(appId);
+            userDelete();
         }
 
-        public static void UserDelete(DateTime dateTime, string appId)
+        public static void UserDelete(DateTime dateTime)
         {
-            userDelete(dateTime, appId);
+            userDelete(dateTime);
         }
 
-        public static void Flush(string appId)
+        public static void Flush()
         {
-            flush(appId);
+            flush();
         }
 
         public static void SetNetworkType(GravityEngineAPI.NetworkType networkType)
@@ -263,19 +263,19 @@ namespace GravityEngine.Wrapper
             return getDeviceId();
         }
 
-        public static void SetDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties, string appId)
+        public static void SetDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties)
         {
             if (!GE_PropertiesChecker.CheckProperties(dynamicSuperProperties.GetDynamicSuperProperties()))
             {
-                GE_Log.d("GE.Wrapper(" + appId + ") - Cannot set dynamic super properties due to invalid properties.");
+                GE_Log.d("GE.Wrapper - Cannot set dynamic super properties due to invalid properties.");
             }
             mDynamicSuperProperties = dynamicSuperProperties;
-            setDynamicSuperProperties(dynamicSuperProperties, appId);
+            setDynamicSuperProperties(dynamicSuperProperties);
         }
 
-        public static void SetTrackStatus(GE_TRACK_STATUS status, string appId)
+        public static void SetTrackStatus(GE_TRACK_STATUS status)
         {
-            setTrackStatus(status, appId);
+            setTrackStatus(status);
         }
 
         public static void CalibrateTime(long timestamp)
@@ -288,10 +288,10 @@ namespace GravityEngine.Wrapper
             calibrateTimeWithNtp(ntpServer);
         }
 
-        public static void EnableThirdPartySharing(GEThirdPartyShareType shareType, Dictionary<string, object> properties = null, string appId = "")
+        public static void EnableThirdPartySharing(GEThirdPartyShareType shareType, Dictionary<string, object> properties = null)
         {
             if (null == properties) properties = new Dictionary<string, object>();
-            enableThirdPartySharing(shareType, serilize(properties), appId);
+            enableThirdPartySharing(shareType, serilize(properties));
         }
 
         public static void Register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)

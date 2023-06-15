@@ -96,9 +96,9 @@ namespace GravitySDK.PC.Request
 
         abstract public IEnumerator SendData_2(ResponseHandle responseHandle, IList<Dictionary<string, object>> data);
 
-        public static IEnumerator GetWithFORM_2(string url, string appId, Dictionary<string, object> param, ResponseHandle responseHandle)
+        public static IEnumerator GetWithFORM_2(string url, Dictionary<string, object> param, ResponseHandle responseHandle)
         {
-            string uri = url + "?appid=" + appId;
+            string uri = url;
             if (param != null)
             {
                 uri = uri + "&data=" + GravitySDKJSON.Serialize(param);

@@ -18,7 +18,8 @@ namespace GravitySDK.PC.Config
     }
     public class GravitySDKConfig
     {
-        private string mToken;
+        private static readonly object Locker = new object();
+        private static GravitySDKConfig _instance;
         private string mServerUrl;
         private string mNormalUrl;
         private string mConfigUrl;
@@ -28,8 +29,7 @@ namespace GravitySDK.PC.Config
         public int mUploadInterval = 30; // 默认30s刷新一次
         public int mUploadSize = 30;
         private List<string> mDisableEvents = new List<string>();
-        private static Dictionary<string, GravitySDKConfig> sInstances = new Dictionary<string, GravitySDKConfig>();
-        private GravitySDKConfig(string token,string serverUrl, string instanceName)
+        private GravitySDKConfig(string serverUrl, string instanceName)
         {
             //校验 server url
             serverUrl = this.VerifyUrl(serverUrl);
@@ -37,7 +37,6 @@ namespace GravitySDK.PC.Config
             this.mNormalUrl = serverUrl + "/event_center/api/v1/event/collect/?access_token=" +
                               Turbo.GetAccessToken();
             this.mConfigUrl = serverUrl + "/config";
-            this.mToken = token;
             this.mInstanceName = instanceName;
             try
             {
@@ -80,32 +79,14 @@ namespace GravitySDK.PC.Config
         }
         public static GravitySDKConfig GetInstance(string token, string server, string instanceName)
         {
-            GravitySDKConfig config = null;
-            if (!string.IsNullOrEmpty(instanceName))
+            lock (Locker)
             {
-                if (sInstances.ContainsKey(instanceName))
+                if (_instance==null)
                 {
-                    config = sInstances[instanceName];
-                }
-                else
-                {
-                    config = new GravitySDKConfig(token, server, instanceName);
-                    sInstances.Add(instanceName, config);
-                }
+                    _instance = new GravitySDKConfig(server, instanceName ?? token);
+                }    
             }
-            else
-            {
-                if (sInstances.ContainsKey(token))
-                {
-                    config = sInstances[token];
-                }
-                else
-                {
-                    config = new GravitySDKConfig(token, server, null);
-                    sInstances.Add(token, config);
-                }
-            }
-            return config;
+            return _instance;
         }
         public void SetTimeZone(TimeZoneInfo timeZoneInfo)
         {
@@ -168,11 +149,11 @@ namespace GravitySDK.PC.Config
                     callback();
                 }
             };
-            mono.StartCoroutine(this.GetWithFORM(this.mConfigUrl,this.mToken,null,responseHandle));
+            mono.StartCoroutine(this.GetWithFORM(this.mConfigUrl,null,responseHandle));
         }
 
-        private IEnumerator GetWithFORM (string url, string appId, Dictionary<string, object> param, ResponseHandle responseHandle) {
-            yield return GravitySDKBaseRequest.GetWithFORM_2(this.mConfigUrl,this.mToken,param,responseHandle);
+        private IEnumerator GetWithFORM (string url, Dictionary<string, object> param, ResponseHandle responseHandle) {
+            yield return GravitySDKBaseRequest.GetWithFORM_2(this.mConfigUrl, param, responseHandle);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿#if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_IOS_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
-// #if false
+﻿// #if  ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_IOS_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
+#if false
 using System;
 using System.Collections.Generic;
 using GravityEngine.Utils;
@@ -60,29 +60,29 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.Init(token.appid, GravitySDKConstant.SERVER_URL, token.GetInstanceName(), config, sMono);
         }
 
-        private static void identify(string uniqueId, string appId)
+        private static void identify(string uniqueId)
         {
-            GravityPCSDK.Identifiy(uniqueId, appId);
+            GravityPCSDK.Identifiy(uniqueId);
         }
 
-        private static string getDistinctId(string appId)
+        private static string getDistinctId()
         {
-            return GravityPCSDK.DistinctId(appId);
+            return GravityPCSDK.DistinctId();
         }
 
-        private static void login(string accountId, string appId)
+        private static void login(string accountId)
         {
-            GravityPCSDK.Login(accountId, appId);
+            GravityPCSDK.Login(accountId);
         }
 
-        private static void logout(string appId)
+        private static void logout()
         {
-            GravityPCSDK.Logout(appId);
+            GravityPCSDK.Logout();
         }
 
-        private static void flush(string appId)
+        private static void flush()
         {
-           GravityPCSDK.Flush(appId);
+           GravityPCSDK.Flush();
         }
 
         private static void setVersionInfo(string lib_name, string lib_version) {
@@ -90,152 +90,152 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.SetLibVersion(lib_version);
         }
         
-        private static void track(string eventName, string properties, string appId)
+        private static void track(string eventName, string properties)
         {  
             Dictionary<string,object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.Track(eventName,propertiesDic,appId);
+            GravityPCSDK.Track(eventName,propertiesDic);
         }
 
-        private static void track(string eventName, string properties, DateTime dateTime, string appId)
+        private static void track(string eventName, string properties, DateTime dateTime)
         {
             Dictionary<string,object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.Track(eventName,propertiesDic,dateTime,appId);
+            GravityPCSDK.Track(eventName,propertiesDic,dateTime);
         }
 
-        private static void track(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone, string appId)
+        private static void track(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.Track(eventName, propertiesDic, dateTime, timeZone, appId);
+            GravityPCSDK.Track(eventName, propertiesDic, dateTime, timeZone);
         }
 
-        private static void setSuperProperties(string superProperties, string appId)
+        private static void setSuperProperties(string superProperties)
         {
             Dictionary<string, object> superPropertiesDic = GE_MiniJson.Deserialize(superProperties);
-            GravityPCSDK.SetSuperProperties(superPropertiesDic,appId);
+            GravityPCSDK.SetSuperProperties(superPropertiesDic);
         }
 
-        private static void unsetSuperProperty(string superPropertyName, string appId)
+        private static void unsetSuperProperty(string superPropertyName)
         {
-            GravityPCSDK.UnsetSuperProperty(superPropertyName,appId);
+            GravityPCSDK.UnsetSuperProperty(superPropertyName);
         }
 
-        private static void clearSuperProperty(string appId)
+        private static void clearSuperProperty()
         {
-            GravityPCSDK.ClearSuperProperties(appId);
+            GravityPCSDK.ClearSuperProperties();
         }
 
-        private static Dictionary<string, object> getSuperProperties(string appId)
+        private static Dictionary<string, object> getSuperProperties()
         {
-            return GravityPCSDK.SuperProperties(appId);
+            return GravityPCSDK.SuperProperties();
         }
 
-        private static void timeEvent(string eventName, string appId)
+        private static void timeEvent(string eventName)
         {
-            GravityPCSDK.TimeEvent(eventName,appId);
+            GravityPCSDK.TimeEvent(eventName);
         }
 
-        private static void userSet(string properties, string appId)
-        {
-            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserSet(propertiesDic,appId);
-        }
-
-        private static void userSet(string properties, DateTime dateTime, string appId)
+        private static void userSet(string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserSet(propertiesDic,dateTime,appId);
+            GravityPCSDK.UserSet(propertiesDic);
         }
 
-        private static void userUnset(List<string> properties, string appId)
-        {
-            GravityPCSDK.UserUnset(properties,appId);
-        }
-
-        private static void userUnset(List<string> properties, DateTime dateTime, string appId)
-        {
-            GravityPCSDK.UserUnset(properties,dateTime,appId);
-        }
-
-        private static void userSetOnce(string properties, string appId)
+        private static void userSet(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserSetOnce(propertiesDic, appId);
+            GravityPCSDK.UserSet(propertiesDic,dateTime);
         }
 
-        private static void userSetOnce(string properties, DateTime dateTime, string appId)
+        private static void userUnset(List<string> properties)
         {
-            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserSetOnce(propertiesDic,dateTime,appId);
+            GravityPCSDK.UserUnset(properties);
         }
 
-        private static void userAdd(string properties, string appId)
+        private static void userUnset(List<string> properties, DateTime dateTime)
         {
-            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserAdd(propertiesDic,appId);
+            GravityPCSDK.UserUnset(properties,dateTime);
         }
 
-        private static void userAdd(string properties, DateTime dateTime, string appId)
+        private static void userSetOnce(string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserAdd(propertiesDic,dateTime,appId);
+            GravityPCSDK.UserSetOnce(propertiesDic);
+        }
+
+        private static void userSetOnce(string properties, DateTime dateTime)
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.UserSetOnce(propertiesDic,dateTime);
+        }
+
+        private static void userAdd(string properties)
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.UserAdd(propertiesDic);
+        }
+
+        private static void userAdd(string properties, DateTime dateTime)
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.UserAdd(propertiesDic,dateTime);
         }
         
-        private static void userNumberMin(string properties, string appId)
+        private static void userNumberMin(string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserNumberMin(propertiesDic,appId);
+            GravityPCSDK.UserNumberMin(propertiesDic);
         }
 
-        private static void userNumberMin(string properties, DateTime dateTime, string appId)
+        private static void userNumberMin(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserNumberMin(propertiesDic,dateTime,appId);
+            GravityPCSDK.UserNumberMin(propertiesDic,dateTime);
         }
         
-        private static void userNumberMax(string properties, string appId)
+        private static void userNumberMax(string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserNumberMax(propertiesDic,appId);
+            GravityPCSDK.UserNumberMax(propertiesDic);
         }
 
-        private static void userNumberMax(string properties, DateTime dateTime, string appId)
+        private static void userNumberMax(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserNumberMax(propertiesDic,dateTime,appId);
+            GravityPCSDK.UserNumberMax(propertiesDic,dateTime);
         }
 
-        private static void userDelete(string appId)
+        private static void userDelete()
         {
-            GravityPCSDK.UserDelete(appId);
+            GravityPCSDK.UserDelete();
         }
 
-        private static void userDelete(DateTime dateTime, string appId)
+        private static void userDelete(DateTime dateTime)
         {
-            GravityPCSDK.UserDelete(dateTime,appId);
+            GravityPCSDK.UserDelete(dateTime);
         }
 
-        private static void userAppend(string properties, string appId)
-        {
-            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserAppend(propertiesDic,appId);
-        }
-
-        private static void userAppend(string properties, DateTime dateTime, string appId)
+        private static void userAppend(string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserAppend(propertiesDic,dateTime,appId);
+            GravityPCSDK.UserAppend(propertiesDic);
         }
 
-        private static void userUniqAppend(string properties, string appId)
+        private static void userAppend(string properties, DateTime dateTime)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserUniqAppend(propertiesDic,appId);
+            GravityPCSDK.UserAppend(propertiesDic,dateTime);
         }
 
-        private static void userUniqAppend(string properties, DateTime dateTime, string appId)
+        private static void userUniqAppend(string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
-            GravityPCSDK.UserUniqAppend(propertiesDic,dateTime,appId);
+            GravityPCSDK.UserUniqAppend(propertiesDic);
+        }
+
+        private static void userUniqAppend(string properties, DateTime dateTime)
+        {
+            Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
+            GravityPCSDK.UserUniqAppend(propertiesDic,dateTime);
         }
 
         private static void setNetworkType(GravityEngineAPI.NetworkType networkType)
@@ -248,14 +248,14 @@ namespace GravityEngine.Wrapper
             return GravityPCSDK.GetDeviceId();
         }
 
-        private static void setDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties, string appId)
+        private static void setDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties)
         {
             GravityPCSDK.SetDynamicSuperProperties(new GravityEngineWrapper());
         }
 
-        private static void setTrackStatus(GE_TRACK_STATUS status, string appId)
+        private static void setTrackStatus(GE_TRACK_STATUS status)
         {
-            GravityPCSDK.SetTrackStatus((GE_TRACK_STATUS)status, appId);
+            GravityPCSDK.SetTrackStatus((GE_TRACK_STATUS)status);
         }
 
         private static string getTimeString(DateTime dateTime)
@@ -263,7 +263,7 @@ namespace GravityEngine.Wrapper
             return GravityPCSDK.TimeString(dateTime);
         }
 
-        private static void enableAutoTrack(AUTO_TRACK_EVENTS autoTrackEvents, string properties, string appId)
+        private static void enableAutoTrack(AUTO_TRACK_EVENTS autoTrackEvents, string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
             AUTO_TRACK_EVENTS pcAutoTrackEvents = AUTO_TRACK_EVENTS.NONE;
@@ -302,10 +302,10 @@ namespace GravityEngine.Wrapper
             }
 #endif
             
-            GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, propertiesDic, appId);
+            GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, propertiesDic);
         }
 
-        private static void enableAutoTrack(AUTO_TRACK_EVENTS autoTrackEvents, IAutoTrackEventCallback eventCallback, string appId)
+        private static void enableAutoTrack(AUTO_TRACK_EVENTS autoTrackEvents, IAutoTrackEventCallback eventCallback)
         {
             AUTO_TRACK_EVENTS pcAutoTrackEvents = AUTO_TRACK_EVENTS.NONE;
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_INSTALL) != 0)
@@ -346,24 +346,24 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.EnableAutoTrack(pcAutoTrackEvents, new GravityEngineWrapper());
         }
 
-        private static void setAutoTrackProperties(AUTO_TRACK_EVENTS autoTrackEvents, string properties, string appId)
+        private static void setAutoTrackProperties(AUTO_TRACK_EVENTS autoTrackEvents, string properties)
         {
             Dictionary<string, object> propertiesDic = GE_MiniJson.Deserialize(properties);
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_INSTALL) != 0)
             {
-                GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_INSTALL, propertiesDic, appId);
+                GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_INSTALL, propertiesDic);
             }
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_START) != 0)
             {
-                GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_START, propertiesDic, appId);
+                GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_START, propertiesDic);
             }
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_END) != 0)
             {
-                GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_END, propertiesDic, appId);
+                GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_END, propertiesDic);
             }
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.APP_CRASH) != 0)
             {
-                GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_CRASH, propertiesDic, appId);
+                GravityPCSDK.SetAutoTrackProperties(AUTO_TRACK_EVENTS.APP_CRASH, propertiesDic);
             }
         }
 
@@ -381,9 +381,9 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.CalibrateTimeWithNtp(ntpServer);
         }
 
-        private static void enableThirdPartySharing(GEThirdPartyShareType shareType, string properties, string appId)
+        private static void enableThirdPartySharing(GEThirdPartyShareType shareType, string properties)
         {
-            GravitySDKLogger.Print("Third Party Sharing is not support on PC: " + shareType + ", " + properties + ", "+ appId);
+            GravitySDKLogger.Print("Third Party Sharing is not support on PC: " + shareType + ", " + properties);
         }
 
         private static void register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)
@@ -392,7 +392,7 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.Register(name, version, wxOpenId, wxUnionId, registerCallback);
         }
         
-        public static void getBytedanceEcpmRecords(string wxOpenId, string mpId)
+        private static void getBytedanceEcpmRecords(string wxOpenId, string mpId)
         {
             GravityPCSDK.GetBytedanceEcpmRecords(wxOpenId, mpId);
         }

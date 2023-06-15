@@ -27,257 +27,256 @@ namespace GravitySDK.PC.Main
         {
 
         }
-        private static GravitySDKInstance currentInstance;
+        private static GravitySDKInstance _instance;
+        private static readonly object Locker = new object();
 
-        private static GravitySDKInstance GetInstance(string appId)
+        private static GravitySDKInstance GetInstance()
         {
-            return currentInstance;
+            return _instance;
         }
         
+        // 要早于GetInstance调用
         public static GravitySDKInstance Init(string appId, string server, string instanceName, GravitySDKConfig config = null, MonoBehaviour mono = null)
         {
-            if (currentInstance==null)
+            lock (Locker)
             {
-                currentInstance = new GravitySDKInstance(appId, server, instanceName, config, mono);
+                if (_instance==null)
+                {
+                    _instance = new GravitySDKInstance(appId, server, instanceName, config, mono);
+                }    
             }
-
-            return currentInstance;
+            return _instance;
         }
         /// <summary>
         /// 设置访客ID
         /// </summary>
         /// <param name="distinctID"></param>
-        /// <param name="appId"></param>
-        public static void Identifiy(string distinctID, string appId = "")
+        public static void Identifiy(string distinctID)
         {
-            GetInstance(appId).Identifiy(distinctID);
+            GetInstance().Identifiy(distinctID);
         }
 
         public static GravitySDKTimeInter GetTime(DateTime dateTime)
         {
-            return GetInstance("").GetTime(dateTime);
+            return GetInstance().GetTime(dateTime);
         }
 
         /// <summary>
         /// 获取访客ID
         /// </summary>
-        /// <param name="appId"></param>
         /// <returns></returns>
-        public static string DistinctId(string appId = "")
+        public static string DistinctId()
         {
-            return GetInstance(appId).DistinctId();
+            return GetInstance().DistinctId();
         }
         /// <summary>
         /// 设置账号ID
         /// </summary>
         /// <param name="accountID"></param>
-        /// <param name="appId"></param>
-        public static void Login(string accountID,string appId = "")
+        public static void Login(string accountID)
         {
-            GetInstance(appId).Login(accountID);
+            GetInstance().Login(accountID);
         }
         /// <summary>
         /// 获取账号ID
         /// </summary>
-        /// <param name="appId"></param>
         /// <returns></returns>
-        public static string AccountID(string appId = "")
+        public static string AccountID()
         {
-            return GetInstance(appId).AccountID();
+            return GetInstance().AccountID();
         }
         /// <summary>
         ///清空账号ID
         /// </summary>
-        public static void Logout(string appId = "")
+        public static void Logout()
         {
-            GetInstance(appId).Logout();
+            GetInstance().Logout();
         }
 
         /// <summary>
         /// 设置自动采集事件
         /// </summary>
         /// <param name="events"></param>
-        /// <param name="appId"></param>
-        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties, string appId = "")
+        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
-            GetInstance(appId).EnableAutoTrack(events, properties);
+            GetInstance().EnableAutoTrack(events, properties);
         }
 
-        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback_PC eventCallback, string appId = "")
+        public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback_PC eventCallback)
         {
-            GetInstance(appId).EnableAutoTrack(events, eventCallback);
+            GetInstance().EnableAutoTrack(events, eventCallback);
         }
 
-        public static void SetAutoTrackProperties(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties, string appId = "")
+        public static void SetAutoTrackProperties(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
-            GetInstance(appId).SetAutoTrackProperties(events, properties);
+            GetInstance().SetAutoTrackProperties(events, properties);
         }
 
-        public static void Track(string eventName,string appId = "")
+        public static void Track(string eventName)
         {
-            GetInstance(appId).Track(eventName);
+            GetInstance().Track(eventName);
         }
-        public static void Track(string eventName, Dictionary<string, object> properties, string appId = "")
+        public static void Track(string eventName, Dictionary<string, object> properties)
         {
-            GetInstance(appId).Track(eventName,properties);
+            GetInstance().Track(eventName,properties);
         }
-        public static void Track(string eventName, Dictionary<string, object> properties, DateTime date, string appId = "")
+        public static void Track(string eventName, Dictionary<string, object> properties, DateTime date)
         {
-            GetInstance(appId).Track(eventName, properties, date);
+            GetInstance().Track(eventName, properties, date);
         }
-        public static void Track(string eventName, Dictionary<string, object> properties, DateTime date, TimeZoneInfo timeZone, string appId = "")
+        public static void Track(string eventName, Dictionary<string, object> properties, DateTime date, TimeZoneInfo timeZone)
         {
-            GetInstance(appId).Track(eventName, properties, date, timeZone);
+            GetInstance().Track(eventName, properties, date, timeZone);
         }
-        public static void Track(GravitySDKEventData analyticsEvent,string appId = "")
+        public static void Track(GravitySDKEventData analyticsEvent)
         {
-            GetInstance(appId).Track(analyticsEvent);
-        }
-
-        public static void Flush (string appId = "")
-        {
-            GetInstance(appId).Flush();
-        }
-        public static void FlushImmediately (string appId = "")
-        {
-            GetInstance(appId).FlushImmediately();
-        }
-        public static void SetSuperProperties(Dictionary<string, object> superProperties,string appId = "")
-        {
-            GetInstance(appId).SetSuperProperties(superProperties);
-        }
-        public static void UnsetSuperProperty(string propertyKey, string appId = "")
-        {
-            GetInstance(appId).UnsetSuperProperty(propertyKey);
-        }
-        public static Dictionary<string, object> SuperProperties(string appId="")
-        {
-           return GetInstance(appId).SuperProperties();
+            GetInstance().Track(analyticsEvent);
         }
 
-        public static void ClearSuperProperties(string appId= "")
+        public static void Flush ()
         {
-            GetInstance(appId).ClearSuperProperties();
+            GetInstance().Flush();
+        }
+        public static void FlushImmediately ()
+        {
+            GetInstance().FlushImmediately();
+        }
+        public static void SetSuperProperties(Dictionary<string, object> superProperties)
+        {
+            GetInstance().SetSuperProperties(superProperties);
+        }
+        public static void UnsetSuperProperty(string propertyKey)
+        {
+            GetInstance().UnsetSuperProperty(propertyKey);
+        }
+        public static Dictionary<string, object> SuperProperties()
+        {
+           return GetInstance().SuperProperties();
         }
 
-        public static void TimeEvent(string eventName,string appId="")
+        public static void ClearSuperProperties()
         {
-            GetInstance(appId).TimeEvent(eventName);
+            GetInstance().ClearSuperProperties();
+        }
+
+        public static void TimeEvent(string eventName)
+        {
+            GetInstance().TimeEvent(eventName);
         }
         /// <summary>
         /// 暂停事件的计时
         /// </summary>
         /// <param name="status">暂停状态，ture：暂停计时，false：取消暂停计时</param>
         /// <param name="eventName">事件名称，有值：暂停指定事件计时，无值：暂停全部事件计时</param>
-        public static void PauseTimeEvent(bool status, string eventName = "", string appId = "")
+        public static void PauseTimeEvent(bool status, string eventName = "")
         {
-            GetInstance(appId).PauseTimeEvent(status, eventName);
+            GetInstance().PauseTimeEvent(status, eventName);
         }
-        public static void UserSet(Dictionary<string, object> properties, string appId = "")
+        public static void UserSet(Dictionary<string, object> properties)
         {
-            GetInstance(appId).UserSet(properties);
+            GetInstance().UserSet(properties);
         }
-        public static void UserSet(Dictionary<string, object> properties, DateTime dateTime,string appId = "")
+        public static void UserSet(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance(appId).UserSet(properties, dateTime);
+            GetInstance().UserSet(properties, dateTime);
         }
-        public static void UserUnset(string propertyKey,string appId = "")
+        public static void UserUnset(string propertyKey)
         {
-            GetInstance(appId).UserUnset(propertyKey);
+            GetInstance().UserUnset(propertyKey);
         }
-        public static void UserUnset(string propertyKey, DateTime dateTime,string appId = "")
+        public static void UserUnset(string propertyKey, DateTime dateTime)
         {
-            GetInstance(appId).UserUnset(propertyKey,dateTime);
+            GetInstance().UserUnset(propertyKey,dateTime);
         }
-        public static void UserUnset(List<string> propertyKeys, string appId = "")
+        public static void UserUnset(List<string> propertyKeys)
         {
-            GetInstance(appId).UserUnset(propertyKeys);
+            GetInstance().UserUnset(propertyKeys);
         }
-        public static void UserUnset(List<string> propertyKeys, DateTime dateTime, string appId = "")
+        public static void UserUnset(List<string> propertyKeys, DateTime dateTime)
         {
-            GetInstance(appId).UserUnset(propertyKeys,dateTime);
+            GetInstance().UserUnset(propertyKeys,dateTime);
         }
-        public static void UserSetOnce(Dictionary<string, object> properties,string appId = "")
+        public static void UserSetOnce(Dictionary<string, object> properties)
         {
-            GetInstance(appId).UserSetOnce(properties);
+            GetInstance().UserSetOnce(properties);
         }
-        public static void UserSetOnce(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserSetOnce(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance(appId).UserSetOnce(properties,dateTime);
+            GetInstance().UserSetOnce(properties,dateTime);
         }
-        public static void UserAdd(Dictionary<string, object> properties, string appId = "")
+        public static void UserAdd(Dictionary<string, object> properties)
         {
-            GetInstance(appId).UserAdd(properties);
+            GetInstance().UserAdd(properties);
         }
-        public static void UserAdd(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserAdd(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance(appId).UserAdd(properties,dateTime);
+            GetInstance().UserAdd(properties,dateTime);
         }
-        public static void UserNumberMin(Dictionary<string, object> properties, string appId = "")
+        public static void UserNumberMin(Dictionary<string, object> properties)
         {
-            GetInstance(appId).UserNumberMin(properties);
+            GetInstance().UserNumberMin(properties);
         }
-        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserNumberMin(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance(appId).UserNumberMin(properties,dateTime);
+            GetInstance().UserNumberMin(properties,dateTime);
         }
-        public static void UserNumberMax(Dictionary<string, object> properties, string appId = "")
+        public static void UserNumberMax(Dictionary<string, object> properties)
         {
-            GetInstance(appId).UserNumberMax(properties);
+            GetInstance().UserNumberMax(properties);
         }
-        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserNumberMax(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance(appId).UserNumberMax(properties,dateTime);
+            GetInstance().UserNumberMax(properties,dateTime);
         }
-        public static void UserAppend(Dictionary<string, object> properties, string appId = "")
+        public static void UserAppend(Dictionary<string, object> properties)
         {
-            GetInstance(appId).UserAppend(properties);
+            GetInstance().UserAppend(properties);
         }
-        public static void UserAppend(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserAppend(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance(appId).UserAppend(properties,dateTime);
+            GetInstance().UserAppend(properties,dateTime);
         }
-        public static void UserUniqAppend(Dictionary<string, object> properties, string appId = "")
+        public static void UserUniqAppend(Dictionary<string, object> properties)
         {
-            GetInstance(appId).UserUniqAppend(properties);
+            GetInstance().UserUniqAppend(properties);
         }
-        public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime, string appId = "")
+        public static void UserUniqAppend(Dictionary<string, object> properties, DateTime dateTime)
         {
-            GetInstance(appId).UserUniqAppend(properties,dateTime);
+            GetInstance().UserUniqAppend(properties,dateTime);
         }
-        public static void UserDelete(string appId="")
+        public static void UserDelete()
         {
-            GetInstance(appId).UserDelete();
+            GetInstance().UserDelete();
         }
-        public static void UserDelete(DateTime dateTime,string appId = "")
+        public static void UserDelete(DateTime dateTime)
         {
-            GetInstance(appId).UserDelete(dateTime);
+            GetInstance().UserDelete(dateTime);
         }
-        public static void SetDynamicSuperProperties(IDynamicSuperProperties_PC dynamicSuperProperties, string appId = "")
+        public static void SetDynamicSuperProperties(IDynamicSuperProperties_PC dynamicSuperProperties)
         {
-            GetInstance(appId).SetDynamicSuperProperties(dynamicSuperProperties);
+            GetInstance().SetDynamicSuperProperties(dynamicSuperProperties);
         }
-        public static void SetTrackStatus(GE_TRACK_STATUS status, string appId = "")
+        public static void SetTrackStatus(GE_TRACK_STATUS status)
         {
-            GetInstance(appId).SetTrackStatus(status);
+            GetInstance().SetTrackStatus(status);
         }
         /*
         停止或开启数据上报,默认是开启状态,设置为停止时还会清空本地的访客ID,账号ID,静态公共属性
         其中true表示可以上报数据,false表示停止数据上报
         **/
-        public static void OptTracking(bool optTracking,string appId = "")
+        public static void OptTracking(bool optTracking)
         {
-            GetInstance(appId).OptTracking(optTracking);
+            GetInstance().OptTracking(optTracking);
         }
         //是否暂停数据上报,默认是正常上报状态,其中true表示可以上报数据,false表示暂停数据上报
-        public static void EnableTracking(bool isEnable, string appId = "")
+        public static void EnableTracking(bool isEnable)
         {
-            GetInstance(appId).EnableTracking(isEnable);
+            GetInstance().EnableTracking(isEnable);
         }
         //停止数据上报
-        public static void OptTrackingAndDeleteUser(string appId = "")
+        public static void OptTrackingAndDeleteUser()
         {
-            GetInstance(appId).OptTrackingAndDeleteUser();
+            GetInstance().OptTrackingAndDeleteUser();
         }
         /// <summary>
         /// 通过时间戳校准时间
@@ -286,7 +285,7 @@ namespace GravitySDK.PC.Main
         public static void CalibrateTime(long timestamp)
         {
             GravitySDKTimestampCalibration timestampCalibration = new GravitySDKTimestampCalibration(timestamp);
-            GetInstance("").SetTimeCalibratieton(timestampCalibration);
+            GetInstance().SetTimeCalibratieton(timestampCalibration);
         }
         /// <summary>
         /// 通过NTP服务器校准时间
@@ -295,7 +294,7 @@ namespace GravitySDK.PC.Main
         public static void CalibrateTimeWithNtp(string ntpServer)
         {
             GravitySDKNTPCalibration ntpCalibration = new GravitySDKNTPCalibration(ntpServer);
-            GetInstance("").SetTimeCalibratieton(ntpCalibration);
+            GetInstance().SetTimeCalibratieton(ntpCalibration);
         }
 
         /// <summary>
@@ -323,9 +322,9 @@ namespace GravitySDK.PC.Main
         {
             GravitySDKPublicConfig.SetVersion(versionCode);
         }
-        public static string TimeString(DateTime dateTime, string appId = "")
+        public static string TimeString(DateTime dateTime)
         {
-            return GetInstance(appId).TimeString(dateTime);
+            return GetInstance().TimeString(dateTime);
         }
         
         public static void Register(string name, int version, string wxOpenId, string wxUnionId, IRegisterCallback registerCallback)

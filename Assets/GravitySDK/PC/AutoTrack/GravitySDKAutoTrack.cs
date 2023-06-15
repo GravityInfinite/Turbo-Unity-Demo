@@ -10,7 +10,6 @@ namespace GravitySDK.PC.AutoTrack
 {
     public class GravitySDKAutoTrack : MonoBehaviour
     {
-        private string mAppId;
         private AUTO_TRACK_EVENTS mAutoTrackEvents = AUTO_TRACK_EVENTS.NONE;
 
         private Dictionary<string, Dictionary<string, object>> mAutoTrackProperties =
@@ -38,16 +37,16 @@ namespace GravitySDK.PC.AutoTrack
                             mEventCallback_PC.AutoTrackEventCallback_PC((int) AUTO_TRACK_EVENTS.APP_START, properties));
                     }
 
-                    GravityPCSDK.Track(GravitySDKConstant.START_EVENT, properties, this.mAppId);
+                    GravityPCSDK.Track(GravitySDKConstant.START_EVENT, properties);
                 }
 
                 if ((mAutoTrackEvents & AUTO_TRACK_EVENTS.APP_END) != 0)
                 {
                     // 开始记录end事件
-                    GravityPCSDK.TimeEvent(GravitySDKConstant.END_EVENT, this.mAppId);
+                    GravityPCSDK.TimeEvent(GravitySDKConstant.END_EVENT);
                 }
 
-                GravityPCSDK.PauseTimeEvent(false, appId: this.mAppId);
+                GravityPCSDK.PauseTimeEvent(false);
             }
             else
             {
@@ -67,12 +66,12 @@ namespace GravitySDK.PC.AutoTrack
                     }
 
                     // 上报end事件
-                    GravityPCSDK.Track(GravitySDKConstant.END_EVENT, properties, this.mAppId);
+                    GravityPCSDK.Track(GravitySDKConstant.END_EVENT, properties);
                 }
 
-                GravityPCSDK.Flush(this.mAppId);
+                GravityPCSDK.Flush();
 
-                GravityPCSDK.PauseTimeEvent(true, appId: this.mAppId);
+                GravityPCSDK.PauseTimeEvent(true);
             }
         }
 
@@ -83,14 +82,9 @@ namespace GravitySDK.PC.AutoTrack
                 OnApplicationFocus(false);
             }
 
-            GravityPCSDK.FlushImmediately(this.mAppId);
+            GravityPCSDK.FlushImmediately();
         }
-
-        public void SetAppId(string appId)
-        {
-            this.mAppId = appId;
-        }
-
+        
         public void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties, string appId)
         {
             SetAutoTrackProperties(events, properties);
@@ -107,8 +101,8 @@ namespace GravitySDK.PC.AutoTrack
                             mAutoTrackProperties[AUTO_TRACK_EVENTS.APP_INSTALL.ToString()]);
                     }
 
-                    GravityPCSDK.Track(GravitySDKConstant.INSTALL_EVENT, mProperties, this.mAppId);
-                    GravityPCSDK.Flush(this.mAppId);
+                    GravityPCSDK.Track(GravitySDKConstant.INSTALL_EVENT, mProperties);
+                    GravityPCSDK.Flush();
                 }
             }
 
@@ -121,13 +115,13 @@ namespace GravitySDK.PC.AutoTrack
                         mAutoTrackProperties[AUTO_TRACK_EVENTS.APP_START.ToString()]);
                 }
 
-                GravityPCSDK.Track(GravitySDKConstant.START_EVENT, mProperties, this.mAppId);
-                GravityPCSDK.Flush(this.mAppId);
+                GravityPCSDK.Track(GravitySDKConstant.START_EVENT, mProperties);
+                GravityPCSDK.Flush();
             }
 
             if ((events & AUTO_TRACK_EVENTS.APP_END) != 0 && mStarted == false)
             {
-                GravityPCSDK.TimeEvent(GravitySDKConstant.END_EVENT, this.mAppId);
+                GravityPCSDK.TimeEvent(GravitySDKConstant.END_EVENT);
             }
 
             mStarted = true;
@@ -160,8 +154,8 @@ namespace GravitySDK.PC.AutoTrack
                                 properties));
                     }
 
-                    GravityPCSDK.Track(GravitySDKConstant.INSTALL_EVENT, properties, this.mAppId);
-                    GravityPCSDK.Flush(this.mAppId);
+                    GravityPCSDK.Track(GravitySDKConstant.INSTALL_EVENT, properties);
+                    GravityPCSDK.Flush();
                 }
             }
 
@@ -183,13 +177,13 @@ namespace GravitySDK.PC.AutoTrack
                         mEventCallback_PC.AutoTrackEventCallback_PC((int) AUTO_TRACK_EVENTS.APP_START, properties));
                 }
 
-                GravityPCSDK.Track(GravitySDKConstant.START_EVENT, properties, this.mAppId);
-                GravityPCSDK.Flush(this.mAppId);
+                GravityPCSDK.Track(GravitySDKConstant.START_EVENT, properties);
+                GravityPCSDK.Flush();
             }
 
             if ((events & AUTO_TRACK_EVENTS.APP_END) != 0 && mStarted == false)
             {
-                GravityPCSDK.TimeEvent(GravitySDKConstant.END_EVENT, this.mAppId);
+                GravityPCSDK.TimeEvent(GravitySDKConstant.END_EVENT);
             }
 
             mStarted = true;
