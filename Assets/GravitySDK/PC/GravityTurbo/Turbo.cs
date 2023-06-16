@@ -44,9 +44,8 @@ namespace GravitySDK.PC.GravityTurbo
             Debug.Log("turbo init success");
         }
 
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId,
-            Dictionary<string, string> wxLaunchQuery, IRegisterCallback registerCallback,
-            UnityWebRequestMgr.Callback callback)
+        public static void Register(string name, int version, string wxOpenId, Dictionary<string, string> wxLaunchQuery,
+            IRegisterCallback registerCallback, UnityWebRequestMgr.Callback callback)
         {
             // check params
             GlobalCheck();
@@ -62,7 +61,7 @@ namespace GravitySDK.PC.GravityTurbo
                 {"channel", _channel},
                 {"version", version},
                 {"wx_openid", wxOpenId},
-                {"wx_unionid", wxUnionId},
+                {"wx_unionid", ""},
                 {"ad_data", wxLaunchQuery},
             };
 

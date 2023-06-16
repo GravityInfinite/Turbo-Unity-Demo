@@ -14,7 +14,24 @@ using WeChatWASM;
 using StarkSDKSpace;
 #endif
 
-public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IRegisterCallback
+public class RegisterCallbackImpl : IRegisterCallback
+{
+    
+    public void onFailed(string errorMsg)
+    {
+        Debug.Log("register failed  with message " + errorMsg);
+    }
+
+    public void onSuccess()
+    {
+        Debug.Log("register success");
+        Debug.Log("register call end");
+        // 建议在此执行一次Flush
+        GravityEngineAPI.Flush();
+    }
+}
+
+public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
 {
     public GUISkin skin;
     private const int Margin = 20;
@@ -30,19 +47,6 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IRegist
         {
             {"DynamicProperty", DateTime.Now}
         };
-    }
-
-    public void onFailed(string errorMsg)
-    {
-        Debug.Log("register failed  with message " + errorMsg);
-    }
-
-    public void onSuccess()
-    {
-        Debug.Log("register success");
-        Debug.Log("register call end");
-        // 建议在此执行一次Flush
-        GravityEngineAPI.Flush();
     }
 
     private void Start()
@@ -89,7 +93,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IRegist
             string clientId = "1234567890067";
             
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.NORMAL);
+            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
             // 微信小游戏开启自动采集，并设置自定属性
             GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.WECHAT_GAME_ALL, new Dictionary<string, object>()
             {
@@ -129,7 +133,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IRegist
         if (GUILayout.Button("Register", GUILayout.Height(Height)))
         {
             Debug.Log("register clicked");
-            GravityEngineAPI.Register("name_123", 1, "your_openid_111", "your_wx_unionid", this);
+            GravityEngineAPI.Register("name_123", 1, "your_openid_111", new RegisterCallbackImpl());
         }
 
         GUILayout.EndHorizontal();

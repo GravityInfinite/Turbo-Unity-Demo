@@ -494,8 +494,7 @@ namespace GravityEngine.Wrapper
             }
         }
 
-        private static void register(string name, int version, string wxOpenId, string wxUnionId,
-            IRegisterCallback registerCallback)
+        private static void register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
             RegisterListenerAdapter listenerAdapter = new RegisterListenerAdapter();
             getInstance().Call("register", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(),

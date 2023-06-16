@@ -15,6 +15,7 @@ using UnityEngine.Networking;
 
 #if GRAVITY_WECHAT_GAME_MODE
 using WeChatWASM;
+
 #elif GRAVITY_BYTEDANCE_GAME_MODE
 using StarkSDKSpace;
 #endif
@@ -374,8 +375,7 @@ namespace GravitySDK.PC.Main
             return GetInstance().TimeString(dateTime);
         }
 
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId,
-            IRegisterCallback registerCallback)
+        public static void Register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
@@ -384,7 +384,7 @@ namespace GravitySDK.PC.Main
 #else
             Dictionary<string, string> wxLaunchQuery = new Dictionary<string, string>();
 #endif
-            Turbo.Register(name, version, wxOpenId, wxUnionId, wxLaunchQuery, registerCallback, () =>
+            Turbo.Register(name, version, wxOpenId, wxLaunchQuery, registerCallback, () =>
             {
                 // 自动采集注册事件
                 Track("$MPRegister");

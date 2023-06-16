@@ -402,10 +402,9 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.CalibrateTimeWithNtp(ntpServer);
         }
 
-        private static void register(string name, int version, string wxOpenId, string wxUnionId,
-            IRegisterCallback registerCallback)
+        private static void register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
-            GravityPCSDK.Register(name, version, wxOpenId, wxUnionId, registerCallback);
+            GravityPCSDK.Register(name, version, wxOpenId, registerCallback);
         }
 
         private static void getBytedanceEcpmRecords(string wxOpenId, string mpId)

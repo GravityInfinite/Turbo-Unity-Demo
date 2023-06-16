@@ -291,11 +291,10 @@ namespace GravityEngine.Wrapper
             calibrateTimeWithNtp(ntpServer);
         }
 
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId,
-            IRegisterCallback registerCallback)
+        public static void Register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
             mRegisterCallback = registerCallback;
-            register(name, version, wxOpenId, wxUnionId, registerCallback);
+            register(name, version, wxOpenId, registerCallback);
         }
 
         public static void GetBytedanceEcpmRecords(string wxOpenId, string mpId)

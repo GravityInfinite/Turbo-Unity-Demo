@@ -1326,13 +1326,11 @@ namespace GravityEngine
         /// <param name="name"></param>             用户名
         /// <param name="version"></param>          用户注册的程序版本，比如当前微信小游戏的版本号
         /// <param name="wxOpenId"></param>         微信open id (微信小程序和小游戏必填)
-        /// <param name="wxUnionId"></param>        微信union id（微信小程序和小游戏选填）
-        /// <param name="actionResult"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
+        /// <param name="registerCallback"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void Register(string name, int version, string wxOpenId, string wxUnionId,
-            IRegisterCallback registerCallback)
+        public static void Register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
-            GravityEngineWrapper.Register(name, version, wxOpenId, wxUnionId, registerCallback);
+            GravityEngineWrapper.Register(name, version, wxOpenId, registerCallback);
         }
 
         public static void test()

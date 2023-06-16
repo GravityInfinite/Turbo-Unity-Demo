@@ -755,7 +755,8 @@ PlayerSettings:
   webGLNameFilesAsHashes: 0
   webGLDataCaching: 0
   webGLDebugSymbols: 2
-  webGLEmscriptenArgs: ' -s TOTAL_MEMORY=512MB'
+  webGLEmscriptenArgs: ' -s EXPORTED_FUNCTIONS=_sbrk,_emscripten_stack_get_base,_emscripten_stack_get_end
+    -s TOTAL_MEMORY=256MB'
   webGLModulesDirectory: 
   webGLTemplate: PROJECT:WXTemplate2020
   webGLAnalyzeBuildSize: 0
@@ -766,8 +767,8 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    Android: GRAVITY_BYTEDANCE_GAME_MODE
-    WebGL: GRAVITY_BYTEDANCE_GAME_MODE
+    Android: GRAVITY_WECHAT_GAME_MODE
+    WebGL: GRAVITY_WECHAT_GAME_MODE
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
