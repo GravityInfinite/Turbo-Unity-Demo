@@ -89,12 +89,12 @@ namespace GravitySDK.PC.GravityTurbo
                 {
                     string responseText = request.downloadHandler.text;
                     Dictionary<string, object> res = GE_MiniJson.Deserialize(responseText);
-                    Debug.Log("response is " + responseText + " " + res);
+                    Debug.Log("response is " + responseText);
                     if (res != null)
                     {
                         if (res.TryGetValue("code", out var re))
                         {
-                            var code = (int) re;
+                            int code = Convert.ToInt32(re);
                             if (code == 0)
                             {
                                 registerCallback?.onSuccess();

@@ -113,7 +113,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties, IRegist
             // 抖音小游戏示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "z4gcI6n1O52DRibPXZfjvn8w3YVtLUqp";
-            string clientId = "123456";
+            string clientId = "1234567";
 
             // 启动引力引擎
             GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);

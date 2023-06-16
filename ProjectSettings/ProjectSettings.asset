@@ -135,9 +135,7 @@ PlayerSettings:
     16:9: 1
     Others: 1
   bundleVersion: 1.0.2
-  preloadedAssets:
-  - {fileID: 7666488022114387895, guid: 535ec13a2de8d4d7c8e948a6ec60e4fe, type: 2}
-  - {fileID: 11400000, guid: 28b1d049744e343c0bc07da14b71009b, type: 2}
+  preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -768,7 +766,7 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    Android: GRAVITY_ANDROID_GAME_MODE
+    Android: GRAVITY_BYTEDANCE_GAME_MODE
     WebGL: GRAVITY_BYTEDANCE_GAME_MODE
   additionalCompilerArguments: {}
   platformArchitecture: {}
