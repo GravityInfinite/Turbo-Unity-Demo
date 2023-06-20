@@ -409,9 +409,12 @@ namespace GravityEngine
             Flush();
         }
 
-        public static void TrackBytedanceAdShowEvent(string wxOpenId, string mpId)
+        /// <summary>
+        /// 上报抖音小游戏广告观看事件
+        /// </summary>
+        public static void TrackBytedanceAdShowEvent(string dyOpenId, string adUnitId)
         {
-            GravityEngineWrapper.GetBytedanceEcpmRecords(wxOpenId, mpId);
+            GravityEngineWrapper.ReportBytedanceAdToGravity(dyOpenId, adUnitId);
         }
 
         /// <summary>

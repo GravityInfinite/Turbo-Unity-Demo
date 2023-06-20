@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GravityEngine;
+using GravityEngine.Utils;
 using GravityEngine.Wrapper;
 using GravitySDK.PC.Config;
 using GravitySDK.PC.Constant;
@@ -400,10 +401,126 @@ namespace GravitySDK.PC.Main
             });
         }
 
-        public static void GetBytedanceEcpmRecords(string wxOpenId, string mpId)
+        // public static int count = 0;
+        private static bool DEV = false;
+
+        public static void ReportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
             string dateHourStr = GetTime(DateTime.MinValue).GetTimeWithFormat(null, "yyyy-MM-dd HH");
-            Turbo.GetBytedanceEcpmRecords(wxOpenId, mpId, dateHourStr);
+            Turbo.ReportBytedanceAdToGravity(wxOpenId, dateHourStr, request =>
+            {
+                string responseText = request.downloadHandler.text;
+                // string responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":1283,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":562229595,\"open_id\":\"_0006RvUSeDMliQ7yeAEboYqH2w_poTzk2Dp\"}],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
+                // if (count == 1)
+                // {
+                //     responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":1283,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":562229595 },{\"aid\":\"1128\",\"cost\":2000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":100000000 }],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
+                // } else if (count == 2)
+                // {
+                //     responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":2000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":100000000 },{\"aid\":\"1128\",\"cost\":3000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":200000000 },],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
+                // }
+
+                // count++;
+
+                if (DEV)
+                {
+                    Debug.Log("response is " + responseText);
+                }
+                
+                Dictionary<string, object> res = GE_MiniJson.Deserialize(responseText);
+
+                // 获取之前的id List
+                List<string> newAdRecordsId = new List<string>();
+
+                List<string> savedAdRecordsId = new List<string>();
+                string savedAdRecordsIdStr =
+                    (string) GravitySDKFile.GetData(GravitySDKConstant.SAVED_AD_RECORDS_ID, typeof(string));
+                if (!string.IsNullOrEmpty(savedAdRecordsIdStr))
+                {
+                    savedAdRecordsId = new List<string>(savedAdRecordsIdStr.Split(","));
+                }
+
+                if (DEV)
+                {
+                    GravitySDKLogger.Print("pre save ad records " + string.Join(",", savedAdRecordsId));
+                }
+
+                if (res != null)
+                {
+                    if (res.TryGetValue("code", out var re))
+                    {
+                        int code = Convert.ToInt32(re);
+                        if (code == 0)
+                        {
+                            // 请求成功了
+                            if (res.ContainsKey("data"))
+                            {
+                                Dictionary<string, object> data = (Dictionary<string, object>) res["data"];
+                                if (data.ContainsKey("records"))
+                                {
+                                    List<object> records = (List<object>) data["records"];
+                                    foreach (var record in records)
+                                    {
+                                        Dictionary<string, object> recordDict = (Dictionary<string, object>) record;
+                                        if (DEV)
+                                        {
+                                            GravitySDKLogger.Print("record " + record + " " + record.GetType() + " length " + records.Count + " " + recordDict["event_name"] + " " + recordDict["id"]);
+                                        }
+                                        if (recordDict.ContainsKey("event_name") &&
+                                            "send".Equals(recordDict["event_name"]))
+                                        {
+                                            if (recordDict.ContainsKey("id"))
+                                            {
+                                                string id = Convert.ToInt64(recordDict["id"]).ToString();
+                                                if (DEV)
+                                                {
+                                                    GravitySDKLogger.Print("处理id " + id + " " + DateTime.Now);
+                                                }
+                                                if (savedAdRecordsId.Contains(id))
+                                                {
+                                                    // 此记录本地已经上报，不要重复上报
+                                                    if (DEV)
+                                                    {
+                                                        GravitySDKLogger.Print("上次上报过，不要重复上报 " + id + " "+ DateTime.Now);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (DEV)
+                                                    {
+                                                        GravitySDKLogger.Print("本次需要上报");
+                                                    }
+                                                    float ecpm = Convert.ToInt32(recordDict["cost"]) / 100f;
+                                                    // 上报广告事件
+                                                    Track("$AdShow", new Dictionary<string, object>()
+                                                    {
+                                                        {"$ad_type", "reward"},
+                                                        {"$ad_unit_id", adUnitId},
+                                                        {"$adn_type", "bytedance"},
+                                                        {"$ecpm", ecpm}
+                                                    });
+                                                    Flush();
+                                                }
+
+                                                // 记录下所有的id
+                                                newAdRecordsId.Add(id);
+                                            }
+                                        }
+                                    }
+
+                                    string saveStr = string.Join(",", newAdRecordsId);
+                                    if (DEV)
+                                    {
+                                        GravitySDKLogger.Print("save ad list str " + saveStr);
+                                    }
+                                    GravitySDKFile.SaveData(GravitySDKConstant.SAVED_AD_RECORDS_ID, saveStr);
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+                GravitySDKLogger.Print("report ad event error " + request.downloadHandler.text);
+            });
         }
     }
 }

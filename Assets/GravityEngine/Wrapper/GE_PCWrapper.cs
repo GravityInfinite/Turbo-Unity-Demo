@@ -407,9 +407,16 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.Register(name, version, wxOpenId, registerCallback);
         }
 
-        private static void getBytedanceEcpmRecords(string wxOpenId, string mpId)
+        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
-            GravityPCSDK.GetBytedanceEcpmRecords(wxOpenId, mpId);
+            try
+            {
+                GravityPCSDK.ReportBytedanceAdToGravity(wxOpenId, adUnitId);
+            }
+            catch (Exception e)
+            {
+                GravitySDKLogger.Print("report bytedance ad error " + e.Message);
+            }
         }
     }
 }

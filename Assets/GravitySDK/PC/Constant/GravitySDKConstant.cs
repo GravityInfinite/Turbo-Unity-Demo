@@ -100,6 +100,8 @@ namespace GravitySDK.PC.Constant
 
         //静态公共事件属性
         public static readonly string SUPER_PROPERTY = "super_properties";
+        
+        public static readonly string SAVED_AD_RECORDS_ID = "saved_ad_records_id";
 
         //用户属性相关
         public static readonly string USER_ADD = "profile_increment";

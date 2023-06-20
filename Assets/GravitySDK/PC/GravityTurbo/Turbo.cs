@@ -41,7 +41,7 @@ namespace GravitySDK.PC.GravityTurbo
             _clientID = clientId;
             _channel = channel;
             GlobalCheck();
-            Debug.Log("turbo init success");
+            GravitySDKLogger.Print("turbo init success");
         }
 
         public static void Register(string name, int version, string wxOpenId, Dictionary<string, string> wxLaunchQuery,
@@ -70,17 +70,17 @@ namespace GravitySDK.PC.GravityTurbo
                 string value;
                 if (wxLaunchQuery.TryGetValue("turbo_promoted_object_id", out value))
                 {
-                    Debug.Log("get promoted object id");
+                    GravitySDKLogger.Print("get promoted object id");
                 }
                 else
                 {
-                    Debug.Log("no promoted object id");
+                    GravitySDKLogger.Print("no promoted object id");
                 }
 
                 registerRequestDir["promoted_object_id"] = value ?? "";
             }
 
-            Debug.Log(registerRequestDir.ToString());
+            GravitySDKLogger.Print(registerRequestDir.ToString());
 
             UnityWebRequestMgr.Instance.Post(
                 TurboHost + "/event_center/api/v1/user/register/?access_token=" + _accessToken,
@@ -88,7 +88,7 @@ namespace GravitySDK.PC.GravityTurbo
                 {
                     string responseText = request.downloadHandler.text;
                     Dictionary<string, object> res = GE_MiniJson.Deserialize(responseText);
-                    Debug.Log("response is " + responseText);
+                    GravitySDKLogger.Print("response is " + responseText);
                     if (res != null)
                     {
                         if (res.TryGetValue("code", out var re))
@@ -106,12 +106,12 @@ namespace GravitySDK.PC.GravityTurbo
                 }), callback);
         }
 
-        public static void GetBytedanceEcpmRecords(string wxOpenId, string mpId, string dateHourStr)
+        public static void ReportBytedanceAdToGravity(string wxOpenId, string dateHourStr,
+            Action<UnityWebRequest> actionResult)
         {
             UnityWebRequestMgr.Instance.Get(TurboHost + "/event_center/api/v1/event/dy/get_ecpm/?access_token=" +
-                                            _accessToken + "&open_id=" + wxOpenId + "&mp_id=" + mpId + "&date_hour=" +
-                                            dateHourStr,
-                request => { Debug.Log("get ecpm done " + request.downloadHandler.text); });
+                                            _accessToken + "&open_id=" + wxOpenId + "&date_hour=" +
+                                            dateHourStr, actionResult);
         }
 
         public static String GetAccessToken()

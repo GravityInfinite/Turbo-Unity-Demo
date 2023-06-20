@@ -297,9 +297,9 @@ namespace GravityEngine.Wrapper
             register(name, version, wxOpenId, registerCallback);
         }
 
-        public static void GetBytedanceEcpmRecords(string wxOpenId, string mpId)
+        public static void ReportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
-            getBytedanceEcpmRecords(wxOpenId, mpId);
+            reportBytedanceAdToGravity(wxOpenId, adUnitId);
         }
     }
 }

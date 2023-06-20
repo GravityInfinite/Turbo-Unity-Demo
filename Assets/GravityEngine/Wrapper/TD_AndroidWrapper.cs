@@ -501,7 +501,7 @@ namespace GravityEngine.Wrapper
                 listenerAdapter);
         }
 
-        private static void getBytedanceEcpmRecords(string wxOpenId, string mpId)
+        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
             GE_Log.d("android not support");
         }

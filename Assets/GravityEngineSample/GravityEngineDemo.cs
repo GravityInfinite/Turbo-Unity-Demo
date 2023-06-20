@@ -126,6 +126,15 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
+#else
+            // Unity Editor
+            //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
+            string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
+            string clientId = "1234567890067";
+            string aesKey = "k7ZjSgc1Z8j551UJUNLlWA==";
+
+            // 启动引力引擎
+            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi", aesKey);
 #endif
         }
 
@@ -155,6 +164,13 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             GravityEngineAPI.Track("GE_000", properties);
         }
 
+        GUILayout.Space(20);
+        if (GUILayout.Button("TrackBytedanceAdShowEvent", GUILayout.Height(Height)))
+        {
+            // 记录用户头条广告观看事件
+            GravityEngineAPI.TrackBytedanceAdShowEvent("your_open_id", "test-unit-id");
+        }
+        
         GUILayout.Space(20);
         if (GUILayout.Button("TrackAdShowEvent", GUILayout.Height(Height)))
         {
