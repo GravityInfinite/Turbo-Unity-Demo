@@ -767,8 +767,9 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    Android: GRAVITY_WECHAT_GAME_MODE
-    WebGL: GRAVITY_WECHAT_GAME_MODE
+    Android: 
+    WebGL: 
+    iPhone: GRAVITY_IOS_GAME_MODE
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

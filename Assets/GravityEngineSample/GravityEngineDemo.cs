@@ -99,7 +99,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
-#elif GRAVITY_ANDROID_GAME_MODE
+#elif (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR && !GRAVITY_BYTEDANCE_GAME_MODE
             // Android、iOS原生应用示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
@@ -126,7 +126,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
-#else
+#elif UNITY_EDITOR
             // Unity Editor
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
@@ -168,7 +168,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         if (GUILayout.Button("TrackBytedanceAdShowEvent", GUILayout.Height(Height)))
         {
             // 记录用户头条广告观看事件
-            GravityEngineAPI.TrackBytedanceAdShowEvent("your_open_id", "test-unit-id");
+            GravityEngineAPI.TrackBytedanceAdShowEvent("your_open_id", "your_unit_id");
         }
         
         GUILayout.Space(20);

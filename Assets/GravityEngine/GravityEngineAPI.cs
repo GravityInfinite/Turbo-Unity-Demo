@@ -410,8 +410,10 @@ namespace GravityEngine
         }
 
         /// <summary>
-        /// 上报抖音小游戏广告观看事件
+        /// 上报抖音小游戏广告观看事件 AdShow
         /// </summary>
+        /// <param name="dyOpenId"></param>             当前用户的抖音openID
+        /// <param name="adUnitId"></param>             广告位ID
         public static void TrackBytedanceAdShowEvent(string dyOpenId, string adUnitId)
         {
             GravityEngineWrapper.ReportBytedanceAdToGravity(dyOpenId, adUnitId);

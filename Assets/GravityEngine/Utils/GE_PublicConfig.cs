@@ -32,7 +32,7 @@ namespace GravityEngine.Utils
         public static bool DisableCSharpException = false;
         public static List<string> DisPresetProperties = new List<string>();
 
-        public static readonly string LIB_VERSION = "4.1.3";
+        public static readonly string LIB_VERSION = "4.1.4";
 
         public static void GetPublicConfig()
         {

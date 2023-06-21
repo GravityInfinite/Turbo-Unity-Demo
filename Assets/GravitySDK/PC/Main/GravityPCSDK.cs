@@ -436,7 +436,7 @@ namespace GravitySDK.PC.Main
                     (string) GravitySDKFile.GetData(GravitySDKConstant.SAVED_AD_RECORDS_ID, typeof(string));
                 if (!string.IsNullOrEmpty(savedAdRecordsIdStr))
                 {
-                    savedAdRecordsId = new List<string>(savedAdRecordsIdStr.Split(","));
+                    savedAdRecordsId = new List<string>(savedAdRecordsIdStr.Split(','));
                 }
 
                 if (DEV)
