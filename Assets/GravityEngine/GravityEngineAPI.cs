@@ -372,7 +372,7 @@ namespace GravityEngine
         }
 
         /// <summary>
-        /// 上报微信小游戏付费事件 PayEvent
+        /// 上报付费事件 PayEvent
         /// </summary>
         /// <param name="payAmount"></param>            付费金额 单位为分
         /// <param name="payType"></param>              付费类型 按照国际标准组织ISO 4217中规范的3位字母，例如CNY人民币、USD美金等
@@ -382,15 +382,23 @@ namespace GravityEngine
         public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,
             string payMethod)
         {
-            Track("$PayEvent", new Dictionary<string, object>()
-            {
-                {"$pay_amount", payAmount},
-                {"$pay_type", payType},
-                {"$order_id", orderId},
-                {"$pay_reason", payReason},
-                {"$pay_method", payMethod}
-            });
-            Flush();
+            GravityEngineWrapper.TrackPayEvent(payAmount, payType, orderId, payReason, payMethod);
+        }
+
+        /// <summary>
+        /// 上报原生App广告观看事件 AdShow
+        /// </summary>
+        /// <param name="adUnionType"></param>          广告聚合平台类型  （取值为：topon、gromore、admore、self，分别对应Topon、Gromore、Admore、自建聚合）
+        /// <param name="adPlacementId"></param>        广告瀑布流ID
+        /// <param name="adSourceId"></param>           广告源ID
+        /// <param name="adType"></param>               广告类型 （取值为：reward、banner、 native 、interstitial、 splash ，分别对应激励视频广告、横幅广告、信息流广告、插屏广告、开屏广告）
+        /// <param name="adnType"></param>              广告平台类型（取值为：csj、gdt、ks、 mint 、baidu，分别对应为穿山甲、优量汇、快手联盟、Mintegral、百度联盟）
+        /// <param name="ecpm"></param>                 预估ECPM价格（单位为元）
+        public static void TrackNativeAppAdShowEvent(string adUnionType, string adPlacementId, string adSourceId,
+            string adType, string adnType, float ecpm)
+        {
+            GravityEngineWrapper.TrackNativeAppAdShowEvent(adUnionType, adPlacementId, adSourceId, adType, adnType,
+                ecpm);
         }
 
         /// <summary>
@@ -398,7 +406,7 @@ namespace GravityEngine
         /// </summary>
         /// <param name="adType"></param>               广告类型 取值为：reward、banner、native、interstitial、video_feed、video_begin，分别对应：激励视频广告、Banner广告、原生模板广告、插屏广告、视频广告、视频贴片广告
         /// <param name="adUnitId"></param>             广告位ID
-        public static void TrackAdShowEvent(string adType, string adUnitId)
+        public static void TrackWechatAdShowEvent(string adType, string adUnitId)
         {
             Track("$AdShow", new Dictionary<string, object>()
             {

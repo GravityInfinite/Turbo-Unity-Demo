@@ -167,15 +167,22 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         GUILayout.Space(20);
         if (GUILayout.Button("TrackBytedanceAdShowEvent", GUILayout.Height(Height)))
         {
-            // 记录用户头条广告观看事件
+            // 记录用户抖音小游戏广告观看事件
             GravityEngineAPI.TrackBytedanceAdShowEvent("your_open_id", "your_unit_id");
         }
         
         GUILayout.Space(20);
-        if (GUILayout.Button("TrackAdShowEvent", GUILayout.Height(Height)))
+        if (GUILayout.Button("TrackWechatAdShowEvent", GUILayout.Height(Height)))
         {
-            // 记录用户广告观看事件
-            GravityEngineAPI.TrackAdShowEvent("reward", "your_ad_unit_id");
+            // 记录用户微信小游戏广告观看事件
+            GravityEngineAPI.TrackWechatAdShowEvent("reward", "your_ad_unit_id");
+        }
+        
+        GUILayout.Space(20);
+        if (GUILayout.Button("TrackNativeAppAdShowEvent", GUILayout.Height(Height)))
+        {
+            // 记录用户原生应用广告观看事件
+            GravityEngineAPI.TrackNativeAppAdShowEvent("topon", "placement_id", "ad_source_id", "reward", "csj", 1);
         }
 
         GUILayout.Space(20);

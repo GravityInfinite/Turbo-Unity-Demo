@@ -301,5 +301,18 @@ namespace GravityEngine.Wrapper
         {
             reportBytedanceAdToGravity(wxOpenId, adUnitId);
         }
+        
+        public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,
+            string payMethod)
+        {
+            trackPayEvent(payAmount, payType, orderId, payReason, payMethod);
+        }
+        
+        public static void TrackNativeAppAdShowEvent(string adUnionType, string adPlacementId, string adSourceId,
+            string adType, string adnType, float ecpm)
+        {
+            trackNativeAppAdShowEvent(adUnionType, adPlacementId, adSourceId, adType, adnType,
+                ecpm);
+        }
     }
 }

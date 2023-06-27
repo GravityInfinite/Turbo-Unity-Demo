@@ -418,6 +418,18 @@ namespace GravityEngine.Wrapper
                 GravitySDKLogger.Print("report bytedance ad error " + e.Message);
             }
         }
+
+        private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,
+            string payMethod)
+        {
+            GravityPCSDK.TrackPayEvent(payAmount, payType, orderId, payReason, payMethod);
+        }
+        
+        private static void trackNativeAppAdShowEvent(string adUnionType, string adPlacementId, string adSourceId,
+            string adType, string adnType, float ecpm)
+        {
+            GravitySDKLogger.Print("not support trackNativeAppAdShowEvent!");
+        }
     }
 }
 #endif

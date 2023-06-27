@@ -522,5 +522,19 @@ namespace GravitySDK.PC.Main
                 GravitySDKLogger.Print("report ad event error " + request.downloadHandler.text);
             });
         }
+        
+        public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,
+            string payMethod)
+        {
+            Track("$PayEvent", new Dictionary<string, object>()
+            {
+                {"$pay_amount", payAmount},
+                {"$pay_type", payType},
+                {"$order_id", orderId},
+                {"$pay_reason", payReason},
+                {"$pay_method", payMethod}
+            });
+            Flush();
+        }
     }
 }
