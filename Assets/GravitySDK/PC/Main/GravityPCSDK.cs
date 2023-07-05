@@ -96,9 +96,9 @@ namespace GravitySDK.PC.Main
         /// <summary>
         ///清空账号ID
         /// </summary>
-        public static void Logout()
+        public static void Logout(ILogoutCallback logoutCallback)
         {
-            GetInstance().Logout();
+            GetInstance().Logout(logoutCallback);
         }
 
         /// <summary>

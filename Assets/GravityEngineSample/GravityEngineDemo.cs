@@ -31,6 +31,14 @@ public class RegisterCallbackImpl : IRegisterCallback
     }
 }
 
+public class LogoutCallbackImpl : ILogoutCallback
+{
+    public void onCompleted()
+    {
+        Debug.Log("logout callback");
+    }
+}
+
 public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
 {
     public GUISkin skin;
@@ -99,8 +107,8 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
-#elif (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR && !GRAVITY_BYTEDANCE_GAME_MODE
-            // Android、iOS原生应用示例
+#elif UNITY_ANDROID && !UNITY_EDITOR && !GRAVITY_BYTEDANCE_GAME_MODE
+            // Android原生应用示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
             string clientId = "1234567890067";
@@ -108,6 +116,24 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
 
             // 启动引力引擎
             GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi", aesKey);
+            // 原生app开启自动采集，并设置自定属性
+            GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, new Dictionary<string, object>()
+            {
+                {"auto_track_key", "auto_track_value"} // 静态属性
+            });
+#elif UNITY_IOS && !UNITY_EDITOR || true
+            // iOS原生应用示例
+            //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
+            string accessToken = "HuyP3wz0exklCr2YhoKht9Ju8fUjiBjs";
+            string clientId = "1234567890067";
+            string idfa = "123456789";
+            string idfv = "123456789";
+            string caid1Md5 = "123456789";
+            string caid2Md5 = "123456789";
+            string asaToken = "123456789";
+
+            // 启动引力引擎
+            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "appstore" , "", idfa, idfv, caid1Md5, caid2Md5, asaToken);
             // 原生app开启自动采集，并设置自定属性
             GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, new Dictionary<string, object>()
             {
@@ -193,17 +219,17 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         }
 
         GUILayout.Space(20);
-        if (GUILayout.Button("TrackMPLogin", GUILayout.Height(Height)))
+        if (GUILayout.Button("Login", GUILayout.Height(Height)))
         {
-            // 记录用户登录事件
-            GravityEngineAPI.TrackMPLogin();
+            // 用户登录
+            GravityEngineAPI.Login("new_client_id");
         }
 
         GUILayout.Space(20);
-        if (GUILayout.Button("TrackMPLogout", GUILayout.Height(Height)))
+        if (GUILayout.Button("Logout", GUILayout.Height(Height)))
         {
-            // 记录用户退出登录事件
-            GravityEngineAPI.TrackMPLogout();
+            // 用户登出
+            GravityEngineAPI.Logout(new LogoutCallbackImpl());
         }
 
         GUILayout.EndHorizontal();

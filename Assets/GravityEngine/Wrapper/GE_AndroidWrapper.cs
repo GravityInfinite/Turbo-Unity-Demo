@@ -292,7 +292,7 @@ namespace GravityEngine.Wrapper
             getInstance().Call("user_delete", getDate(dateTime));
         }
 
-        private static void logout()
+        private static void logout(ILogoutCallback logoutCallback)
         {
             getInstance().Call("logout");
         }

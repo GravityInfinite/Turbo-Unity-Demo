@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GravityEngine;
 using GravitySDK.PC.AutoTrack;
 using GravitySDK.PC.Config;
 using GravitySDK.PC.Constant;
 using GravitySDK.PC.DataModel;
+using GravitySDK.PC.GravityTurbo;
 using GravitySDK.PC.Request;
 using GravitySDK.PC.Storage;
 using GravitySDK.PC.TaskManager;
@@ -197,6 +199,9 @@ namespace GravitySDK.PC.Main
             {
                 this.mAccountID = accountID;
                 GravitySDKFile.SaveData(GravitySDKConstant.ACCOUNT_ID, accountID);
+                Turbo.SetClientId(accountID);
+                
+                Track("$MPLogin");
             }
         }
 
@@ -207,15 +212,23 @@ namespace GravitySDK.PC.Main
             return this.mAccountID;
         }
 
-        public virtual void Logout()
+        public virtual void Logout(ILogoutCallback logoutCallback)
         {
             if (IsPaused())
             {
                 return;
             }
+            
+            Track("$MPLogout", null, DateTime.MinValue, null, true);
 
             this.mAccountID = "";
             GravitySDKFile.DeleteData(GravitySDKConstant.ACCOUNT_ID);
+            Turbo.SetClientId("");
+
+            if (logoutCallback!=null)
+            {
+                logoutCallback.onCompleted();
+            }
         }
 
         //TODO

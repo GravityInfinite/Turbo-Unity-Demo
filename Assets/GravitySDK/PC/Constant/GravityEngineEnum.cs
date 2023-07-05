@@ -13,7 +13,7 @@ namespace GravitySDK.PC.Constant
         APP_INSTALL = 1 << 5, // 应用安装后首次打开的时候触发上报，对应 $AppInstall
         APP_SCENE_LOAD = 1 << 6, // 当应用内加载场景的时候触发上报，对应 $SceneLoaded
         APP_SCENE_UNLOAD = 1 << 7, // 当应用内卸载场景的时候触发上报，对应 $SceneUnloaded
-        APP_ALL = APP_START | APP_END | APP_INSTALL | APP_CRASH | APP_SCENE_LOAD | APP_SCENE_UNLOAD,
+        APP_ALL = APP_START | APP_END | APP_INSTALL | APP_SCENE_LOAD | APP_SCENE_UNLOAD, // 默认不再开启crash信息的收集
 #if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
         // 微信小游戏、抖音小游戏
         MP_SHOW = 1 << 8, // 当小游戏展示的时候触发上报，对应 $MPShow

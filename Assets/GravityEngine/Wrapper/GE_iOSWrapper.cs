@@ -1,442 +1,535 @@
-﻿#if UNITY_IOS && !(UNITY_EDITOR)
+﻿#if UNITY_IOS && !(UNITY_EDITOR) && !TE_DISABLE_IOS_OC
 
 // #if true
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using GravityEngine;
 using GravityEngine.Utils;
 using GravitySDK.PC.Constant;
 using GravitySDK.PC.GravityTurbo;
-using UnityEngine;
-using UnityEngine.Networking;
 
 namespace GravityEngine.Wrapper
 {
     public partial class GravityEngineWrapper
     {
-        // private static readonly string JSON_CLASS = "org.json.JSONObject";
-        // private static readonly AndroidJavaClass sdkClass = new AndroidJavaClass("cn.gravity.android.GravityEngineSDK");
-        //
-        // private static readonly AndroidJavaObject unityAPIInstance = new AndroidJavaObject("cn.gravity.engine.GravityEngineUnityAPI");
+        private static IRegisterCallback _registerCallback;
+        private static ILogoutCallback _logoutCallback;
+        [DllImport("__Internal")]
+        private static extern void ge_start(string app_id, string access_token, string client_id, string idfa,
+            string idfv, string caid1_md5, string caid2_md5, int mode, string timezone_id, bool enable_encrypt,
+            int encrypt_version, string encrypt_public_key, int pinning_mode, bool allow_invalid_certificates,
+            bool validates_domain_name);
 
-        private static GravityEngineAPI.Token mToken;
+        [DllImport("__Internal")]
+        private static extern void ge_identify(string app_id, string unique_id);
 
-        /// <summary>
-        /// Convert Dictionary object to JSONObject in Java.
-        /// </summary>
-        /// <returns>The JSONObject instance.</returns>
-        /// <param name="data">The Dictionary containing some data </param>
-        // private static AndroidJavaObject getJSONObject(string dataString)
-        // {
-        //     if (dataString.Equals("null"))
-        //     {
-        //         return null;
-        //     }
-        //
-        //     try
-        //     {
-        //         return new AndroidJavaObject(JSON_CLASS, dataString);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         GE_Log.w("GravityEngine: unexpected exception: " + e);
-        //     }
-        //
-        //     return null;
-        // }
+        [DllImport("__Internal")]
+        private static extern string ge_get_distinct_id(string app_id);
 
-        private static string getTimeString(DateTime dateTime)
-        {
-            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
-            //
-            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            // long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
-            //
-            // AndroidJavaObject date = new AndroidJavaObject("java.util.Date", currentMillis);
-            return dtFrom.ToString();
-        }
+        [DllImport("__Internal")]
+        private static extern void ge_login(string app_id, string account_id);
 
-        // private static AndroidJavaObject getInstance()
-        // {
-        //     AndroidJavaObject context =
-        //         new AndroidJavaClass("com.unity3d.player.UnityPlayer")
-        //             .GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
-        //     AndroidJavaObject currentInstance;
-        //
-        //     currentInstance = sdkClass.CallStatic<AndroidJavaObject>("sharedInstance", context, mToken.accessToken);
-        //     return currentInstance;
-        // }
+        [DllImport("__Internal")]
+        private static extern void ge_logout(string app_id);
 
+        [DllImport("__Internal")]
+        private static extern void ge_track(string app_id, string event_name, string properties, long time_stamp_millis,
+            string timezone);
 
-        private static void enableLog(bool enable)
-        {
-            // sdkClass.CallStatic("enableTrackLog", enable);
-        }
+        [DllImport("__Internal")]
+        private static extern void ge_set_super_properties(string app_id, string properties);
 
-        private static void setVersionInfo(string libName, string version)
-        {
-            // sdkClass.CallStatic("setCustomerLibInfo", libName, version);
-        }
+        [DllImport("__Internal")]
+        private static extern void ge_unset_super_property(string app_id, string property_name);
+
+        [DllImport("__Internal")]
+        private static extern void ge_clear_super_properties(string app_id);
+
+        [DllImport("__Internal")]
+        private static extern string ge_get_super_properties(string app_id);
+
+        [DllImport("__Internal")]
+        private static extern void ge_time_event(string app_id, string event_name);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_set(string app_id, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_set_with_time(string app_id, string properties, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_unset(string app_id, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_unset_with_time(string app_id, string properties, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_set_once(string app_id, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_set_once_with_time(string app_id, string properties, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_increment(string app_id, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_increment_with_time(string app_id, string properties, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_number_max(string app_id, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_number_max_with_time(string app_id, string properties, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_number_min(string app_id, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_number_min_with_time(string app_id, string properties, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_delete(string app_id);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_delete_with_time(string app_id, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_append(string app_id, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_append_with_time(string app_id, string properties, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_uniq_append(string app_id, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_user_uniq_append_with_time(string app_id, string properties, long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_flush(string app_id);
+
+        [DllImport("__Internal")]
+        private static extern void ge_set_network_type(int type);
+
+        [DllImport("__Internal")]
+        private static extern void ge_enable_log(bool is_enable);
+
+        [DllImport("__Internal")]
+        private static extern string ge_get_device_id();
+
+        [DllImport("__Internal")]
+        private static extern void ge_set_dynamic_super_properties(string app_id);
+
+        [DllImport("__Internal")]
+        private static extern void ge_set_track_status(string app_id, int status);
+
+        [DllImport("__Internal")]
+        private static extern void ge_enable_autoTrack(string app_id, int events, string properties);
+
+        [DllImport("__Internal")]
+        private static extern void ge_enable_autoTrack_with_callback(string app_id, int events);
+
+        [DllImport("__Internal")]
+        private static extern void ge_set_autoTrack_properties(string app_id, int events, string properties);
+
+        [DllImport("__Internal")]
+        private static extern string ge_get_time_string(long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_calibrate_time(long timestamp);
+
+        [DllImport("__Internal")]
+        private static extern void ge_calibrate_time_with_ntp(string ntpServer);
+
+        [DllImport("__Internal")]
+        private static extern void ge_config_custom_lib_info(string lib_name, string lib_version);
+
+        [DllImport("__Internal")]
+        private static extern void ge_track_native_app_ad_show_event(string app_id, string adUnionType,
+            string adPlacementId, string adSourceId,
+            string adType, string adnType, float ecpm);
+
+        [DllImport("__Internal")]
+        private static extern void ge_track_pay_event(string app_id, int payAmount, string payType, string orderId,
+            string payReason,
+            string payMethod);
+
+        [DllImport("__Internal")]
+        private static extern void ge_register(string app_id, string clientId, string userClientName, string asaToken,
+            int version);
+
+        private const string AppID = "gravity_engine_appid";
 
         private static void init(GravityEngineAPI.Token token)
         {
-            // mToken = token;
-            // AndroidJavaObject context =
-            //     new AndroidJavaClass("com.unity3d.player.UnityPlayer")
-            //         .GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
-            //
-            // Dictionary<string, object> configDic = new Dictionary<string, object>();
-            // configDic["accessToken"] = token.accessToken;
-            // configDic["mode"] = (int) token.mode;
-            // configDic["aesKey"] = token.aesKey;
-            //
-            // string timeZoneId = token.getTimeZoneId();
-            // if (null != timeZoneId && timeZoneId.Length > 0)
-            // {
-            //     configDic["timeZone"] = timeZoneId;
-            // }
-            //
-            // if (token.enableEncrypt)
-            // {
-            //     configDic["enableEncrypt"] = true;
-            //     configDic["secretKey"] = new Dictionary<string, object>() {
-            //         {"publicKey", token.encryptPublicKey},
-            //         {"version", token.encryptVersion},
-            //         {"symmetricEncryption", "AES"},
-            //         {"asymmetricEncryption", "RSA"},
-            //     };
-            // }
-            //
-            // unityAPIInstance.Call("sharedInstance", context, GE_MiniJson.Serialize(configDic));
-        }
-
-        private static void flush()
-        {
-            // getInstance().Call("flush");
-        }
-
-        // private static AndroidJavaObject getDate(DateTime dateTime)
-        // {
-        //     long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
-        //
-        //     DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        //     long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
-        //     return new AndroidJavaObject("java.util.Date", currentMillis);
-        // }
-
-        private static void track(string eventName, string properties, DateTime dateTime)
-        {
-            // AndroidJavaObject date = getDate(dateTime);
-            // AndroidJavaObject tz = null;
-            // getInstance().Call("track", eventName, getJSONObject(properties), date, tz);
-        }
-
-        private static void track(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone)
-        {
-            // AndroidJavaObject date = getDate(dateTime);
-            // AndroidJavaObject tz = null;
-            // if (null != timeZone && null != timeZone.Id && timeZone.Id.Length > 0)
-            // {
-            //     tz = new AndroidJavaClass("java.util.TimeZone").CallStatic<AndroidJavaObject>("getTimeZone",
-            //         timeZone.Id);
-            // }
-            //
-            // getInstance().Call("track", eventName, getJSONObject(properties), date, tz);
-        }
-
-        private static void track(string eventName, string properties)
-        {
-            // getInstance().Call("track", eventName, getJSONObject(properties));
-        }
-
-        private static void setSuperProperties(string superProperties)
-        {
-            // getInstance().Call("setSuperProperties", getJSONObject(superProperties));
-        }
-
-        private static void unsetSuperProperty(string superPropertyName)
-        {
-            // getInstance().Call("unsetSuperProperty", superPropertyName);
-        }
-
-        private static void clearSuperProperty()
-        {
-            // getInstance().Call("clearSuperProperties");
-        }
-
-        private static Dictionary<string, object> getSuperProperties()
-        {
-            Dictionary<string, object> result = new Dictionary<string, object>();
-            // AndroidJavaObject superPropertyObject = getInstance().Call<AndroidJavaObject>("getSuperProperties");
-            // if (null != superPropertyObject)
-            // {
-            //     string superPropertiesString = superPropertyObject.Call<string>("toString");
-            //     result = GE_MiniJson.Deserialize(superPropertiesString);
-            // }
-
-            return result;
-        }
-
-        private static void timeEvent(string eventName)
-        {
-            // getInstance().Call("timeEvent", eventName);
+            registerRecieveGameCallback();
+            ge_start(AppID, token.accessToken, token.clientId, token.idfa, token.idfv, token.caid1Md5, token.caid2Md5,
+                (int) token.mode, token.getTimeZoneId(), token.enableEncrypt, token.encryptVersion,
+                token.encryptPublicKey, (int) token.pinningMode, token.allowInvalidCertificates,
+                token.validatesDomainName);
         }
 
         private static void identify(string uniqueId)
         {
-            // getInstance().Call("identify", uniqueId);
+            ge_identify(AppID, uniqueId);
         }
 
         private static string getDistinctId()
         {
-            // return getInstance().Call<string>("getDistinctId");
-            return "";
+            return ge_get_distinct_id(AppID);
         }
 
-        private static void login(string uniqueId)
+        private static void login(string accountId)
         {
-            // getInstance().Call("login", uniqueId);
+            ge_login(AppID, accountId);
         }
 
-        private static void userSetOnce(string properties)
+        private static void logout(ILogoutCallback logoutCallback)
         {
-            // getInstance().Call("user_setOnce", getJSONObject(properties));
+            _logoutCallback = logoutCallback;
+            ge_logout(AppID);
         }
 
-        private static void userSetOnce(string properties, DateTime dateTime)
+        private static void flush()
         {
-            // getInstance().Call("user_setOnce", getJSONObject(properties), getDate(dateTime));
+            ge_flush(AppID);
+        }
+
+        private static void enableLog(bool enable)
+        {
+            ge_enable_log(enable);
+        }
+
+        private static void setVersionInfo(string lib_name, string lib_version)
+        {
+            ge_config_custom_lib_info(lib_name, lib_version);
+        }
+
+        private static void track(string eventName, string properties)
+        {
+            ge_track(AppID, eventName, properties, 0, "");
+        }
+
+        private static void track(string eventName, string properties, DateTime dateTime)
+        {
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            string tz = "";
+            ge_track(AppID, eventName, properties, currentMillis, tz);
+        }
+
+        private static void track(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone)
+        {
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            string tz = "";
+            if (timeZone != null)
+            {
+                tz = timeZone.Id;
+            }
+
+            ge_track(AppID, eventName, properties, currentMillis, tz);
+        }
+
+        private static void setSuperProperties(string superProperties)
+        {
+            ge_set_super_properties(AppID, superProperties);
+        }
+
+        private static void unsetSuperProperty(string superPropertyName)
+        {
+            ge_unset_super_property(AppID, superPropertyName);
+        }
+
+        private static void clearSuperProperty()
+        {
+            ge_clear_super_properties(AppID);
+        }
+
+        private static Dictionary<string, object> getSuperProperties()
+        {
+            string superPropertiesString = ge_get_super_properties(AppID);
+            return GE_MiniJson.Deserialize(superPropertiesString);
+        }
+
+        private static void timeEvent(string eventName)
+        {
+            ge_time_event(AppID, eventName);
         }
 
         private static void userSet(string properties)
         {
-            // getInstance().Call("user_set", getJSONObject(properties));
+            ge_user_set(AppID, properties);
         }
 
         private static void userSet(string properties, DateTime dateTime)
         {
-            // getInstance().Call("user_set", getJSONObject(properties), getDate(dateTime));
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            ge_user_set_with_time(AppID, properties, currentMillis);
         }
 
         private static void userUnset(List<string> properties)
         {
-            // userUnset(properties, DateTime.Now);
+            foreach (string property in properties)
+            {
+                ge_user_unset(AppID, property);
+            }
         }
 
         private static void userUnset(List<string> properties, DateTime dateTime)
         {
-            // Dictionary<string, object> finalProperties = new Dictionary<string, object>();
-            // foreach (string s in properties)
-            // {
-            //     finalProperties.Add(s, 0);
-            // }
-            //
-            // getInstance().Call("user_unset", getJSONObject(GE_MiniJson.Serialize(finalProperties)), getDate(dateTime));
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            foreach (string property in properties)
+            {
+                ge_user_unset_with_time(AppID, property, currentMillis);
+            }
+        }
+
+        private static void userSetOnce(string properties)
+        {
+            ge_user_set_once(AppID, properties);
+        }
+
+        private static void userSetOnce(string properties, DateTime dateTime)
+        {
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            ge_user_set_once_with_time(AppID, properties, currentMillis);
         }
 
         private static void userAdd(string properties)
         {
-            // getInstance().Call("user_increment", getJSONObject(properties));
+            ge_user_increment(AppID, properties);
         }
 
         private static void userAdd(string properties, DateTime dateTime)
         {
-            // getInstance().Call("user_increment", getJSONObject(properties), getDate(dateTime));
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            ge_user_increment_with_time(AppID, properties, currentMillis);
         }
 
         private static void userNumberMax(string properties)
         {
-            // getInstance().Call("user_max", getJSONObject(properties));
+            ge_user_number_max(AppID, properties);
         }
 
         private static void userNumberMax(string properties, DateTime dateTime)
         {
-            // getInstance().Call("user_max", getJSONObject(properties), getDate(dateTime));
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            ge_user_number_max_with_time(AppID, properties, currentMillis);
         }
 
         private static void userNumberMin(string properties)
         {
-            // getInstance().Call("user_min", getJSONObject(properties));
+            ge_user_number_min(AppID, properties);
         }
 
         private static void userNumberMin(string properties, DateTime dateTime)
         {
-            // getInstance().Call("user_min", getJSONObject(properties), getDate(dateTime));
-        }
-
-        private static void userAppend(string properties)
-        {
-            // getInstance().Call("user_append", getJSONObject(properties));
-        }
-
-        private static void userAppend(string properties, DateTime dateTime)
-        {
-            // getInstance().Call("user_append", getJSONObject(properties), getDate(dateTime));
-        }
-
-        private static void userUniqAppend(string properties)
-        {
-            // getInstance().Call("user_uniqAppend", getJSONObject(properties));
-        }
-
-        private static void userUniqAppend(string properties, DateTime dateTime)
-        {
-            // getInstance().Call("user_uniqAppend", getJSONObject(properties), getDate(dateTime));
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            ge_user_number_min_with_time(AppID, properties, currentMillis);
         }
 
         private static void userDelete()
         {
-            // getInstance().Call("user_delete");
+            ge_user_delete(AppID);
         }
 
         private static void userDelete(DateTime dateTime)
         {
-            // getInstance().Call("user_delete", getDate(dateTime));
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            ge_user_delete_with_time(AppID, currentMillis);
         }
 
-        private static void logout()
+        private static void userAppend(string properties)
         {
-            // getInstance().Call("logout");
+            ge_user_append(AppID, properties);
         }
 
-        private static string getDeviceId()
+        private static void userAppend(string properties, DateTime dateTime)
         {
-            // return getInstance().Call<string>("getDeviceId");
-            return "";
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            ge_user_append_with_time(AppID, properties, currentMillis);
         }
 
-        private static void setDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties)
+        private static void userUniqAppend(string properties)
         {
-            // DynamicListenerAdapter listenerAdapter = new DynamicListenerAdapter();
-            // unityAPIInstance.Call("setDynamicSuperPropertiesTrackerListener", listenerAdapter);
+            ge_user_uniq_append(AppID, properties);
+        }
+
+        private static void userUniqAppend(string properties, DateTime dateTime)
+        {
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            ge_user_uniq_append_with_time(AppID, properties, currentMillis);
         }
 
         private static void setNetworkType(GravityEngineAPI.NetworkType networkType)
         {
-            // Dictionary<string, object> properties = new Dictionary<string, object>() { };
-            // switch (networkType)
-            // {
-            //     case GravityEngineAPI.NetworkType.DEFAULT:
-            //         properties["network_type"] = 0;
-            //         break;
-            //     case GravityEngineAPI.NetworkType.WIFI:
-            //         properties["network_type"] = 1;
-            //         break;
-            //     case GravityEngineAPI.NetworkType.ALL:
-            //         properties["network_type"] = 2;
-            //         break;
-            // }
-            // unityAPIInstance.Call("setNetworkType", GE_MiniJson.Serialize(properties));
+            ge_set_network_type((int) networkType);
         }
 
-        private static void enableAutoTrack(AUTO_TRACK_EVENTS events, string properties)
+        private static string getDeviceId()
         {
-            // Dictionary<string, object> propertiesNew = new Dictionary<string, object>()
-            // {
-            //     {"autoTrackType", (int) events}
-            // };
-            //
-            // unityAPIInstance.Call("enableAutoTrack", GE_MiniJson.Serialize(propertiesNew));
-            // propertiesNew["properties"] = GE_MiniJson.Deserialize(properties);
-            // unityAPIInstance.Call("setAutoTrackProperties", GE_MiniJson.Serialize(propertiesNew));
+            return ge_get_device_id();
         }
 
-        private static void enableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback eventCallback)
+        private static void setDynamicSuperProperties(IDynamicSuperProperties dynamicSuperProperties)
         {
-            // AutoTrackListenerAdapter listenerAdapter = new AutoTrackListenerAdapter();
-            // Dictionary<string, object> properties = new Dictionary<string, object>()
-            // {
-            //     {"autoTrackType", (int) events}
-            // };
-            // unityAPIInstance.Call("enableAutoTrack", GE_MiniJson.Serialize(properties), listenerAdapter);
-        }
-
-        private static void setAutoTrackProperties(AUTO_TRACK_EVENTS events, string properties)
-        {
-            // Dictionary<string, object> propertiesNew = new Dictionary<string, object>()
-            // {
-            //     {"autoTrackType", (int) events}
-            // };
-            // propertiesNew["properties"] = GE_MiniJson.Deserialize(properties);
-            //
-            // unityAPIInstance.Call("setAutoTrackProperties", GE_MiniJson.Serialize(propertiesNew));
+            ge_set_dynamic_super_properties(AppID);
         }
 
         private static void setTrackStatus(GE_TRACK_STATUS status)
         {
-            // AndroidJavaClass javaClass = new AndroidJavaClass("cn.gravity.android.GravityEngineSDK$GETrackStatus");
-            // AndroidJavaObject trackStatus;
-            // switch (status)
-            // {
-            //     case GE_TRACK_STATUS.PAUSE:
-            //         trackStatus = javaClass.GetStatic<AndroidJavaObject>("PAUSE");
-            //         break;
-            //     case GE_TRACK_STATUS.STOP:
-            //         trackStatus = javaClass.GetStatic<AndroidJavaObject>("STOP");
-            //         break;
-            //     case GE_TRACK_STATUS.SAVE_ONLY:
-            //         trackStatus = javaClass.GetStatic<AndroidJavaObject>("SAVE_ONLY");
-            //         break;
-            //     case GE_TRACK_STATUS.NORMAL:
-            //     default:
-            //         trackStatus = javaClass.GetStatic<AndroidJavaObject>("NORMAL");
-            //         break;
-            // }
-
-            // getInstance().Call("setTrackStatus", trackStatus);
+            ge_set_track_status(AppID, (int) status);
         }
 
-        private static void optOutTracking()
+        private static string getTimeString(DateTime dateTime)
         {
-            // getInstance().Call("optOutTracking");
+            long dateTimeTicksUTC = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks;
+            DateTime dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            long currentMillis = (dateTimeTicksUTC - dtFrom.Ticks) / 10000;
+            return ge_get_time_string(currentMillis);
         }
 
-        private static void optOutTrackingAndDeleteUser()
+        private static void enableAutoTrack(AUTO_TRACK_EVENTS autoTrackEvents, string properties)
         {
-            // getInstance().Call("optOutTrackingAndDeleteUser");
+            ge_enable_autoTrack(AppID, (int) autoTrackEvents, properties);
         }
 
-        private static void optInTracking()
+        private static void enableAutoTrack(AUTO_TRACK_EVENTS autoTrackEvents, IAutoTrackEventCallback eventCallback)
         {
-            // getInstance().Call("optInTracking");
+            ge_enable_autoTrack_with_callback(AppID, (int) autoTrackEvents);
         }
 
-        private static void enableTracking(bool enabled)
+        private static void setAutoTrackProperties(AUTO_TRACK_EVENTS autoTrackEvents, string properties)
         {
-            // getInstance().Call("enableTracking", enabled);
+            ge_set_autoTrack_properties(AppID, (int) autoTrackEvents, properties);
         }
 
         private static void calibrateTime(long timestamp)
         {
-            // sdkClass.CallStatic("calibrateTime", timestamp);
+            ge_calibrate_time(timestamp);
         }
 
         private static void calibrateTimeWithNtp(string ntpServer)
         {
-            // sdkClass.CallStatic("calibrateTimeWithNtp", ntpServer);
+            ge_calibrate_time_with_ntp(ntpServer);
+        }
+
+        private static void registerRecieveGameCallback()
+        {
+            ResultHandler handler = new ResultHandler(resultHandler);
+            IntPtr handlerPointer = Marshal.GetFunctionPointerForDelegate(handler);
+            RegisterRecieveGameCallback(handlerPointer);
         }
 
         private static void register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
-            // RegisterListenerAdapter listenerAdapter = new RegisterListenerAdapter();
-            // getInstance().Call("register", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(),
-            //     listenerAdapter);
+            _registerCallback = registerCallback;
+            ge_register(AppID, Turbo.GetClientId(), name, Turbo.GetAsaToken(), version);
         }
 
         private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
-            // GE_Log.d("android not support");
+            GE_Log.d("android not support");
         }
 
         private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,
             string payMethod)
         {
-            // getInstance().Call("trackPayEvent", payAmount, payType, orderId, payReason, payMethod);
+            ge_track_pay_event(AppID, payAmount, payType, orderId, payReason, payMethod);
         }
 
         private static void trackNativeAppAdShowEvent(string adUnionType, string adPlacementId, string adSourceId,
             string adType, string adnType, float ecpm)
         {
-            // getInstance().Call("trackAdShowEvent", adUnionType, adPlacementId, adSourceId, adType, adnType, ecpm);
+            ge_track_native_app_ad_show_event(AppID, adUnionType, adPlacementId, adSourceId, adType, adnType, ecpm);
+        }
+
+        [DllImport("__Internal")]
+        public static extern void RegisterRecieveGameCallback
+        (
+            IntPtr handlerPointer
+        );
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate string ResultHandler(string type, string jsonData);
+
+        [AOT.MonoPInvokeCallback(typeof(ResultHandler))]
+        static string resultHandler(string type, string jsonData)
+        {
+            if (type == "AutoTrackProperties")
+            {
+                if (mAutoTrackEventCallback != null)
+                {
+                    Dictionary<string, object> properties = GE_MiniJson.Deserialize(jsonData);
+                    int eventType = Convert.ToInt32(properties["EventType"]);
+                    properties.Remove("EventType");
+                    Dictionary<string, object> autoTrackProperties =
+                        mAutoTrackEventCallback.AutoTrackEventCallback(eventType, properties);
+                    return GE_MiniJson.Serialize(autoTrackProperties);
+                }
+            }
+            else if (type == "DynamicSuperProperties")
+            {
+                if (mDynamicSuperProperties != null)
+                {
+                    Dictionary<string, object> dynamicSuperProperties =
+                        mDynamicSuperProperties.GetDynamicSuperProperties();
+                    return GE_MiniJson.Serialize(dynamicSuperProperties);
+                }
+            }
+            else if (type == "LogoutCallback")
+            {
+                if (_logoutCallback!=null)
+                {
+                    _logoutCallback.onCompleted();
+                    _logoutCallback = null;
+                }
+                GE_Log.d("logout callback");
+            }
+            else if (type == "RegisterCallbackSuccess")
+            {
+                if (_registerCallback!=null)
+                {
+                    _registerCallback.onSuccess();
+                    _registerCallback = null;
+                }
+                GE_Log.d("register callback success");
+            }
+            else if (type == "RegisterCallbackFailed")
+            {
+                if (_registerCallback!=null)
+                {
+                    _registerCallback.onFailed("register failed, read the logs.");
+                    _registerCallback = null;
+                }
+                GE_Log.d("register callback failed");
+            }
+
+            return "{}";
         }
     }
 }

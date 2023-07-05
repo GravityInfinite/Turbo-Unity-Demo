@@ -80,9 +80,9 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.Login(accountId);
         }
 
-        private static void logout()
+        private static void logout(ILogoutCallback logoutCallback)
         {
-            GravityPCSDK.Logout();
+            GravityPCSDK.Logout(logoutCallback);
         }
 
         private static void flush()

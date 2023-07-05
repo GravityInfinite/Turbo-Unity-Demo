@@ -24,4 +24,9 @@ namespace GravityEngine
 
         void onSuccess();
     }
+
+    public interface ILogoutCallback
+    {
+        void onCompleted();
+    }
 }

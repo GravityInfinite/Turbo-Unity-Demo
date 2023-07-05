@@ -46,6 +46,11 @@ namespace GravityEngine
             public string channel;
             public string aesKey;
             public string clientId;
+            public string idfa;
+            public string idfv;
+            public string caid1Md5;
+            public string caid2Md5;
+            public string asaToken;
             public SDKRunMode mode;
             public SDKTimeZone timeZone;
 
@@ -60,7 +65,7 @@ namespace GravityEngine
             public bool validatesDomainName; // 是否验证证书域名，默认true
             private string instanceName; // 实例名
 
-            public Token(string accessToken, string clientId, string channel, string aesKey,
+            public Token(string accessToken, string clientId, string channel, string aesKey, string idfa, string idfv, string caid1Md5, string caid2Md5, string asaToken,
                 SDKRunMode mode = SDKRunMode.NORMAL, SDKTimeZone timeZone = SDKTimeZone.Local, string timeZoneId = null,
                 string instanceName = null)
             {
@@ -68,6 +73,11 @@ namespace GravityEngine
                 this.clientId = clientId.Replace(" ", "");
                 this.channel = channel.Replace(" ", "");
                 this.aesKey = aesKey.Replace(" ", "");
+                this.idfa = idfa.Replace(" ", "");
+                this.idfv = idfv.Replace(" ", "");
+                this.caid1Md5 = caid1Md5.Replace(" ", "");
+                this.caid2Md5 = caid2Md5.Replace(" ", "");
+                this.asaToken = asaToken.Replace(" ", "");
                 this.mode = mode;
                 this.timeZone = timeZone;
                 this.timeZoneId = timeZoneId;
@@ -206,13 +216,13 @@ namespace GravityEngine
         }
 
         /// <summary>
-        /// 清空账号 ID. 该方法不会上传用户登出事件.
+        /// 清空账号 ID. 该方法会上传用户登出事件.
         /// </summary>
-        public static void Logout()
+        public static void Logout(ILogoutCallback logoutCallback)
         {
             if (tracking_enabled)
             {
-                GravityEngineWrapper.Logout();
+                GravityEngineWrapper.Logout(logoutCallback);
             }
             else
             {
@@ -1228,11 +1238,16 @@ namespace GravityEngine
         /// <param name="mode">SDK运行模式</param>
         /// <param name="channel">用户渠道（选填）</param>
         /// <param name="aesKey">原生平台AES秘钥，目前只有Android平台需要填写</param>
+        /// <param name="idfa">idfa，只有iOS平台需要</param>
+        /// <param name="idfv">idfv，只有iOS平台需要</param>
+        /// <param name="caid1Md5">caid1Md5，只有iOS平台需要</param>
+        /// <param name="caid2Md5">caid2Md5，只有iOS平台需要</param>
+        /// <param name="asaToken">asaToken，只有iOS平台需要</param>
         public static void StartGravityEngine(string accessToken, string clientId, SDKRunMode mode,
-            string channel = "base_channel", string aesKey = "")
+            string channel = "base_channel", string aesKey = "", string idfa = "", string idfv = "", string caid1Md5 = "", string caid2Md5 = "", string asaToken = "")
         {
             SDKTimeZone timeZone = SDKTimeZone.Local;
-            Token token = new Token(accessToken, clientId, channel, aesKey, mode, timeZone);
+            Token token = new Token(accessToken, clientId, channel, aesKey, idfa, idfv, caid1Md5, caid2Md5, asaToken, mode, timeZone);
             Token[] tokens = new Token[1];
             tokens[0] = token;
             StartGravityEngine(tokens);
@@ -1299,7 +1314,7 @@ namespace GravityEngine
                         GE_Log.d("GravityEngine start with SERVER_URL: " + GravitySDKConstant.SERVER_URL +
                                  ", MODE: " + token.mode);
 
-                        Turbo.InitSDK(token.accessToken, token.clientId, token.channel);
+                        Turbo.InitSDK(token.accessToken, token.clientId, token.channel, token.asaToken);
                         GravityEngineWrapper.ShareInstance(token, _sGravityEngineAPI);
                         GravityEngineWrapper.SetNetworkType(_sGravityEngineAPI.networkType);
                     }

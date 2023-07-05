@@ -57,9 +57,9 @@ namespace GravityEngine.Wrapper
             login(accountId);
         }
 
-        public static void Logout()
+        public static void Logout(ILogoutCallback logoutCallback)
         {
-            logout();
+            logout(logoutCallback);
         }
 
         public static void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
