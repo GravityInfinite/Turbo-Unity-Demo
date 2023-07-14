@@ -58,6 +58,7 @@ TDSDKSETTINGS_PLIST_SETTING_IMPL(NSNumber, GravityEngineSDKExpirationDays, _expi
         _networkTypePolicy = GravityNetworkTypeWIFI | GravityNetworkType3G  | GravityNetworkType4G | GravityNetworkType2G | GravityNetworkType5G;
         _securityPolicy = [GESecurityPolicy defaultPolicy];
         _defaultTimeZone = [NSTimeZone localTimeZone];
+        _configureURL = @"https://backend.gravity-engine.com";
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -75,50 +76,6 @@ TDSDKSETTINGS_PLIST_SETTING_IMPL(NSNumber, GravityEngineSDKExpirationDays, _expi
 
     }
     return self;
-}
-
-- (instancetype)initWithAppId:(NSString *)appId serverUrl:(NSString *)serverUrl
-{
-    self = [self init];
-    if (self) {
-        _appid = appId;
-        _configureURL = serverUrl;
-    }
-    return self;
-}
-
-
-- (void)updateConfig:(void(^)(NSDictionary *secretKey))block {
-    // Gravity Modify 暂时先不要请求
-//    NSString *serverUrlStr = [NSString stringWithFormat:@"%@/config",self.configureURL];
-//    GENetwork *network = [[GENetwork alloc] init];
-//    network.serverURL = [NSURL URLWithString:serverUrlStr];
-//    network.securityPolicy = _securityPolicy;
-//
-//    [network fetchRemoteConfig:self.appid handler:^(NSDictionary * _Nonnull result, NSError * _Nullable error) {
-//        if (!error) {
-//            NSInteger uploadInterval = [[result objectForKey:@"sync_interval"] integerValue];
-//            NSInteger uploadSize = [[result objectForKey:@"sync_batch_size"] integerValue];
-//            if (uploadInterval != [self->_uploadInterval integerValue] || uploadSize != [self->_uploadSize integerValue]) {
-//                GEFile *file = [[GEFile alloc] initWithAppid:self.appid];
-//                if (uploadInterval > 0) {
-//                    self.uploadInterval = [NSNumber numberWithInteger:uploadInterval];
-//                    [file archiveUploadInterval:self.uploadInterval];
-//                    NSString *name = self.getInstanceName ? self.getInstanceName() : self.appid;
-//                    [[GravityEngineSDK sharedInstanceWithAppid:name] startFlushTimer];
-//                }
-//                if (uploadSize > 0) {
-//                    self.uploadSize = [NSNumber numberWithInteger:uploadSize];
-//                    [file archiveUploadSize:self.uploadSize];
-//                }
-//            }
-//            self.disableEvents = [result objectForKey:@"disable_event_list"];
-//
-//            if (block) {
-//                block([result objectForKey:@"secret_key"]);
-//            }
-//        }
-//    }];
 }
 
 - (void)setNetworkType:(GravityEngineNetworkType)type {

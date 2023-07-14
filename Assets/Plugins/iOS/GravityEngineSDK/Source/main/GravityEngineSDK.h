@@ -42,7 +42,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- SDK VERSION = 4.2.9
+ SDK VERSION = 4.3.1
  GravityEngine API
  
  ## Initialization
@@ -94,16 +94,6 @@ typedef void (^CallbackWithError)(NSError * error);
   Initialization method
   After the SDK initialization is complete, the saved instance can be obtained through this api
 
-  @param appId appId
-  @param url server url
-  @return one instance
-  */
-+ (GravityEngineSDK *)startWithAppId:(NSString *)appId withUrl:(NSString *)url;
-
-/**
-  Initialization method
-  After the SDK initialization is complete, the saved instance can be obtained through this api
-
   @param config initialization configuration
   @return one instance
   */
@@ -125,7 +115,9 @@ typedef void (^CallbackWithError)(NSError * error);
 /**
  register GravityEngine
  */
-- (void)registerGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaToken:(NSString *)asaToken withSuccessCallback:(CallbackWithSuccess)successCallback withCallbackErrro:(CallbackWithError)errorCallback;
+- (void)registerGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback;
+
+- (void)resetClientID:(NSString *) newClientID withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback;
 
 /**
  * 上报付费事件
@@ -172,6 +164,15 @@ typedef void (^CallbackWithError)(NSError * error);
 - (void)trackAdPlayStartEventWithUninType:(NSString *)adUnionType withPlacementId:(NSString *)adPlacementId withSourceId:(NSString *)adSourceId withAdType:(NSString *)adType withAdnType:(NSString *)adAdnType withEcpm:(NSNumber *)ecpm;
 
 - (void)trackAdPlayEndEventWithUninType:(NSString *)adUnionType withPlacementId:(NSString *)adPlacementId withSourceId:(NSString *)adSourceId withAdType:(NSString *)adType withAdnType:(NSString *)adAdnType withEcpm:(NSNumber *)ecpm withDruation:(NSNumber *)duration withIsPlayOver:(BOOL)isPlayOver;
+
+
+/**
+ * 绑定数数账号
+ *
+ * @param taAccountId    数数的account_id
+ * @param taDistinctId  数数的distinct_id
+ */
+- (void)bindTAThirdPlatformWithAccountId:(NSString *)taAccountId withDistinctId:(NSString *)taDistinctId;
 
 #pragma mark - Action Track
 
@@ -584,20 +585,14 @@ typedef void (^CallbackWithError)(NSError * error);
 
 - (void)flushWithCompletion:(void(^)(void))completion;
 
+- (void)testTest;
+
 /**
  Switch reporting status
 
  @param status GETrackStatus reporting status
  */
 - (void)setTrackStatus: (GETrackStatus)status;
-
-- (void)enableTracking:(BOOL)enabled DEPRECATED_MSG_ATTRIBUTE("Please use instance method setTrackStatus: GETrackStatusPause");
-
-- (void)optOutTracking DEPRECATED_MSG_ATTRIBUTE("Please use instance method setTrackStatus: GETrackStatusStop");
-
-- (void)optOutTrackingAndDeleteUser DEPRECATED_MSG_ATTRIBUTE("Please use instance method setTrackStatus: GETrackStatusStop");
-
-- (void)optInTracking DEPRECATED_MSG_ATTRIBUTE("Please use instance method setTrackStatus: GETrackStatusNormal");
 
 + (void)calibrateTimeWithNtp:(NSString *)ntpServer;
 

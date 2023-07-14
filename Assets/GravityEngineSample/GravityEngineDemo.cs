@@ -16,7 +16,6 @@ using StarkSDKSpace;
 
 public class RegisterCallbackImpl : IRegisterCallback
 {
-    
     public void onFailed(string errorMsg)
     {
         Debug.Log("register failed  with message " + errorMsg);
@@ -26,6 +25,22 @@ public class RegisterCallbackImpl : IRegisterCallback
     {
         Debug.Log("register success");
         Debug.Log("register call end");
+        // 建议在此执行一次Flush
+        GravityEngineAPI.Flush();
+    }
+}
+
+public class ResetClientIdCallbackImpl : IRegisterCallback
+{
+    public void onFailed(string errorMsg)
+    {
+        Debug.Log("reset failed  with message " + errorMsg);
+    }
+
+    public void onSuccess()
+    {
+        Debug.Log("reset success");
+        Debug.Log("reset call end");
         // 建议在此执行一次Flush
         GravityEngineAPI.Flush();
     }
@@ -121,19 +136,14 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
-#elif UNITY_IOS && !UNITY_EDITOR || true
+#elif UNITY_IOS && !UNITY_EDITOR
             // iOS原生应用示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "HuyP3wz0exklCr2YhoKht9Ju8fUjiBjs";
             string clientId = "1234567890067";
-            string idfa = "123456789";
-            string idfv = "123456789";
-            string caid1Md5 = "123456789";
-            string caid2Md5 = "123456789";
-            string asaToken = "123456789";
 
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "appstore" , "", idfa, idfv, caid1Md5, caid2Md5, asaToken);
+            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "appstore");
             // 原生app开启自动采集，并设置自定属性
             GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, new Dictionary<string, object>()
             {
@@ -160,15 +170,39 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             string aesKey = "k7ZjSgc1Z8j551UJUNLlWA==";
 
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi", aesKey);
+            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi",
+                aesKey);
 #endif
         }
 
         GUILayout.Space(20);
         if (GUILayout.Button("Register", GUILayout.Height(Height)))
         {
+#if UNITY_IOS && !UNITY_EDITOR
+            // iOS原生应用注册
+            string idfa = "123456789";
+            string idfv = "123456789";
+            string caid1Md5 = "123456789";
+            string caid2Md5 = "123456789";
+            GravityEngineAPI.RegisterIOS("name_123", 1, false, idfa, idfv, caid1Md5, caid2Md5,
+                new RegisterCallbackImpl());
+#else
             Debug.Log("register clicked");
             GravityEngineAPI.Register("name_123", 1, "your_openid_111", new RegisterCallbackImpl());
+#endif
+        }
+        
+        GUILayout.Space(20);
+        if (GUILayout.Button("ResetClientID", GUILayout.Height(Height)))
+        {
+            string newClientId = "2";
+            GravityEngineAPI.ResetClientID(newClientId, new ResetClientIdCallbackImpl());
+        }
+        
+        GUILayout.Space(20);
+        if (GUILayout.Button("BindTAThirdPlatform", GUILayout.Height(Height)))
+        {
+            GravityEngineAPI.BindTAThirdPlatform("123", "456");
         }
 
         GUILayout.EndHorizontal();
@@ -196,14 +230,14 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             // 记录用户抖音小游戏广告观看事件
             GravityEngineAPI.TrackBytedanceAdShowEvent("your_open_id", "your_unit_id");
         }
-        
+
         GUILayout.Space(20);
         if (GUILayout.Button("TrackWechatAdShowEvent", GUILayout.Height(Height)))
         {
             // 记录用户微信小游戏广告观看事件
             GravityEngineAPI.TrackWechatAdShowEvent("reward", "your_ad_unit_id");
         }
-        
+
         GUILayout.Space(20);
         if (GUILayout.Button("TrackNativeAppAdShowEvent", GUILayout.Height(Height)))
         {

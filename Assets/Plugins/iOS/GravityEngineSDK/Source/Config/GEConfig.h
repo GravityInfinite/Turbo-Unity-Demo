@@ -71,18 +71,6 @@ NS_ASSUME_NONNULL_BEGIN
  Gravity AccessToken
  */
 @property (nonatomic, copy) NSString *accessToken;
-/**
- Gravity Client ID
- */
-@property (nonatomic, copy) NSString *clientId;
-
-@property (nonatomic, copy) NSString *idfa;
-
-@property (nonatomic, copy) NSString *idfv;
-
-@property (nonatomic, copy) NSString *caid1_md5;
-
-@property (nonatomic, copy) NSString *caid2_md5;
 
 /**
  Initialize and configure background self-starting events
@@ -117,8 +105,6 @@ app launchOptions
 @property (nonatomic, copy) NSString *name;
 
 + (GEConfig *)defaultGEConfig;
-- (instancetype)initWithAppId:(NSString *)appId serverUrl:(NSString *)serverUrl;
-- (void)updateConfig:(void(^)(NSDictionary *secretKey))block;
 - (void)setNetworkType:(GravityEngineNetworkType)type;
 
 

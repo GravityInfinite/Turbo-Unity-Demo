@@ -23,6 +23,8 @@
 //#import "TASessionIdPropertyPlugin.h"
 //#import "TASessionIdManager.h"
 
+#import <AdServices/AAAttribution.h>
+
 
 #if !__has_feature(objc_arc)
 #error The GravityEngineSDK library must be compiled with ARC enabled
@@ -88,11 +90,6 @@ static dispatch_queue_t ge_trackQueue;
     return [[self alloc] initWithAppkey:appId withServerURL:url withConfig:config];
 }
 
-+ (GravityEngineSDK *)startWithAppId:(NSString *)appId withUrl:(NSString *)url {
-    return [GravityEngineSDK startWithAppId:appId withUrl:url withConfig:nil];
-}
-
-
 + (GravityEngineSDK *)startWithConfig:(nullable GEConfig *)config {
     return [GravityEngineSDK startWithAppId:config.appid withUrl:config.configureURL withConfig:config];
 }
@@ -137,17 +134,12 @@ static dispatch_queue_t ge_trackQueue;
         _config = [config copy];
         _config.appid = appid;
         _config.configureURL = serverURL;
-        _config.idfa = config.idfa;
-        _config.idfv = config.idfv;
-        _config.caid1_md5 = config.caid1_md5;
-        _config.caid2_md5 = config.caid2_md5;
         _config.accessToken = config.accessToken;
         
         instances[[self ge_getMapInstanceTag]] = self;
 
         // 每次启动的时候，读取本地存储的文件
         self.file = [[GEFile alloc] initWithAppid:[self ge_getMapInstanceTag]];
-        [self.file archiveClientId:config.clientId];
         [self retrievePersistedData];
         
         // 预加载
@@ -197,13 +189,6 @@ static dispatch_queue_t ge_trackQueue;
         if (_config.enableEncrypt) {
             self.encryptManager = [[GEEncryptManager alloc] initWithConfig:config];
         }
-        
-        __weak __typeof(self)weakSelf = self;
-        [_config updateConfig:^(NSDictionary * _Nonnull secretKey) {
-            if (weakSelf.config.enableEncrypt && secretKey) {
-                [weakSelf.encryptManager handleEncryptWithConfig:secretKey];
-            }
-        }];
       
 #elif TARGET_OS_OSX
         [_config updateConfig:^(NSDictionary * _Nonnull secretKey) {}];
@@ -312,7 +297,8 @@ static dispatch_queue_t ge_trackQueue;
     [dataTask resume];
 }
 
-- (void)registerGravityEngineWithAttributionInfo:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withClickTime:(long long)clickTime withAsaRecord:(NSDictionary *)asaRecord withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSuccessCallback:(CallbackWithSuccess)successCallback withCallbackErrro:(CallbackWithError)errorCallback {
+// 用来做asa归因
+- (void)registerGravityEngineWithAttributionInfo:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withClickTime:(long long)clickTime withAsaRecord:(NSDictionary *)asaRecord withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
     GENetwork *network = [[GENetwork alloc] init];
     network.debugMode = GravityEngineDebugOff;
     network.appid = _config.appid;
@@ -381,7 +367,18 @@ static dispatch_queue_t ge_trackQueue;
     [network postDataWith:registerBody handler:block];
 }
 
-- (void)registerGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaToken:(NSString *)asaToken withSuccessCallback:(CallbackWithSuccess)successCallback withCallbackErrro:(CallbackWithError)errorCallback {
+- (void)registerGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
+    
+    if (!(idfa && idfa.length > 0) && !(idfv && idfv.length > 0) && !(caid1_md5 && caid1_md5.length > 0) && !(caid2_md5 && caid2_md5.length > 0)) {
+        GELogError(@"idfa/idfv/caid1_md5/caid2_md5 必现至少一个不为空！否则会严重影响归因结果！");
+        if (errorCallback) {
+            errorCallback([NSError errorWithDomain:@"com.gravityengine" code:-1 userInfo:@{
+                @"error": @"idfa/idfv/caid1_md5/caid2_md5 必现至少一个不为空！否则会严重影响归因结果！"
+            }]);
+        }
+        return;
+    }
+    
     GENetwork *network = [[GENetwork alloc] init];
     network.debugMode = GravityEngineDebugOff;
     network.appid = _config.appid;
@@ -399,66 +396,12 @@ static dispatch_queue_t ge_trackQueue;
         NSNumber *code = [result objectForKey:@"code"];
         GELogDebug(@"register respons code is %@", code);
         if ([code isEqualToNumber:@0]) {
+            // 注册成功，准备开始上报各种信息
             [self.file archiveClientId:clientId];
 
             if (successCallback) {
                 GELogDebug(@"didFinishAdnSuccess, client id is %@", [self.file unarchiveClientId]);
                 successCallback();
-            }
-            
-            // asaToken参数，启动/注册 的时候获取，获取完成之后，传入给引力
-            // 如果attribution为true，则调用归因register接口
-            // 否则，调用device info接口
-            if (asaToken && asaToken.length > 0) {
-                // asaToken有值时
-                GELogDebug(@"asa token is %@", asaToken);
-                [self getAsaAttributionRecords:asaToken withRetryCount:0 completeBlock:^(NSDictionary * _Nonnull asaRecord) {
-                    GELogDebug(@"asa records ret ---> %@", asaRecord);
-                    BOOL attributionValue = [asaRecord[@"attribution"] boolValue];
-                    if (attributionValue) {
-                        //调用归因register接口
-                        NSString *clickDateStr = [asaRecord objectForKey:@"clickDate"];
-                        // 如果没有授权IDFA，则click time有可能拿不到
-                        NSTimeInterval utcTimestampSec = 0;
-                        if (clickDateStr) {
-                            // 将字符串解析为NSDate对象
-                            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
-                            NSDate *clickDate = [dateFormatter dateFromString:clickDateStr];
-
-                            // 转换为UTC时间并获取毫秒时间戳
-                            utcTimestampSec = [clickDate timeIntervalSince1970];
-                            GELogDebug(@"use asa click time");
-                        }
-
-                       long long utcTimestampMs = (long long)(utcTimestampSec * 1000);
-
-                       NSLog(@"UTC timestamp in milliseconds: %lld", utcTimestampMs);
-                        
-                        [self registerGravityEngineWithAttributionInfo:clientId withUserName:userName withVersion:version withClickTime:utcTimestampMs withAsaRecord:asaRecord withIdfa:self->_config.idfa withIdfv:self->_config.idfv withCaid1:self->_config.caid1_md5 withCaid2:self->_config.caid2_md5 withSuccessCallback:^{
-                            GELogDebug(@"registerGravityEngineWithAttributionInfo successs");
-                        } withCallbackErrro:^(NSError * _Nonnull error) {
-                            GELogDebug(@"registerGravityEngineWithAttributionInfo error %@", error);
-                        }];
-                    } else {
-                        GELogDebug(@"asa token is invalid, will not use it as attribution params");
-                        // asaToken虽然有值，但是苹果并不认为此次是归因成功带来的量，故走默认逻辑
-                        // 注册成功之后，自动上报设备信息
-                        [self uploadDeviceInfoWithIdfa:self->_config.idfa withIdfv:self->_config.idfv withCaid1:self->_config.caid1_md5 withCaid2:self->_config.caid2_md5 withSuccessCallback:^{
-                            GELogDebug(@"upload device info success");
-                        } withCallbackErrro:^(NSError * _Nonnull error) {
-                            GELogDebug(@"upload device info error %@", error);
-                        }];
-                    }
-                }];
-            } else {
-                GELogDebug(@"asa token is nil or empty string, will not use it as attribution params");
-                // asaToken无值，直接走普通device info绑定逻辑
-                [self uploadDeviceInfoWithIdfa:self->_config.idfa withIdfv:self->_config.idfv withCaid1:self->_config.caid1_md5 withCaid2:self->_config.caid2_md5 withSuccessCallback:^{
-                    GELogDebug(@"upload device info success");
-                } withCallbackErrro:^(NSError * _Nonnull error) {
-                    GELogDebug(@"upload device info error %@", error);
-                }];
             }
             
             // 上报用户信息
@@ -473,6 +416,69 @@ static dispatch_queue_t ge_trackQueue;
             // 上报用户注册事件
             [self track:@"$AppRegister"];
             [self flush];
+            
+            // 处理asa和设备信息绑定上报
+            if (@available(iOS 14.3, *)) {
+                if (enableAsa == YES) {
+                    NSError *error;
+                    NSString *asaToken = [AAAttribution attributionTokenWithError:&error];
+                    GELogDebug(@"asa token is %@", asaToken);
+                    // asaToken参数，启动/注册 的时候获取，获取完成之后，传入给引力
+                    // 如果attribution为true，则调用归因register接口
+                    // 否则，调用device info接口
+                    if (asaToken && asaToken.length > 0) {
+                        // asaToken有值时
+                        [self getAsaAttributionRecords:asaToken withRetryCount:0 completeBlock:^(NSDictionary * _Nonnull asaRecord) {
+                            GELogDebug(@"asa records ret ---> %@", asaRecord);
+                            BOOL attributionValue = [asaRecord[@"attribution"] boolValue];
+                            if (attributionValue) {
+                                //调用归因register接口
+                                NSString *clickDateStr = [asaRecord objectForKey:@"clickDate"];
+                                // 如果没有授权IDFA，则click time有可能拿不到
+                                NSTimeInterval utcTimestampSec = 0;
+                                if (clickDateStr) {
+                                    // 将字符串解析为NSDate对象
+                                    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                                    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
+                                    NSDate *clickDate = [dateFormatter dateFromString:clickDateStr];
+
+                                    // 转换为UTC时间并获取毫秒时间戳
+                                    utcTimestampSec = [clickDate timeIntervalSince1970];
+                                    GELogDebug(@"use asa click time");
+                                }
+
+                               long long utcTimestampMs = (long long)(utcTimestampSec * 1000);
+
+                               NSLog(@"UTC timestamp in milliseconds: %lld", utcTimestampMs);
+                                
+                                [self registerGravityEngineWithAttributionInfo:clientId withUserName:userName withVersion:version withClickTime:utcTimestampMs withAsaRecord:asaRecord withIdfa:idfa withIdfv:idfv withCaid1:caid1_md5 withCaid2:caid2_md5 withSuccessCallback:^{
+                                    GELogDebug(@"registerGravityEngineWithAttributionInfo successs");
+                                } withErrorCallback:^(NSError * _Nonnull error) {
+                                    GELogDebug(@"registerGravityEngineWithAttributionInfo error %@", error);
+                                }];
+                            } else {
+                                GELogDebug(@"asa token is invalid, will not use it as attribution params");
+                                // asaToken虽然有值，但是苹果并不认为此次是归因成功带来的量，故走默认逻辑
+                                // 注册成功之后，自动上报设备信息
+                                [self uploadDeviceInfoWithIdfa:idfa withIdfv:idfv withCaid1:caid1_md5 withCaid2:caid2_md5 withSuccessCallback:^{
+                                    GELogDebug(@"upload device info success");
+                                } withErrorCallback:^(NSError * _Nonnull error) {
+                                    GELogDebug(@"upload device info error %@", error);
+                                }];
+                            }
+                        }];
+                        return;
+                    }
+                }
+            }
+            
+            GELogDebug(@"asa token is nil or empty string or disable asa, will not use it as attribution params");
+            // asaToken无值/asa disable/系统版本小于14.3，直接走普通device info绑定逻辑
+            [self uploadDeviceInfoWithIdfa:idfa withIdfv:idfv withCaid1:caid1_md5 withCaid2:caid2_md5 withSuccessCallback:^{
+                GELogDebug(@"upload device info success");
+            } withErrorCallback:^(NSError * _Nonnull error) {
+                GELogDebug(@"upload device info error %@", error);
+            }];
             return;
         }
         
@@ -511,7 +517,50 @@ static dispatch_queue_t ge_trackQueue;
     }
 }
 
-- (void)uploadDeviceInfoWithIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSuccessCallback:(CallbackWithSuccess)successCallback withCallbackErrro:(CallbackWithError)errorCallback {
+- (void)resetClientID:(NSString *)newClientID withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
+    NSString * clientId = [self.file unarchiveClientId];
+    if (!clientId) {
+        GELogError(@"client id is nil, will not reset client id");
+        if (errorCallback) {
+            errorCallback([NSError errorWithDomain:@"com.gravityengine" code:-1 userInfo:@{
+                @"error": @"client id is nil, will not reset client id"
+            }]);
+        }
+        return;
+    }
+    GENetwork *network = [[GENetwork alloc] init];
+    network.debugMode = GravityEngineDebugOff;
+    network.appid = _config.appid;
+    network.serverURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/event_center/api/v1/user/reset_client_id/?access_token=%@&client_id=%@", _config.configureURL, _config.accessToken, clientId]];
+    network.securityPolicy = _config.securityPolicy;
+    
+    NSDictionary *registerBody = @{
+        @"new_client_id": newClientID
+    };
+
+    [network postDataWith:(registerBody) handler:^(NSDictionary * _Nonnull result, NSError * _Nullable error) {
+        GELogDebug(@"reset result is %@", result);
+        if (error) {
+            if (errorCallback) {
+                errorCallback(error);
+            }
+        } else {
+            NSNumber *code = [result objectForKey:@"code"];
+            if ([code isEqualToNumber:@0]) {
+                [self.file archiveClientId:newClientID];
+                if (successCallback) {
+                    successCallback();
+                }
+            } else {
+                if (errorCallback) {
+                    errorCallback(error);
+                }
+            }
+        }
+    }];
+}
+
+- (void)uploadDeviceInfoWithIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
     NSString * clientId = [self.file unarchiveClientId];
     if (!clientId) {
         GELogError(@"client id is nil, will not upuload device info");
@@ -580,6 +629,15 @@ static dispatch_queue_t ge_trackQueue;
         @"$order_id": orderId,
         @"$pay_reason": payReason,
         @"$pay_method": payMethod
+    }];
+    [self flush];
+}
+
+- (void)bindTAThirdPlatformWithAccountId:(NSString *)taAccountId withDistinctId:(NSString *)taDistinctId {
+    [self track:@"$BindThirdPlatform" properties:@{
+        @"$ta_account_id": taAccountId,
+        @"$ta_distinct_id": taDistinctId,
+        @"$third_platform_type": @"ta",
     }];
     [self flush];
 }
@@ -1841,6 +1899,11 @@ static dispatch_queue_t ge_trackQueue;
 
 - (NSInteger)saveEventsData:(NSDictionary *)data {
     return [self.eventTracker saveEventsData:data];
+}
+
+- (void)testTest {
+    NSString * clientId = [self.file unarchiveClientId];
+    GELogError(@"client id is %@", clientId);
 }
 
 @end

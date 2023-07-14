@@ -406,6 +406,16 @@ namespace GravityEngine.Wrapper
         {
             GravityPCSDK.Register(name, version, wxOpenId, registerCallback);
         }
+        
+        private static void registerIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IRegisterCallback registerCallback)
+        {
+            GravitySDKLogger.Print("not support registerIOS!");
+        }
+        
+        private static void resetClientId(string newClientId, IRegisterCallback resetClientIdCallback)
+        {
+            GravitySDKLogger.Print("not support resetClientId!");
+        }
 
         private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
@@ -429,6 +439,11 @@ namespace GravityEngine.Wrapper
             string adType, string adnType, float ecpm)
         {
             GravitySDKLogger.Print("not support trackNativeAppAdShowEvent!");
+        }
+
+        private static void bindTAThirdPlatform(string taAccountId, string taDistinctId)
+        {
+            GravitySDKLogger.Print("not support bindTAThirdPlatform!");
         }
     }
 }

@@ -13,6 +13,7 @@ namespace GravityEngine.Wrapper
         private static IDynamicSuperProperties mDynamicSuperProperties;
         private static IAutoTrackEventCallback mAutoTrackEventCallback;
         private static IRegisterCallback mRegisterCallback;
+        private static IRegisterCallback mResetClientIdCallback;
 
         private static System.Random rnd = new System.Random();
 
@@ -296,6 +297,18 @@ namespace GravityEngine.Wrapper
             mRegisterCallback = registerCallback;
             register(name, version, wxOpenId, registerCallback);
         }
+        
+        public static void RegisterIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IRegisterCallback registerCallback)
+        {
+            mRegisterCallback = registerCallback;
+            registerIOS(name, version, enableAsa, idfa, idfv, caid1_md5, caid2_md5, registerCallback);
+        }
+
+        public static void ResetClientID(string newClientId, IRegisterCallback resetClientIdCallback)
+        {
+            mResetClientIdCallback = resetClientIdCallback;
+            resetClientId(newClientId, resetClientIdCallback);
+        }
 
         public static void ReportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
@@ -313,6 +326,11 @@ namespace GravityEngine.Wrapper
         {
             trackNativeAppAdShowEvent(adUnionType, adPlacementId, adSourceId, adType, adnType,
                 ecpm);
+        }
+        
+        public static void BindTAThirdPlatform(string taAccountId, string taDistinctId)
+        {
+            bindTAThirdPlatform(taAccountId, taDistinctId);
         }
     }
 }

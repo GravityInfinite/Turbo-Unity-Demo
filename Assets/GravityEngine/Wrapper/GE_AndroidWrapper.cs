@@ -15,8 +15,9 @@ namespace GravityEngine.Wrapper
     {
         private static readonly string JSON_CLASS = "org.json.JSONObject";
         private static readonly AndroidJavaClass sdkClass = new AndroidJavaClass("cn.gravity.android.GravityEngineSDK");
-        
-        private static readonly AndroidJavaObject unityAPIInstance = new AndroidJavaObject("cn.gravity.engine.GravityEngineUnityAPI");
+
+        private static readonly AndroidJavaObject unityAPIInstance =
+            new AndroidJavaObject("cn.gravity.engine.GravityEngineUnityAPI");
 
         private static GravityEngineAPI.Token mToken;
 
@@ -83,22 +84,23 @@ namespace GravityEngine.Wrapper
             AndroidJavaObject context =
                 new AndroidJavaClass("com.unity3d.player.UnityPlayer")
                     .GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
-            
+
             Dictionary<string, object> configDic = new Dictionary<string, object>();
             configDic["accessToken"] = token.accessToken;
             configDic["mode"] = (int) token.mode;
             configDic["aesKey"] = token.aesKey;
-            
+
             string timeZoneId = token.getTimeZoneId();
             if (null != timeZoneId && timeZoneId.Length > 0)
             {
                 configDic["timeZone"] = timeZoneId;
             }
-            
+
             if (token.enableEncrypt)
             {
                 configDic["enableEncrypt"] = true;
-                configDic["secretKey"] = new Dictionary<string, object>() {
+                configDic["secretKey"] = new Dictionary<string, object>()
+                {
                     {"publicKey", token.encryptPublicKey},
                     {"version", token.encryptVersion},
                     {"symmetricEncryption", "AES"},
@@ -323,6 +325,7 @@ namespace GravityEngine.Wrapper
                     properties["network_type"] = 2;
                     break;
             }
+
             unityAPIInstance.Call("setNetworkType", GE_MiniJson.Serialize(properties));
         }
 
@@ -332,7 +335,7 @@ namespace GravityEngine.Wrapper
             {
                 {"autoTrackType", (int) events}
             };
-            
+
             unityAPIInstance.Call("enableAutoTrack", GE_MiniJson.Serialize(propertiesNew));
             propertiesNew["properties"] = GE_MiniJson.Deserialize(properties);
             unityAPIInstance.Call("setAutoTrackProperties", GE_MiniJson.Serialize(propertiesNew));
@@ -421,7 +424,8 @@ namespace GravityEngine.Wrapper
 
         private class DynamicListenerAdapter : AndroidJavaProxy
         {
-            public DynamicListenerAdapter() : base("cn.gravity.engine.GravityEngineUnityAPI$DynamicSuperPropertiesTrackerListener")
+            public DynamicListenerAdapter() : base(
+                "cn.gravity.engine.GravityEngineUnityAPI$DynamicSuperPropertiesTrackerListener")
             {
             }
 
@@ -494,6 +498,29 @@ namespace GravityEngine.Wrapper
             }
         }
 
+        private class ResetClientIdListenerAdapter : AndroidJavaProxy
+        {
+            public ResetClientIdListenerAdapter() : base("cn.gravity.android.RegisterCallback")
+            {
+            }
+
+            void onFailed(string errorMsg)
+            {
+                if (mResetClientIdCallback != null)
+                {
+                    mResetClientIdCallback.onFailed(errorMsg);
+                }
+            }
+
+            void onSuccess()
+            {
+                if (mResetClientIdCallback != null)
+                {
+                    mResetClientIdCallback.onSuccess();
+                }
+            }
+        }
+
         private static void register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
             RegisterListenerAdapter listenerAdapter = new RegisterListenerAdapter();
@@ -501,11 +528,23 @@ namespace GravityEngine.Wrapper
                 listenerAdapter);
         }
 
+        private static void registerIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+            string caid1_md5, string caid2_md5, IRegisterCallback registerCallback)
+        {
+            GE_Log.d("android not support registerIOS");
+        }
+
+        private static void resetClientId(string newClientId, IRegisterCallback resetClientIdCallback)
+        {
+            ResetClientIdListenerAdapter listenerAdapter = new ResetClientIdListenerAdapter();
+            getInstance().Call("resetClientId", Turbo.GetAccessToken(), newClientId, listenerAdapter);
+        }
+
         private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
-            GE_Log.d("android not support");
+            GE_Log.d("android not support reportBytedanceAdToGravity");
         }
-        
+
         private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,
             string payMethod)
         {
@@ -516,6 +555,11 @@ namespace GravityEngine.Wrapper
             string adType, string adnType, float ecpm)
         {
             getInstance().Call("trackAdShowEvent", adUnionType, adPlacementId, adSourceId, adType, adnType, ecpm);
+        }
+
+        private static void bindTAThirdPlatform(string taAccountId, string taDistinctId)
+        {
+            getInstance().Call("bindTAThirdPlatform", taAccountId, taDistinctId);
         }
     }
 }

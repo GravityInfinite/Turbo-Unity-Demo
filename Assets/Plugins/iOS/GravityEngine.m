@@ -11,11 +11,11 @@
 #define NETWORK_TYPE_WIFI 2
 #define NETWORK_TYPE_ALL 3
 
-typedef const char * (*ResultHandler) (const char *type, const char *jsonData);
-static ResultHandler resultHandler;
-void RegisterRecieveGameCallback(ResultHandler handlerPointer)
+typedef const char * (*GEResultHandler) (const char *type, const char *jsonData);
+static GEResultHandler geResultHandler;
+void GERegisterRecieveGameCallback(GEResultHandler geHandlerPointer)
 {
-    resultHandler = handlerPointer;
+    geResultHandler = geHandlerPointer;
 }
 
 static NSMutableDictionary *light_instances;
@@ -74,26 +74,14 @@ char* ge_strdup(const char* string) {
 }
 
 
-void ge_start(const char *app_id, const char *accessToken, const char *clientId, const char *idfa, const char *idfv, const char *caid1_md5, const char *caid2_md5, int mode, const char *timezone_id, bool enable_encrypt, int encrypt_version, const char *encrypt_public_key, int pinning_mode, bool allow_invalid_certificates, bool validates_domain_name) {
+void ge_start(const char *app_id, const char *accessToken, int mode, const char *timezone_id, bool enable_encrypt, int encrypt_version, const char *encrypt_public_key, int pinning_mode, bool allow_invalid_certificates, bool validates_domain_name) {
     NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
     NSString *access_token_string = accessToken != NULL ? [NSString stringWithUTF8String:accessToken] : nil;
-    NSString *client_id_string = clientId != NULL ? [NSString stringWithUTF8String:clientId] : nil;
-    NSString *idfa_string = idfa != NULL ? [NSString stringWithUTF8String:idfa] : nil;
-    NSString *idfv_string = idfv != NULL ? [NSString stringWithUTF8String:idfv] : nil;
-    NSString *caid1_md5_string = caid1_md5 != NULL ? [NSString stringWithUTF8String:caid1_md5] : nil;
-    NSString *caid2_md5_string = caid2_md5 != NULL ? [NSString stringWithUTF8String:caid2_md5] : nil;
     
     GEConfig *config = [[GEConfig alloc] init];
     config.appid = app_id_string;
     config.accessToken = access_token_string;
     
-    config.clientId = client_id_string;
-    config.idfa = idfa_string;
-    config.idfv = idfv_string;
-    config.caid1_md5 = caid1_md5_string;
-    config.caid2_md5 = caid2_md5_string;
-    
-    config.configureURL = @"https://backend.gravity-engine.com";
     [config setName:app_id_string];
     if (mode == 1) {
         // DEBUG
@@ -158,7 +146,7 @@ void ge_login(const char *app_id, const char *account_id) {
 void ge_logout(const char *app_id) {
     NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
     [ge_getInstance(app_id_string) logoutWithCompletion:^{
-        resultHandler("LogoutCallback", "{}");
+        geResultHandler("LogoutCallback", "{}");
     }];
 }
 
@@ -405,7 +393,7 @@ const char *ge_get_device_id() {
 void ge_set_dynamic_super_properties(const char *app_id) {
     NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
     [ge_getInstance(app_id_string) registerDynamicSuperProperties:^NSDictionary * _Nonnull{
-        const char *ret = resultHandler("DynamicSuperProperties", nil);
+        const char *ret = geResultHandler("DynamicSuperProperties", nil);
         NSDictionary *dynamicSuperProperties = nil;
         ge_convertToDictionary(ret, &dynamicSuperProperties);
         return dynamicSuperProperties;
@@ -447,7 +435,7 @@ void ge_enable_autoTrack_with_callback(const char *app_id, int autoTrackEvents) 
         [callbackProperties setObject:w_app_id_string forKey:@"AppID"];
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:ge_parse_date(callbackProperties) options:NSJSONWritingPrettyPrinted error:nil];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        const char *ret = resultHandler("AutoTrackProperties", [jsonString UTF8String]);
+        const char *ret = geResultHandler("AutoTrackProperties", [jsonString UTF8String]);
         NSDictionary *autoTrackProperties = nil;
         ge_convertToDictionary(ret, &autoTrackProperties);
         return autoTrackProperties;
@@ -496,18 +484,44 @@ void ge_track_pay_event(const char *app_id, int pay_amount, const char *pay_type
     [ge_getInstance(app_id_string) trackPayEventWithAmount:pay_amount withPayType:pay_type_string withOrderId:order_id_string withPayReason:pay_reason_string withPayMethod:pay_method_string];
 }
 
-void ge_register(const char *app_id, const char *client_id, const char *user_client_name, const char *asa_token, int version) {
+void ge_register(const char *app_id, const char *client_id, const char *user_client_name, bool enable_asa, int version, const char *idfa, const char *idfv, const char *caid1_md5, const char *caid2_md5) {
     NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
     NSString *client_id_string = client_id != NULL ? [NSString stringWithUTF8String:client_id] : nil;
     NSString *user_client_name_string = user_client_name != NULL ? [NSString stringWithUTF8String:user_client_name] : nil;
-    NSString *asa_token_string = asa_token != NULL ? [NSString stringWithUTF8String:asa_token] : nil;
+    NSString *idfa_string = idfa != NULL ? [NSString stringWithUTF8String:idfa] : nil;
+    NSString *idfv_string = idfv != NULL ? [NSString stringWithUTF8String:idfv] : nil;
+    NSString *caid1_md5_string = caid1_md5 != NULL ? [NSString stringWithUTF8String:caid1_md5] : nil;
+    NSString *caid2_md5_string = caid2_md5 != NULL ? [NSString stringWithUTF8String:caid2_md5] : nil;
     
-    [ge_getInstance(app_id_string) registerGravityEngineWithClientId:client_id_string withUserName:user_client_name_string withVersion:version withAsaToken:asa_token_string withSuccessCallback:^{
+    [ge_getInstance(app_id_string) registerGravityEngineWithClientId:client_id_string withUserName:user_client_name_string withVersion:version withAsaEnable:enable_asa withIdfa:idfa_string withIdfv:idfv_string withCaid1:caid1_md5_string withCaid2:caid2_md5_string withSuccessCallback:^{
         NSLog(@"gravity engine register success");
-        resultHandler("RegisterCallbackSuccess", "{}");
-    } withCallbackErrro:^(NSError * _Nonnull error) {
+        geResultHandler("RegisterCallbackSuccess", "{}");
+    } withErrorCallback:^(NSError * _Nonnull error) {
         NSLog(@"gravity engine register failed, and error is %@", error);
-        resultHandler("RegisterCallbackFailed", "{}");
+        geResultHandler("RegisterCallbackFailed", "{}");
     }];
 
 }
+
+void ge_resetClientId(const char *app_id, const char *new_client_id) {
+    NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
+    NSString *new_client_id_string = new_client_id != NULL ? [NSString stringWithUTF8String:new_client_id] : nil;
+    
+    [ge_getInstance(app_id_string) resetClientID:new_client_id_string withSuccessCallback:^{
+        NSLog(@"gravity engine reset client id success");
+        geResultHandler("ResetClientIdCallbackSuccess", "{}");
+    } withErrorCallback:^(NSError * _Nonnull error) {
+        NSLog(@"gravity engine reset client id failed, and error is %@", error);
+        geResultHandler("ResetClientIdCallbackFailed", "{}");
+    }];
+
+}
+
+void ge_bind_ta_third_platform(const char *app_id, const char *ta_account_id,  const char *ta_distinct_id) {
+    NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
+    NSString *ta_account_id_string = ta_account_id != NULL ? [NSString stringWithUTF8String:ta_account_id] : nil;
+    NSString *ta_distinct_id_string = ta_distinct_id != NULL ? [NSString stringWithUTF8String:ta_distinct_id] : nil;
+    
+    [ge_getInstance(app_id_string) bindTAThirdPlatformWithAccountId:ta_account_id_string withDistinctId:ta_distinct_id_string];
+}
+

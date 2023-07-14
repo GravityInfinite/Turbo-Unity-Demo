@@ -14,7 +14,6 @@ namespace GravitySDK.PC.GravityTurbo
         private const string TurboHost = "https://backend.gravity-engine.com";
         private static string _accessToken;
         private static string _clientID;
-        private static string _asaToken;
         private static string _channel;
 
         private static void GlobalCheck()
@@ -36,11 +35,10 @@ namespace GravitySDK.PC.GravityTurbo
         /// <param name="accessToken">项目通行证，在：网站后台-->管理中心-->应用列表中找到Access Token列 复制（首次使用可能需要先新增应用）</param> 
         /// <param name="clientId">用户唯一标识，如微信小程序/小游戏的openid、Android ID、iOS的IDFA、或业务侧自行生成的唯一用户ID均可</param>
         /// <param name="channel">用户渠道</param>
-        public static void InitSDK(string accessToken, string clientId, string channel, string asaToken="")
+        public static void InitSDK(string accessToken, string clientId, string channel)
         {
             _accessToken = accessToken;
             _clientID = clientId;
-            _asaToken = asaToken;
             _channel = channel;
             GlobalCheck();
             GravitySDKLogger.Print("turbo init success");
@@ -130,12 +128,7 @@ namespace GravitySDK.PC.GravityTurbo
         {
             _clientID = clientId;
         }
-
-        public static String GetAsaToken()
-        {
-            return _asaToken;
-        }
-
+        
         public static String GetChannel()
         {
             return _channel;

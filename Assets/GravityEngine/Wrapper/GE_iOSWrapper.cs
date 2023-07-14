@@ -14,10 +14,12 @@ namespace GravityEngine.Wrapper
     public partial class GravityEngineWrapper
     {
         private static IRegisterCallback _registerCallback;
+        private static IRegisterCallback _resetClientIdCallback;
         private static ILogoutCallback _logoutCallback;
+
         [DllImport("__Internal")]
-        private static extern void ge_start(string app_id, string access_token, string client_id, string idfa,
-            string idfv, string caid1_md5, string caid2_md5, int mode, string timezone_id, bool enable_encrypt,
+        private static extern void ge_start(string app_id, string access_token, int mode, string timezone_id,
+            bool enable_encrypt,
             int encrypt_version, string encrypt_public_key, int pinning_mode, bool allow_invalid_certificates,
             bool validates_domain_name);
 
@@ -151,21 +153,27 @@ namespace GravityEngine.Wrapper
             string adType, string adnType, float ecpm);
 
         [DllImport("__Internal")]
+        private static extern void ge_bind_ta_third_platform(string app_id, string taAccountId, string taDistinctId);
+
+        [DllImport("__Internal")]
         private static extern void ge_track_pay_event(string app_id, int payAmount, string payType, string orderId,
             string payReason,
             string payMethod);
 
         [DllImport("__Internal")]
-        private static extern void ge_register(string app_id, string clientId, string userClientName, string asaToken,
-            int version);
+        private static extern void ge_register(string app_id, string clientId, string userClientName, bool enableAsa,
+            int version, string idfa, string idfv, string caid1_md5, string caid2_md5);
+
+        [DllImport("__Internal")]
+        private static extern void ge_resetClientId(string app_id, string newClientId);
 
         private const string AppID = "gravity_engine_appid";
 
         private static void init(GravityEngineAPI.Token token)
         {
             registerRecieveGameCallback();
-            ge_start(AppID, token.accessToken, token.clientId, token.idfa, token.idfv, token.caid1Md5, token.caid2Md5,
-                (int) token.mode, token.getTimeZoneId(), token.enableEncrypt, token.encryptVersion,
+            ge_start(AppID, token.accessToken, (int) token.mode, token.getTimeZoneId(), token.enableEncrypt,
+                token.encryptVersion,
                 token.encryptPublicKey, (int) token.pinningMode, token.allowInvalidCertificates,
                 token.validatesDomainName);
         }
@@ -440,20 +448,33 @@ namespace GravityEngine.Wrapper
 
         private static void registerRecieveGameCallback()
         {
-            ResultHandler handler = new ResultHandler(resultHandler);
-            IntPtr handlerPointer = Marshal.GetFunctionPointerForDelegate(handler);
-            RegisterRecieveGameCallback(handlerPointer);
+            GEResultHandler handler = new GEResultHandler(geResultHandler);
+            IntPtr geHandlerPointer = Marshal.GetFunctionPointerForDelegate(handler);
+            GERegisterRecieveGameCallback(geHandlerPointer);
         }
 
         private static void register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
+            GE_Log.d("ios not support register");
+        }
+
+        private static void registerIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+            string caid1_md5, string caid2_md5, IRegisterCallback registerCallback)
+        {
             _registerCallback = registerCallback;
-            ge_register(AppID, Turbo.GetClientId(), name, Turbo.GetAsaToken(), version);
+            ge_register(AppID, Turbo.GetClientId(), name, enableAsa, version, idfa, idfv, caid1_md5,
+                caid2_md5);
+        }
+
+        private static void resetClientId(string newClientId, IRegisterCallback resetClientIdCallback)
+        {
+            _resetClientIdCallback = resetClientIdCallback;
+            ge_resetClientId(AppID, newClientId);
         }
 
         private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
         {
-            GE_Log.d("android not support");
+            GE_Log.d("ios not support reportBytedanceAdToGravity");
         }
 
         private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,
@@ -468,17 +489,22 @@ namespace GravityEngine.Wrapper
             ge_track_native_app_ad_show_event(AppID, adUnionType, adPlacementId, adSourceId, adType, adnType, ecpm);
         }
 
+        private static void bindTAThirdPlatform(string taAccountId, string taDistinctId)
+        {
+            ge_bind_ta_third_platform(AppID, taAccountId, taDistinctId);
+        }
+
         [DllImport("__Internal")]
-        public static extern void RegisterRecieveGameCallback
+        public static extern void GERegisterRecieveGameCallback
         (
-            IntPtr handlerPointer
+            IntPtr geHandlerPointer
         );
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate string ResultHandler(string type, string jsonData);
+        public delegate string GEResultHandler(string type, string jsonData);
 
-        [AOT.MonoPInvokeCallback(typeof(ResultHandler))]
-        static string resultHandler(string type, string jsonData)
+        [AOT.MonoPInvokeCallback(typeof(GEResultHandler))]
+        static string geResultHandler(string type, string jsonData)
         {
             if (type == "AutoTrackProperties")
             {
@@ -503,30 +529,53 @@ namespace GravityEngine.Wrapper
             }
             else if (type == "LogoutCallback")
             {
-                if (_logoutCallback!=null)
+                if (_logoutCallback != null)
                 {
                     _logoutCallback.onCompleted();
                     _logoutCallback = null;
                 }
+
                 GE_Log.d("logout callback");
             }
             else if (type == "RegisterCallbackSuccess")
             {
-                if (_registerCallback!=null)
+                if (_registerCallback != null)
                 {
                     _registerCallback.onSuccess();
                     _registerCallback = null;
                 }
+
                 GE_Log.d("register callback success");
             }
             else if (type == "RegisterCallbackFailed")
             {
-                if (_registerCallback!=null)
+                if (_registerCallback != null)
                 {
                     _registerCallback.onFailed("register failed, read the logs.");
                     _registerCallback = null;
                 }
+
                 GE_Log.d("register callback failed");
+            }
+            else if (type == "ResetClientIdCallbackSuccess")
+            {
+                if (_resetClientIdCallback != null)
+                {
+                    _resetClientIdCallback.onSuccess();
+                    _resetClientIdCallback = null;
+                }
+
+                GE_Log.d("reset callback success");
+            }
+            else if (type == "ResetClientIdCallbackFailed")
+            {
+                if (_resetClientIdCallback != null)
+                {
+                    _resetClientIdCallback.onFailed("reset failed, read the logs.");
+                    _resetClientIdCallback = null;
+                }
+
+                GE_Log.d("reset callback failed");
             }
 
             return "{}";

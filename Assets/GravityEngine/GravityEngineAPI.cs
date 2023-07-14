@@ -46,11 +46,6 @@ namespace GravityEngine
             public string channel;
             public string aesKey;
             public string clientId;
-            public string idfa;
-            public string idfv;
-            public string caid1Md5;
-            public string caid2Md5;
-            public string asaToken;
             public SDKRunMode mode;
             public SDKTimeZone timeZone;
 
@@ -65,7 +60,7 @@ namespace GravityEngine
             public bool validatesDomainName; // 是否验证证书域名，默认true
             private string instanceName; // 实例名
 
-            public Token(string accessToken, string clientId, string channel, string aesKey, string idfa, string idfv, string caid1Md5, string caid2Md5, string asaToken,
+            public Token(string accessToken, string clientId, string channel, string aesKey,
                 SDKRunMode mode = SDKRunMode.NORMAL, SDKTimeZone timeZone = SDKTimeZone.Local, string timeZoneId = null,
                 string instanceName = null)
             {
@@ -73,11 +68,6 @@ namespace GravityEngine
                 this.clientId = clientId.Replace(" ", "");
                 this.channel = channel.Replace(" ", "");
                 this.aesKey = aesKey.Replace(" ", "");
-                this.idfa = idfa.Replace(" ", "");
-                this.idfv = idfv.Replace(" ", "");
-                this.caid1Md5 = caid1Md5.Replace(" ", "");
-                this.caid2Md5 = caid2Md5.Replace(" ", "");
-                this.asaToken = asaToken.Replace(" ", "");
                 this.mode = mode;
                 this.timeZone = timeZone;
                 this.timeZoneId = timeZoneId;
@@ -379,6 +369,16 @@ namespace GravityEngine
         public static void TrackMPAddFavorites(Dictionary<string, object> properties)
         {
             Track(GravitySDKConstant.MP_ADD_FAVORITES, properties);
+        }
+
+        /// <summary>
+        /// 绑定数数账号
+        /// </summary>
+        /// <param name="taAccountId"></param>      当前用户的数数账户 ID (#account_id)
+        /// <param name="taDistinctId"></param>     当前用户的数数访客 ID (#distinct_id)
+        public static void BindTAThirdPlatform(string taAccountId, string taDistinctId)
+        {
+            GravityEngineWrapper.BindTAThirdPlatform(taAccountId, taDistinctId);
         }
 
         /// <summary>
@@ -1238,16 +1238,11 @@ namespace GravityEngine
         /// <param name="mode">SDK运行模式</param>
         /// <param name="channel">用户渠道（选填）</param>
         /// <param name="aesKey">原生平台AES秘钥，目前只有Android平台需要填写</param>
-        /// <param name="idfa">idfa，只有iOS平台需要</param>
-        /// <param name="idfv">idfv，只有iOS平台需要</param>
-        /// <param name="caid1Md5">caid1Md5，只有iOS平台需要</param>
-        /// <param name="caid2Md5">caid2Md5，只有iOS平台需要</param>
-        /// <param name="asaToken">asaToken，只有iOS平台需要</param>
         public static void StartGravityEngine(string accessToken, string clientId, SDKRunMode mode,
-            string channel = "base_channel", string aesKey = "", string idfa = "", string idfv = "", string caid1Md5 = "", string caid2Md5 = "", string asaToken = "")
+            string channel = "base_channel", string aesKey = "")
         {
             SDKTimeZone timeZone = SDKTimeZone.Local;
-            Token token = new Token(accessToken, clientId, channel, aesKey, idfa, idfv, caid1Md5, caid2Md5, asaToken, mode, timeZone);
+            Token token = new Token(accessToken, clientId, channel, aesKey, mode, timeZone);
             Token[] tokens = new Token[1];
             tokens[0] = token;
             StartGravityEngine(tokens);
@@ -1314,7 +1309,7 @@ namespace GravityEngine
                         GE_Log.d("GravityEngine start with SERVER_URL: " + GravitySDKConstant.SERVER_URL +
                                  ", MODE: " + token.mode);
 
-                        Turbo.InitSDK(token.accessToken, token.clientId, token.channel, token.asaToken);
+                        Turbo.InitSDK(token.accessToken, token.clientId, token.channel);
                         GravityEngineWrapper.ShareInstance(token, _sGravityEngineAPI);
                         GravityEngineWrapper.SetNetworkType(_sGravityEngineAPI.networkType);
                     }
@@ -1359,6 +1354,30 @@ namespace GravityEngine
         public static void Register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
             GravityEngineWrapper.Register(name, version, wxOpenId, registerCallback);
+        }
+
+        /// <summary>
+        /// 在引力引擎注册，其他方法均需在本方法回调成功之后才可正常使用（iOS专用）
+        /// </summary>
+        /// <param name="name"></param>             用户名
+        /// <param name="version"></param>          用户注册的程序版本，比如当前微信小游戏的版本号
+        /// <param name="enableAsa"></param>        是否开启asa归因
+        /// <param name="idfa"></param>             当前用户 IDFA
+        /// <param name="idfv"></param>             当前用户 IDFV
+        /// <param name="caid1MD5"></param>        当前用户中广协 ID 的 md5 hash（20230330 版本）（可为空）
+        /// <param name="caid2MD5"></param>        当前用户中广协 ID 的 md5 hash（20220111 版本）（可为空）
+        /// <param name="registerCallback"></param> 网络回调，其他方法均需在回调成功之后才可正常使用
+        /// <exception cref="ArgumentException"></exception>
+        public static void RegisterIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+            string caid1MD5, string caid2MD5, IRegisterCallback registerCallback)
+        {
+            GravityEngineWrapper.RegisterIOS(name, version, enableAsa, idfa, idfv, caid1MD5, caid2MD5,
+                registerCallback);
+        }
+
+        public static void ResetClientID(string newClientId, IRegisterCallback resetClientIdCallback)
+        {
+            GravityEngineWrapper.ResetClientID(newClientId, resetClientIdCallback);
         }
 
         public static void test()
