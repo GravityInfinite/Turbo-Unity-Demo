@@ -536,5 +536,16 @@ namespace GravitySDK.PC.Main
             });
             Flush();
         }
+        
+        public static void BindTAThirdPlatform(string taAccountId, string taDistinctId)
+        {
+            Track("$BindThirdPlatform", new Dictionary<string, object>()
+            {
+                {"$third_platform_type", "ta"},
+                {"$ta_account_id", taAccountId},
+                {"$ta_distinct_id", taDistinctId},
+            });
+            Flush();
+        }
     }
 }

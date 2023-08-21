@@ -378,6 +378,11 @@ namespace GravityEngine
         /// <param name="taDistinctId"></param>     当前用户的数数访客 ID (#distinct_id)
         public static void BindTAThirdPlatform(string taAccountId, string taDistinctId)
         {
+            if (GravitySDKUtil.IsEmptyString(taAccountId) && GravitySDKUtil.IsEmptyString(taDistinctId))
+            {
+                GE_Log.e("taAccountId or taDistinctId must be required");
+                return;
+            }
             GravityEngineWrapper.BindTAThirdPlatform(taAccountId, taDistinctId);
         }
 

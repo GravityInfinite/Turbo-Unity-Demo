@@ -443,7 +443,7 @@ namespace GravityEngine.Wrapper
 
         private static void bindTAThirdPlatform(string taAccountId, string taDistinctId)
         {
-            GravitySDKLogger.Print("not support bindTAThirdPlatform!");
+            GravityPCSDK.BindTAThirdPlatform(taAccountId, taDistinctId);
         }
     }
 }
