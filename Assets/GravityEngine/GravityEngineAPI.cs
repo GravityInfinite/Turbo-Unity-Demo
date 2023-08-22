@@ -421,14 +421,19 @@ namespace GravityEngine
         /// </summary>
         /// <param name="adType"></param>               广告类型 取值为：reward、banner、native、interstitial、video_feed、video_begin，分别对应：激励视频广告、Banner广告、原生模板广告、插屏广告、视频广告、视频贴片广告
         /// <param name="adUnitId"></param>             广告位ID
-        public static void TrackWechatAdShowEvent(string adType, string adUnitId)
+        /// <param name="otherProperties"></param>      其他需要携带的自定义参数
+        ///
+        public static void TrackWechatAdShowEvent(string adType, string adUnitId,
+            Dictionary<string, object> otherProperties = null)
         {
-            Track("$AdShow", new Dictionary<string, object>()
+            var properties = new Dictionary<string, object>()
             {
                 {"$ad_type", adType},
                 {"$ad_unit_id", adUnitId},
                 {"$adn_type", "wechat"}
-            });
+            };
+            GE_PropertiesChecker.MergeProperties(otherProperties, properties);
+            Track("$AdShow", properties);
             Flush();
         }
 
@@ -437,9 +442,10 @@ namespace GravityEngine
         /// </summary>
         /// <param name="dyOpenId"></param>             当前用户的抖音openID
         /// <param name="adUnitId"></param>             广告位ID
-        public static void TrackBytedanceAdShowEvent(string dyOpenId, string adUnitId)
+        /// <param name="otherProperties"></param>      其他需要携带的自定义参数
+        public static void TrackBytedanceAdShowEvent(string dyOpenId, string adUnitId, Dictionary<string, object> otherProperties = null)
         {
-            GravityEngineWrapper.ReportBytedanceAdToGravity(dyOpenId, adUnitId);
+            GravityEngineWrapper.ReportBytedanceAdToGravity(dyOpenId, adUnitId, otherProperties);
         }
 
         /// <summary>

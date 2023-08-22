@@ -404,7 +404,8 @@ namespace GravitySDK.PC.Main
         // public static int count = 0;
         private static bool DEV = false;
 
-        public static void ReportBytedanceAdToGravity(string wxOpenId, string adUnitId)
+        public static void ReportBytedanceAdToGravity(string wxOpenId, string adUnitId,
+            Dictionary<string, object> otherProperties)
         {
             string dateHourStr = GetTime(DateTime.MinValue).GetTimeWithFormat(null, "yyyy-MM-dd HH");
             Turbo.ReportBytedanceAdToGravity(wxOpenId, dateHourStr, request =>
@@ -491,13 +492,15 @@ namespace GravitySDK.PC.Main
                                                     }
                                                     float ecpm = Convert.ToInt32(recordDict["cost"]) / 100f;
                                                     // 上报广告事件
-                                                    Track("$AdShow", new Dictionary<string, object>()
+                                                    var properties = new Dictionary<string, object>()
                                                     {
                                                         {"$ad_type", "reward"},
                                                         {"$ad_unit_id", adUnitId},
                                                         {"$adn_type", "bytedance"},
                                                         {"$ecpm", ecpm}
-                                                    });
+                                                    };
+                                                    GE_PropertiesChecker.MergeProperties(otherProperties, properties);
+                                                    Track("$AdShow", properties);
                                                     Flush();
                                                 }
 

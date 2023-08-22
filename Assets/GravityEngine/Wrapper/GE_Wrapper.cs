@@ -310,9 +310,10 @@ namespace GravityEngine.Wrapper
             resetClientId(newClientId, resetClientIdCallback);
         }
 
-        public static void ReportBytedanceAdToGravity(string wxOpenId, string adUnitId)
+        public static void ReportBytedanceAdToGravity(string wxOpenId, string adUnitId,
+            Dictionary<string, object> otherProperties)
         {
-            reportBytedanceAdToGravity(wxOpenId, adUnitId);
+            reportBytedanceAdToGravity(wxOpenId, adUnitId, otherProperties);
         }
         
         public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,

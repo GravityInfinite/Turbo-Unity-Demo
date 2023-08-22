@@ -235,7 +235,11 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         if (GUILayout.Button("TrackWechatAdShowEvent", GUILayout.Height(Height)))
         {
             // 记录用户微信小游戏广告观看事件
-            GravityEngineAPI.TrackWechatAdShowEvent("reward", "your_ad_unit_id");
+            var otherProperties = new Dictionary<string, object>()
+            {
+                {"other_key", "other_value"}
+            };
+            GravityEngineAPI.TrackWechatAdShowEvent("reward", "your_ad_unit_id", otherProperties);
         }
 
         GUILayout.Space(20);

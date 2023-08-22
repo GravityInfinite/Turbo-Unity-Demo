@@ -417,11 +417,11 @@ namespace GravityEngine.Wrapper
             GravitySDKLogger.Print("not support resetClientId!");
         }
 
-        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
+        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId, Dictionary<string, object> otherProperties)
         {
             try
             {
-                GravityPCSDK.ReportBytedanceAdToGravity(wxOpenId, adUnitId);
+                GravityPCSDK.ReportBytedanceAdToGravity(wxOpenId, adUnitId, otherProperties);
             }
             catch (Exception e)
             {
