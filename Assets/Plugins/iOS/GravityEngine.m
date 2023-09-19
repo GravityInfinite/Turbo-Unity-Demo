@@ -493,7 +493,7 @@ void ge_register(const char *app_id, const char *client_id, const char *user_cli
     NSString *caid1_md5_string = caid1_md5 != NULL ? [NSString stringWithUTF8String:caid1_md5] : nil;
     NSString *caid2_md5_string = caid2_md5 != NULL ? [NSString stringWithUTF8String:caid2_md5] : nil;
     
-    [ge_getInstance(app_id_string) registerGravityEngineWithClientId:client_id_string withUserName:user_client_name_string withVersion:version withAsaEnable:enable_asa withIdfa:idfa_string withIdfv:idfv_string withCaid1:caid1_md5_string withCaid2:caid2_md5_string withSuccessCallback:^{
+    [ge_getInstance(app_id_string) registerGravityEngineWithClientId:client_id_string withUserName:user_client_name_string withVersion:version withAsaEnable:enable_asa withIdfa:idfa_string withIdfv:idfv_string withCaid1:caid1_md5_string withCaid2:caid2_md5_string withSyncAttribution:NO withSuccessCallback:^(NSDictionary * _Nonnull response){
         NSLog(@"gravity engine register success");
         geResultHandler("RegisterCallbackSuccess", "{}");
     } withErrorCallback:^(NSError * _Nonnull error) {
@@ -507,7 +507,7 @@ void ge_resetClientId(const char *app_id, const char *new_client_id) {
     NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
     NSString *new_client_id_string = new_client_id != NULL ? [NSString stringWithUTF8String:new_client_id] : nil;
     
-    [ge_getInstance(app_id_string) resetClientID:new_client_id_string withSuccessCallback:^{
+    [ge_getInstance(app_id_string) resetClientID:new_client_id_string withSuccessCallback:^(NSDictionary * _Nonnull response){
         NSLog(@"gravity engine reset client id success");
         geResultHandler("ResetClientIdCallbackSuccess", "{}");
     } withErrorCallback:^(NSError * _Nonnull error) {
