@@ -77,9 +77,10 @@ namespace GravitySDK.PC.GravityTurbo
         /// </summary>
         /// <param name="url"></param>
         /// <param name="actionResult"></param>
-        public void Get(string url, Action<UnityWebRequest> actionResult)
+        /// <param name="waitTime"></param>
+        public void Get(string url, Action<UnityWebRequest> actionResult, long waitTime = 0)
         {
-            StartCoroutine(_Get(url, actionResult));
+            StartCoroutine(_Get(url, actionResult, waitTime));
         }
 
         /// <summary>
@@ -101,9 +102,18 @@ namespace GravitySDK.PC.GravityTurbo
         /// </summary>
         /// <param name="url">请求地址,like 'http://www.shijing720.com/ '</param>
         /// <param name="actionResult">请求发起后处理回调结果的委托</param>
+        /// <param name="waitTime">等待时间之后再发起请求</param>
         /// <returns></returns>
-        IEnumerator _Get(string url, Action<UnityWebRequest> actionResult)
+        IEnumerator _Get(string url, Action<UnityWebRequest> actionResult, long waitTime = 0)
+
         {
+            if (waitTime != 0)
+            {
+                GravitySDKLogger.Print("wait fetch");
+                yield return new WaitForSeconds(3);
+                GravitySDKLogger.Print("fetch now");
+            }
+
             using (UnityWebRequest uwr = UnityWebRequest.Get(url))
             {
                 yield return uwr.SendWebRequest();

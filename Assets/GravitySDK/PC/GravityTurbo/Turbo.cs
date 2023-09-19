@@ -65,21 +65,6 @@ namespace GravitySDK.PC.GravityTurbo
                 {"ad_data", wxLaunchQuery},
             };
 
-            if (wxLaunchQuery.ContainsKey("turbo_promoted_object_id"))
-            {
-                string value;
-                if (wxLaunchQuery.TryGetValue("turbo_promoted_object_id", out value))
-                {
-                    GravitySDKLogger.Print("get promoted object id");
-                }
-                else
-                {
-                    GravitySDKLogger.Print("no promoted object id");
-                }
-
-                registerRequestDir["promoted_object_id"] = value ?? "";
-            }
-
             GravitySDKLogger.Print(registerRequestDir.ToString());
 
             UnityWebRequestMgr.Instance.Post(
@@ -111,7 +96,7 @@ namespace GravitySDK.PC.GravityTurbo
         {
             UnityWebRequestMgr.Instance.Get(TurboHost + "/event_center/api/v1/event/dy/get_ecpm/?access_token=" +
                                             _accessToken + "&open_id=" + wxOpenId + "&date_hour=" +
-                                            dateHourStr, actionResult);
+                                            dateHourStr, actionResult, 3);
         }
 
         public static String GetAccessToken()

@@ -410,6 +410,7 @@ namespace GravitySDK.PC.Main
                 yield return new WaitForSeconds(mConfig.mUploadInterval);
                 GravitySDKLogger.Print("Flush Data");
                 Flush();
+                break;
             }
         }
 

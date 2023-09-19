@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using GravityEngine;
 using GravityEngine.Utils;
 using GravityEngine.Wrapper;
@@ -411,13 +412,13 @@ namespace GravitySDK.PC.Main
             Turbo.ReportBytedanceAdToGravity(wxOpenId, dateHourStr, request =>
             {
                 string responseText = request.downloadHandler.text;
-                // string responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":1283,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":562229595,\"open_id\":\"_0006RvUSeDMliQ7yeAEboYqH2w_poTzk2Dp\"}],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
+                // string responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":1283,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":1,\"open_id\":\"_0006RvUSeDMliQ7yeAEboYqH2w_poTzk2Dp\"}],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
                 // if (count == 1)
                 // {
-                //     responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":1283,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":562229595 },{\"aid\":\"1128\",\"cost\":2000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":100000000 }],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
+                //     responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":1283,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":1 },{\"aid\":\"1128\",\"cost\":2000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-22 00:00:01\",\"id\":2 }],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
                 // } else if (count == 2)
                 // {
-                //     responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":2000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":100000000 },{\"aid\":\"1128\",\"cost\":3000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-20 00:00:01\",\"id\":200000000 },],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
+                //     responseText = "{\"data\":{\"records\":[{\"aid\":\"1128\",\"cost\":2000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-22 00:00:01\",\"id\":2 },{\"aid\":\"1128\",\"cost\":3000,\"did\":\"****************\",\"event_name\":\"send\",\"event_time\":\"2023-06-23 00:00:01\",\"id\":3 },],\"total\":0 },\"extra\":{},\"code\":0,\"msg\":\"成功\"}";
                 // }
 
                 // count++;
@@ -490,7 +491,19 @@ namespace GravitySDK.PC.Main
                                                     {
                                                         GravitySDKLogger.Print("本次需要上报");
                                                     }
-                                                    float ecpm = Convert.ToInt32(recordDict["cost"]) / 100f;
+                                                    var ecpm = Convert.ToInt32(recordDict["cost"]) / 100f;
+                                                    var eventTime = (string) recordDict["event_time"];
+                                                    DateTime eventDateTime;
+
+                                                    if (DateTime.TryParse(eventTime, out eventDateTime))
+                                                    {
+                                                        Debug.Log("Parsed DateTime: " + eventDateTime.ToString(CultureInfo.InvariantCulture));
+                                                    }
+                                                    else
+                                                    {
+                                                        Debug.Log("Failed to parse DateTime.");
+                                                        eventDateTime = DateTime.MinValue;
+                                                    }
                                                     // 上报广告事件
                                                     var properties = new Dictionary<string, object>()
                                                     {
@@ -500,7 +513,7 @@ namespace GravitySDK.PC.Main
                                                         {"$ecpm", ecpm}
                                                     };
                                                     GE_PropertiesChecker.MergeProperties(otherProperties, properties);
-                                                    Track("$AdShow", properties);
+                                                    Track("$AdShow", properties, eventDateTime);
                                                     Flush();
                                                 }
 
