@@ -70,6 +70,14 @@ namespace GravitySDK.PC.Constant
 
         //系统版本号
         public static readonly string OS_VERSION = "$os_version";
+        
+        // 启动场景
+        public static readonly string SCENE = "$scene";
+        
+        // 今日首次启动场景
+        public static readonly string TODAY_FIRST_SCENE = "$today_first_scene";
+        
+        public static readonly string TODAY_FIRST_SCENE_KEY = "today_first_scene_key";
 
         //app版本号
         public static readonly string APP_VERSION = "$app_version";

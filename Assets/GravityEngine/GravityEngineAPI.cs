@@ -21,6 +21,7 @@ using GravityEngine.Utils;
 using GravityEngine.Wrapper;
 using UnityEngine;
 using GravitySDK.PC.Constant;
+using GravitySDK.PC.Storage;
 using GravitySDK.PC.Time;
 using GravitySDK.PC.Utils;
 using UnityEngine.Networking;
@@ -319,7 +320,7 @@ namespace GravityEngine
             }
 
             properties.Add("$url_query", queryStr);
-            properties.Add("$scene", "" + scene);
+            properties.Add(GravitySDKConstant.SCENE, "" + scene);
             Track(eventName, properties);
         }
 
@@ -1339,17 +1340,42 @@ namespace GravityEngine
                     {
                         LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
                         TrackMPLaunch(launchOptionsSync.query, "" + launchOptionsSync.scene);
+                        ReportSuperProperties("" + launchOptionsSync.scene);
                     }
                 });
 #elif GRAVITY_BYTEDANCE_GAME_MODE
                 // 抖音小游戏不需要提前获取网络状态，直接使用unity自带的即可
                 LaunchOption launchOptionsSync = StarkSDK.API.GetLaunchOptionsSync();
                 TrackMPLaunch(launchOptionsSync.Query, launchOptionsSync.Scene);
+                ReportSuperProperties(launchOptionsSync.Scene);
 #endif
             }
 
             //上报缓存事件
             FlushEventCaches();
+        }
+
+        // 统计启动场景
+        private static void ReportSuperProperties(string scene)
+        {
+            string latestStartupTimestamp;
+            
+            if (GravitySDKUtil.IsFirstLaunchToday())
+            {
+                GravitySDKFile.SaveData(GravitySDKConstant.TODAY_FIRST_SCENE_KEY, scene);
+                latestStartupTimestamp = scene;
+            }
+            else
+            {
+                latestStartupTimestamp = (string) GravitySDKFile.GetData(GravitySDKConstant.TODAY_FIRST_SCENE_KEY, typeof(string));
+            }
+            
+            Dictionary<string, object> superProperties = new Dictionary<string, object>()
+            {
+                {GravitySDKConstant.SCENE, scene},
+                {GravitySDKConstant.TODAY_FIRST_SCENE, latestStartupTimestamp}
+            };
+            SetSuperProperties(superProperties);
         }
 
         #region turbo
