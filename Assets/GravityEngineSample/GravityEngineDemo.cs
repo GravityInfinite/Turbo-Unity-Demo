@@ -228,7 +228,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         if (GUILayout.Button("TrackBytedanceAdShowEvent", GUILayout.Height(Height)))
         {
             // 记录用户抖音小游戏广告观看事件
-            GravityEngineAPI.TrackBytedanceAdShowEvent("your_open_id", "your_unit_id");
+            GravityEngineAPI.TrackBytedanceAdShowEvent("your_ad_unit_type", "your_unit_id");
         }
 
         GUILayout.Space(20);

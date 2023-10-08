@@ -441,12 +441,12 @@ namespace GravityEngine
         /// <summary>
         /// 上报抖音小游戏广告观看事件 AdShow
         /// </summary>
-        /// <param name="dyOpenId"></param>             当前用户的抖音openID
+        /// <param name="adType"></param>               广告位类型，取值为：reward、banner、interstitial，分别对应激励视频广告、Banner广告、插屏广告
         /// <param name="adUnitId"></param>             广告位ID
         /// <param name="otherProperties"></param>      其他需要携带的自定义参数
-        public static void TrackBytedanceAdShowEvent(string dyOpenId, string adUnitId, Dictionary<string, object> otherProperties = null)
+        public static void TrackBytedanceAdShowEvent(string adType, string adUnitId, Dictionary<string, object> otherProperties = null)
         {
-            GravityEngineWrapper.ReportBytedanceAdToGravity(dyOpenId, adUnitId, otherProperties);
+            GravityEngineWrapper.ReportBytedanceAdToGravity(adType, adUnitId, otherProperties);
         }
 
         /// <summary>
