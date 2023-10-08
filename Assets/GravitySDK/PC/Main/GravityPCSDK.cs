@@ -380,13 +380,18 @@ namespace GravitySDK.PC.Main
         public static void Register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
         {
 #if GRAVITY_WECHAT_GAME_MODE
-            var wxLaunchQuery = WX.GetLaunchOptionsSync().query;
+            LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
+            var launchQuery = launchOptionsSync.query;
+            var launchScene = launchOptionsSync.scene;
 #elif GRAVITY_BYTEDANCE_GAME_MODE
-            var wxLaunchQuery = StarkSDK.API.GetLaunchOptionsSync().Query;
+            LaunchOption launchOptionsSync = StarkSDK.API.GetLaunchOptionsSync();
+            var launchQuery = launchOptionsSync.Query;
+            var launchScene = launchOptionsSync.Scene;
 #else
-            Dictionary<string, string> wxLaunchQuery = new Dictionary<string, string>();
+            Dictionary<string, string> launchQuery = new Dictionary<string, string>();
+            var launchScene = "";
 #endif
-            Turbo.Register(name, version, wxOpenId, wxLaunchQuery, registerCallback, () =>
+            Turbo.Register(name, version, wxOpenId, launchQuery, registerCallback, () =>
             {
                 // 自动采集注册事件
                 Track("$MPRegister");
@@ -397,7 +402,8 @@ namespace GravitySDK.PC.Main
                     {GravitySDKConstant.DEVICE_MODEL, GravitySDKDeviceInfo.DeviceModel()},
                     {GravitySDKConstant.DEVICE_BRAND, GravitySDKDeviceInfo.Manufacture().ToUpper()},
                     {GravitySDKConstant.OS, GravitySDKDeviceInfo.OS()},
-                    {"$first_visit_time", GravityEngineWrapper.GetTimeString(DateTime.Now)}
+                    {"$first_visit_time", GravityEngineWrapper.GetTimeString(DateTime.Now)},
+                    {"$first_scene", "" + launchScene}
                 });
                 
                 Flush();
