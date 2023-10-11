@@ -472,7 +472,7 @@ namespace GravityEngine.Wrapper
             ge_resetClientId(AppID, newClientId);
         }
 
-        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
+        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId, Dictionary<string, object> otherProperties)
         {
             GE_Log.d("ios not support reportBytedanceAdToGravity");
         }

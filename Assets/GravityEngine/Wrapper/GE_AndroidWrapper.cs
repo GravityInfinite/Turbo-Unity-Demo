@@ -540,7 +540,7 @@ namespace GravityEngine.Wrapper
             getInstance().Call("resetClientId", Turbo.GetAccessToken(), newClientId, listenerAdapter);
         }
 
-        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId)
+        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId, Dictionary<string, object> otherProperties)
         {
             GE_Log.d("android not support reportBytedanceAdToGravity");
         }

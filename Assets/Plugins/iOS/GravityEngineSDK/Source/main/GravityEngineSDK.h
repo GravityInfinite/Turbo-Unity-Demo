@@ -42,7 +42,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- SDK VERSION = 4.3.1
  GravityEngine API
  
  ## Initialization
@@ -67,7 +66,7 @@ or
 
  */
 
-typedef void (^CallbackWithSuccess)(void);
+typedef void (^CallbackWithSuccess)(NSDictionary *response);
 
 typedef void (^CallbackWithError)(NSError * error);
 
@@ -115,7 +114,9 @@ typedef void (^CallbackWithError)(NSError * error);
 /**
  register GravityEngine
  */
-- (void)registerGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback;
+- (void)registerGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback;
+
+- (void)queryUserInfoWithSuccessCallback:(void(^)(NSDictionary* _Nonnull data))successCallback withErrorCallback:(CallbackWithError)errorCallback;
 
 - (void)resetClientID:(NSString *) newClientID withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback;
 
@@ -556,6 +557,8 @@ typedef void (^CallbackWithError)(NSError * error);
  Get DeviceId
  */
 - (NSString *)getDeviceId;
+
+- (NSString *)getCurrentClientId;
 
 /**
  H5 is connected with the native APP SDK and used in conjunction with the addWebViewUserAgent interface

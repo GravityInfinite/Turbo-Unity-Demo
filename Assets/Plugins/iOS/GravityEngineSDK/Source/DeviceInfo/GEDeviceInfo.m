@@ -477,5 +477,48 @@ static CTTelephonyNetworkInfo *__ge_TelephonyNetworkInfo;
     return uptime;
 }
 
+// 获取最近一次启动时间
++ (NSString *) bootTimeSec {
+    static NSString *kBootTimeInSec;
+    if (!kBootTimeInSec || kBootTimeInSec.length == 0) {
+        long sec = 0;
+        struct timeval boottime;
+        size_t len = sizeof(boottime);
+        int mib[2] = { CTL_KERN, KERN_BOOTTIME };
+        if (sysctl(mib, 2, &boottime, &len, NULL, 0) < 0) {
+            sec = 0;
+        } else {
+            sec = boottime.tv_sec;
+        }
+        kBootTimeInSec = @(sec).stringValue;
+    }
+    return kBootTimeInSec;
+}
+
+// 获取系统最近一次更新时间
++(NSString *)systemUpdateTime
+{
+    static NSString *kSysFileTime;
+    if (!kSysFileTime || kSysFileTime.length == 0) {
+        NSTimeInterval time = 0;
+        // 某路径的base64，脱敏 (不要修改! ! )
+        NSString *information = @"L3Zhci9tb2JpbGUvTGlicmFyeS9Vc2VyQ29uZmlndXJhdGlvblByb2ZpbGVzL1B1YmxpY0luZm8vTUNNZXRhLnBsaXN0";
+        NSData *data=[[NSData alloc]initWithBase64EncodedString:information options:0]
+        ;
+        NSString *dataString = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+        NSError *error = nil;
+        NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:dataString error:&error];
+        if (fileAttributes) {
+            id singleAttibute = [fileAttributes objectForKey:NSFileCreationDate];
+            if ([singleAttibute isKindOfClass:[NSDate class]]) {
+                NSDate *dataDate = singleAttibute;
+                time = [dataDate timeIntervalSince1970];
+            }
+        }
+        kSysFileTime = @(time).stringValue;
+    }
+    return kSysFileTime;
+}
+
 
 @end

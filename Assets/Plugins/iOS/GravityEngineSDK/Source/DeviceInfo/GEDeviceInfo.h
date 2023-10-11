@@ -29,6 +29,8 @@ FOUNDATION_EXTERN NSString *const VERSION;
 + (NSString *)currentRadio;
 
 + (NSTimeInterval)uptime;
++ (NSString *)bootTimeSec;
++ (NSDate *)systemUpdateTime;
 
 - (NSString*)ge_iphoneType;
 @end

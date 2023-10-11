@@ -8,6 +8,7 @@
 #import "GENetwork.h"
 #import "GEReachability.h"
 #import "GEEventRecord.h"
+#import "NSString+GEString.h"
 
 static dispatch_queue_t ge_networkQueue;
 

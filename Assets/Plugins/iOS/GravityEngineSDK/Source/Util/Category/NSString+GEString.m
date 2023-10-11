@@ -33,4 +33,15 @@
     return urlString;
 }
 
+// 尽量跟js中的encodeURIComponent函数保持行为一致
+- (NSString *)ge_urlEncodedString {
+    NSCharacterSet *allowedCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!*'()"];
+    
+    NSMutableCharacterSet *customCharacterSet = [allowedCharacterSet mutableCopy];
+    [customCharacterSet removeCharactersInString:@";:@&=+$,/?%#[]"];
+    
+    NSString *encodedString = [self stringByAddingPercentEncodingWithAllowedCharacters:customCharacterSet];
+    return encodedString;
+}
+
 @end

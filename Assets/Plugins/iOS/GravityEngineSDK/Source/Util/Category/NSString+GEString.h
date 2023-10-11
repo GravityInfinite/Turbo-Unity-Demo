@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString * _Nullable)ge_formatUrlString;
 
+- (NSString *)ge_urlEncodedString;
+
 @end
 
 NS_ASSUME_NONNULL_END
