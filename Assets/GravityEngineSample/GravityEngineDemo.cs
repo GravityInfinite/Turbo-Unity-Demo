@@ -30,7 +30,7 @@ public class RegisterCallbackImpl : IRegisterCallback
     }
 }
 
-public class ResetClientIdCallbackImpl : IRegisterCallback
+public class ResetClientIdCallbackImpl : IResetCallback
 {
     public void onFailed(string errorMsg)
     {
@@ -127,10 +127,9 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
             string clientId = "1234567890067";
-            string aesKey = "k7ZjSgc1Z8j551UJUNLlWA==";
 
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi", aesKey);
+            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi");
             // 原生app开启自动采集，并设置自定属性
             GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.APP_ALL, new Dictionary<string, object>()
             {
@@ -167,11 +166,9 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
             string clientId = "1234567890067";
-            string aesKey = "k7ZjSgc1Z8j551UJUNLlWA==";
 
             // 启动引力引擎
-            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi",
-                aesKey);
+            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG, "xiaomi");
 #endif
         }
 

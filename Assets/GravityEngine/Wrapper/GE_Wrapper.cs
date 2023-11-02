@@ -13,7 +13,7 @@ namespace GravityEngine.Wrapper
         private static IDynamicSuperProperties mDynamicSuperProperties;
         private static IAutoTrackEventCallback mAutoTrackEventCallback;
         private static IRegisterCallback mRegisterCallback;
-        private static IRegisterCallback mResetClientIdCallback;
+        private static IResetCallback mResetClientIdCallback;
 
         private static System.Random rnd = new System.Random();
 
@@ -304,7 +304,7 @@ namespace GravityEngine.Wrapper
             registerIOS(name, version, enableAsa, idfa, idfv, caid1_md5, caid2_md5, registerCallback);
         }
 
-        public static void ResetClientID(string newClientId, IRegisterCallback resetClientIdCallback)
+        public static void ResetClientID(string newClientId, IResetCallback resetClientIdCallback)
         {
             mResetClientIdCallback = resetClientIdCallback;
             resetClientId(newClientId, resetClientIdCallback);

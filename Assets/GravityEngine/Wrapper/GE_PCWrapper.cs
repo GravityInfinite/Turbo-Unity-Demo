@@ -412,7 +412,7 @@ namespace GravityEngine.Wrapper
             GravitySDKLogger.Print("not support registerIOS!");
         }
         
-        private static void resetClientId(string newClientId, IRegisterCallback resetClientIdCallback)
+        private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
         {
             GravitySDKLogger.Print("not support resetClientId!");
         }

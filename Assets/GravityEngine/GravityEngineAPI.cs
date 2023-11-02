@@ -45,7 +45,6 @@ namespace GravityEngine
         {
             public string accessToken;
             public string channel;
-            public string aesKey;
             public string clientId;
             public SDKRunMode mode;
             public SDKTimeZone timeZone;
@@ -61,14 +60,13 @@ namespace GravityEngine
             public bool validatesDomainName; // 是否验证证书域名，默认true
             private string instanceName; // 实例名
 
-            public Token(string accessToken, string clientId, string channel, string aesKey,
+            public Token(string accessToken, string clientId, string channel,
                 SDKRunMode mode = SDKRunMode.NORMAL, SDKTimeZone timeZone = SDKTimeZone.Local, string timeZoneId = null,
                 string instanceName = null)
             {
                 this.accessToken = accessToken.Replace(" ", "");
                 this.clientId = clientId.Replace(" ", "");
                 this.channel = channel.Replace(" ", "");
-                this.aesKey = aesKey.Replace(" ", "");
                 this.mode = mode;
                 this.timeZone = timeZone;
                 this.timeZoneId = timeZoneId;
@@ -1249,12 +1247,11 @@ namespace GravityEngine
         /// <param name="clientId">用户唯一ID</param>
         /// <param name="mode">SDK运行模式</param>
         /// <param name="channel">用户渠道（选填）</param>
-        /// <param name="aesKey">原生平台AES秘钥，目前只有Android平台需要填写</param>
         public static void StartGravityEngine(string accessToken, string clientId, SDKRunMode mode,
-            string channel = "base_channel", string aesKey = "")
+            string channel = "base_channel")
         {
             SDKTimeZone timeZone = SDKTimeZone.Local;
-            Token token = new Token(accessToken, clientId, channel, aesKey, mode, timeZone);
+            Token token = new Token(accessToken, clientId, channel, mode, timeZone);
             Token[] tokens = new Token[1];
             tokens[0] = token;
             StartGravityEngine(tokens);
@@ -1412,7 +1409,7 @@ namespace GravityEngine
                 registerCallback);
         }
 
-        public static void ResetClientID(string newClientId, IRegisterCallback resetClientIdCallback)
+        public static void ResetClientID(string newClientId, IResetCallback resetClientIdCallback)
         {
             GravityEngineWrapper.ResetClientID(newClientId, resetClientIdCallback);
         }

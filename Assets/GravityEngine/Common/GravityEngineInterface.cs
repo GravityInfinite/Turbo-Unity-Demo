@@ -24,6 +24,13 @@ namespace GravityEngine
 
         void onSuccess();
     }
+    
+    public interface IResetCallback
+    {
+        void onFailed(string errorMsg);
+
+        void onSuccess();
+    }
 
     public interface ILogoutCallback
     {

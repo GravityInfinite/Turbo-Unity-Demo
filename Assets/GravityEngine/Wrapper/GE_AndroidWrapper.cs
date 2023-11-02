@@ -88,7 +88,6 @@ namespace GravityEngine.Wrapper
             Dictionary<string, object> configDic = new Dictionary<string, object>();
             configDic["accessToken"] = token.accessToken;
             configDic["mode"] = (int) token.mode;
-            configDic["aesKey"] = token.aesKey;
 
             string timeZoneId = token.getTimeZoneId();
             if (null != timeZoneId && timeZoneId.Length > 0)
@@ -481,7 +480,7 @@ namespace GravityEngine.Wrapper
             {
             }
 
-            void onFailed(string errorMsg)
+            void onFailed(string errorMsg, AndroidJavaObject registerBody)
             {
                 if (mRegisterCallback != null)
                 {
@@ -489,7 +488,7 @@ namespace GravityEngine.Wrapper
                 }
             }
 
-            void onSuccess()
+            void onSuccess(AndroidJavaObject responseJson, AndroidJavaObject registerBody)
             {
                 if (mRegisterCallback != null)
                 {
@@ -500,7 +499,7 @@ namespace GravityEngine.Wrapper
 
         private class ResetClientIdListenerAdapter : AndroidJavaProxy
         {
-            public ResetClientIdListenerAdapter() : base("cn.gravity.android.RegisterCallback")
+            public ResetClientIdListenerAdapter() : base("cn.gravity.android.ResetCallback")
             {
             }
 
@@ -525,7 +524,7 @@ namespace GravityEngine.Wrapper
         {
             RegisterListenerAdapter listenerAdapter = new RegisterListenerAdapter();
             getInstance().Call("register", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(),
-                listenerAdapter);
+                listenerAdapter, false);
         }
 
         private static void registerIOS(string name, int version, bool enableAsa, string idfa, string idfv,
@@ -534,7 +533,7 @@ namespace GravityEngine.Wrapper
             GE_Log.d("android not support registerIOS");
         }
 
-        private static void resetClientId(string newClientId, IRegisterCallback resetClientIdCallback)
+        private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
         {
             ResetClientIdListenerAdapter listenerAdapter = new ResetClientIdListenerAdapter();
             getInstance().Call("resetClientId", Turbo.GetAccessToken(), newClientId, listenerAdapter);

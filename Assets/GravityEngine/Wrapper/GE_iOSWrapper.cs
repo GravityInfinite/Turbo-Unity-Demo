@@ -14,7 +14,7 @@ namespace GravityEngine.Wrapper
     public partial class GravityEngineWrapper
     {
         private static IRegisterCallback _registerCallback;
-        private static IRegisterCallback _resetClientIdCallback;
+        private static IResetCallback _resetClientIdCallback;
         private static ILogoutCallback _logoutCallback;
 
         [DllImport("__Internal")]
@@ -466,7 +466,7 @@ namespace GravityEngine.Wrapper
                 caid2_md5);
         }
 
-        private static void resetClientId(string newClientId, IRegisterCallback resetClientIdCallback)
+        private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
         {
             _resetClientIdCallback = resetClientIdCallback;
             ge_resetClientId(AppID, newClientId);
