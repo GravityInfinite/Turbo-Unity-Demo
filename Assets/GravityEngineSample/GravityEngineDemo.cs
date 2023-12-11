@@ -14,17 +14,17 @@ using WeChatWASM;
 using StarkSDKSpace;
 #endif
 
-public class RegisterCallbackImpl : IRegisterCallback
+public class InitializeCallbackImpl : IInitializeCallback
 {
     public void onFailed(string errorMsg)
     {
-        Debug.Log("register failed  with message " + errorMsg);
+        Debug.Log("initialize failed  with message " + errorMsg);
     }
 
     public void onSuccess()
     {
-        Debug.Log("register success");
-        Debug.Log("register call end");
+        Debug.Log("initialize success");
+        Debug.Log("initialize call end");
         // 建议在此执行一次Flush
         GravityEngineAPI.Flush();
     }
@@ -173,7 +173,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         }
 
         GUILayout.Space(20);
-        if (GUILayout.Button("Register", GUILayout.Height(Height)))
+        if (GUILayout.Button("Initialize", GUILayout.Height(Height)))
         {
 #if UNITY_IOS && !UNITY_EDITOR
             // iOS原生应用注册
@@ -181,11 +181,11 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             string idfv = "123456789";
             string caid1Md5 = "123456789";
             string caid2Md5 = "123456789";
-            GravityEngineAPI.RegisterIOS("name_123", 1, false, idfa, idfv, caid1Md5, caid2Md5,
-                new RegisterCallbackImpl());
+            GravityEngineAPI.InitializeIOS("name_123", 1, false, idfa, idfv, caid1Md5, caid2Md5,
+                new InitializeCallbackImpl());
 #else
-            Debug.Log("register clicked");
-            GravityEngineAPI.Register("name_123", 1, "your_openid_111", new RegisterCallbackImpl());
+            Debug.Log("initialize clicked");
+            GravityEngineAPI.Initialize("name_123", 1, "your_openid_111", new InitializeCallbackImpl());
 #endif
         }
         
@@ -220,14 +220,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
 
             GravityEngineAPI.Track("GE_000", properties);
         }
-
-        GUILayout.Space(20);
-        if (GUILayout.Button("TrackBytedanceAdShowEvent", GUILayout.Height(Height)))
-        {
-            // 记录用户抖音小游戏广告观看事件
-            GravityEngineAPI.TrackBytedanceAdShowEvent("your_ad_unit_type", "your_unit_id");
-        }
-
+        
         GUILayout.Space(20);
         if (GUILayout.Button("TrackWechatAdShowEvent", GUILayout.Height(Height)))
         {

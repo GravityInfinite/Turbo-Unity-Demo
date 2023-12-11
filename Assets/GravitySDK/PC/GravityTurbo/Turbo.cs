@@ -44,8 +44,8 @@ namespace GravitySDK.PC.GravityTurbo
             GravitySDKLogger.Print("turbo init success");
         }
 
-        public static void Register(string name, int version, string wxOpenId, Dictionary<string, string> wxLaunchQuery,
-            IRegisterCallback registerCallback, UnityWebRequestMgr.Callback callback)
+        public static void Initialize(string name, int version, string openId, Dictionary<string, string> wxLaunchQuery,
+            IInitializeCallback initializeCallback, UnityWebRequestMgr.Callback callback)
         {
             // check params
             GlobalCheck();
@@ -60,7 +60,7 @@ namespace GravitySDK.PC.GravityTurbo
                 {"name", name},
                 {"channel", _channel},
                 {"version", version},
-                {"wx_openid", wxOpenId},
+                {"wx_openid", openId},
                 {"wx_unionid", ""},
                 {"ad_data", wxLaunchQuery},
             };
@@ -81,24 +81,16 @@ namespace GravitySDK.PC.GravityTurbo
                             int code = Convert.ToInt32(re);
                             if (code == 0)
                             {
-                                registerCallback?.onSuccess();
+                                initializeCallback?.onSuccess();
                                 return;
                             }
                         }
                     }
 
-                    registerCallback?.onFailed("code is not 0, failed with msg " + res?["msg"]);
+                    initializeCallback?.onFailed("code is not 0, failed with msg " + res?["msg"]);
                 }), callback);
         }
-
-        public static void ReportBytedanceAdToGravity(string wxOpenId, string dateHourStr,
-            Action<UnityWebRequest> actionResult)
-        {
-            UnityWebRequestMgr.Instance.Get(TurboHost + "/event_center/api/v1/event/dy/get_ecpm/?access_token=" +
-                                            _accessToken + "&open_id=" + wxOpenId + "&date_hour=" +
-                                            dateHourStr, actionResult, 3);
-        }
-
+        
         public static String GetAccessToken()
         {
             return _accessToken;

@@ -402,33 +402,21 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.CalibrateTimeWithNtp(ntpServer);
         }
 
-        private static void register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
+        private static void initialize(string name, int version, string openid, IInitializeCallback initializeCallback)
         {
-            GravityPCSDK.Register(name, version, wxOpenId, registerCallback);
+            GravityPCSDK.Initialize(name, version, openid, initializeCallback);
         }
         
-        private static void registerIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IRegisterCallback registerCallback)
+        private static void initializeIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)
         {
-            GravitySDKLogger.Print("not support registerIOS!");
+            GravitySDKLogger.Print("not support initializeIOS!");
         }
         
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
         {
             GravitySDKLogger.Print("not support resetClientId!");
         }
-
-        private static void reportBytedanceAdToGravity(string adType, string adUnitId, Dictionary<string, object> otherProperties)
-        {
-            try
-            {
-                GravityPCSDK.ReportBytedanceAdToGravity(adType, adUnitId, otherProperties);
-            }
-            catch (Exception e)
-            {
-                GravitySDKLogger.Print("report bytedance ad error " + e.Message);
-            }
-        }
-
+        
         private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,
             string payMethod)
         {

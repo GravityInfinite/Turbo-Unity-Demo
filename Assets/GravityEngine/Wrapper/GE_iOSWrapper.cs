@@ -13,7 +13,7 @@ namespace GravityEngine.Wrapper
 {
     public partial class GravityEngineWrapper
     {
-        private static IRegisterCallback _registerCallback;
+        private static IInitializeCallback _initializeCallback;
         private static IResetCallback _resetClientIdCallback;
         private static ILogoutCallback _logoutCallback;
 
@@ -161,7 +161,7 @@ namespace GravityEngine.Wrapper
             string payMethod);
 
         [DllImport("__Internal")]
-        private static extern void ge_register(string app_id, string clientId, string userClientName, bool enableAsa,
+        private static extern void ge_initialize(string app_id, string clientId, string userClientName, bool enableAsa,
             int version, string idfa, string idfv, string caid1_md5, string caid2_md5);
 
         [DllImport("__Internal")]
@@ -453,16 +453,16 @@ namespace GravityEngine.Wrapper
             GERegisterRecieveGameCallback(geHandlerPointer);
         }
 
-        private static void register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
+        private static void initialize(string name, int version, string wxOpenId, IRnitializeCallback initializeCallback)
         {
-            GE_Log.d("ios not support register");
+            GE_Log.d("ios not support initialize");
         }
 
-        private static void registerIOS(string name, int version, bool enableAsa, string idfa, string idfv,
-            string caid1_md5, string caid2_md5, IRegisterCallback registerCallback)
+        private static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+            string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)
         {
-            _registerCallback = registerCallback;
-            ge_register(AppID, Turbo.GetClientId(), name, enableAsa, version, idfa, idfv, caid1_md5,
+            _initializeCallback = initializeCallback;
+            ge_initialize(AppID, Turbo.GetClientId(), name, enableAsa, version, idfa, idfv, caid1_md5,
                 caid2_md5);
         }
 
@@ -470,11 +470,6 @@ namespace GravityEngine.Wrapper
         {
             _resetClientIdCallback = resetClientIdCallback;
             ge_resetClientId(AppID, newClientId);
-        }
-
-        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId, Dictionary<string, object> otherProperties)
-        {
-            GE_Log.d("ios not support reportBytedanceAdToGravity");
         }
 
         private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,
@@ -537,25 +532,25 @@ namespace GravityEngine.Wrapper
 
                 GE_Log.d("logout callback");
             }
-            else if (type == "RegisterCallbackSuccess")
+            else if (type == "InitializeCallbackSuccess")
             {
-                if (_registerCallback != null)
+                if (_initializeCallback != null)
                 {
-                    _registerCallback.onSuccess();
-                    _registerCallback = null;
+                    _initializeCallback.onSuccess();
+                    _initializeCallback = null;
                 }
 
-                GE_Log.d("register callback success");
+                GE_Log.d("initialize callback success");
             }
-            else if (type == "RegisterCallbackFailed")
+            else if (type == "InitializeCallbackFailed")
             {
-                if (_registerCallback != null)
+                if (_initializeCallback != null)
                 {
-                    _registerCallback.onFailed("register failed, read the logs.");
-                    _registerCallback = null;
+                    _initializeCallback.onFailed("initialize failed, read the logs.");
+                    _initializeCallback = null;
                 }
 
-                GE_Log.d("register callback failed");
+                GE_Log.d("initialize callback failed");
             }
             else if (type == "ResetClientIdCallbackSuccess")
             {

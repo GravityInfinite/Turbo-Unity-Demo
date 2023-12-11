@@ -18,7 +18,7 @@ namespace GravityEngine
         Dictionary<string, object> AutoTrackEventCallback(int type, Dictionary<string, object> properties);
     }
 
-    public interface IRegisterCallback
+    public interface IInitializeCallback
     {
         void onFailed(string errorMsg);
 

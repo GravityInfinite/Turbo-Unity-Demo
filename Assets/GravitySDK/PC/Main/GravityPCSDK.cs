@@ -377,7 +377,7 @@ namespace GravitySDK.PC.Main
             return GetInstance().TimeString(dateTime);
         }
 
-        public static void Register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
+        public static void Initialize(string name, int version, string openid, IInitializeCallback initializeCallback)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
@@ -391,10 +391,8 @@ namespace GravitySDK.PC.Main
             Dictionary<string, string> launchQuery = new Dictionary<string, string>();
             var launchScene = "";
 #endif
-            Turbo.Register(name, version, wxOpenId, launchQuery, registerCallback, () =>
+            Turbo.Initialize(name, version, openid, launchQuery, initializeCallback, () =>
             {
-                // 自动采集注册事件
-                Track("$MPRegister");
                 UserSetOnce(new Dictionary<string, object>()
                 {
                     {"$channel", Turbo.GetChannel()},
@@ -408,19 +406,6 @@ namespace GravitySDK.PC.Main
                 
                 Flush();
             });
-        }
-        
-        public static void ReportBytedanceAdToGravity(string adType, string adUnitId,
-            Dictionary<string, object> otherProperties)
-        {
-            var properties = new Dictionary<string, object>()
-            {
-                {"$ad_type", adType},
-                {"$ad_unit_id", adUnitId},
-            };
-            GE_PropertiesChecker.MergeProperties(otherProperties, properties);
-            Track("$AdShowByClient", properties);
-            Flush();
         }
         
         public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,

@@ -128,7 +128,7 @@ static NSString *kTADatasType = @"TA-Datas-Type";
                 GELogDebug(@"flush success");
             } else if (gravityCode == 2000){
                 flushSucc = NO;
-                GELogError(@"please call registerGravityEngine method first");
+                GELogError(@"please call initializeGravityEngine method first");
             } else {
                 flushSucc = NO;
                 GELogError(@"flush error other reason %d", gravityCode);

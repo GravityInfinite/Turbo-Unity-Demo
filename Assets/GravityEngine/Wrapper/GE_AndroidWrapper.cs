@@ -474,25 +474,25 @@ namespace GravityEngine.Wrapper
             }
         }
 
-        private class RegisterListenerAdapter : AndroidJavaProxy
+        private class InitializeListenerAdapter : AndroidJavaProxy
         {
-            public RegisterListenerAdapter() : base("cn.gravity.android.RegisterCallback")
+            public InitializeListenerAdapter() : base("cn.gravity.android.InitializeCallback")
             {
             }
 
-            void onFailed(string errorMsg, AndroidJavaObject registerBody)
+            void onFailed(string errorMsg, AndroidJavaObject initializeBody)
             {
-                if (mRegisterCallback != null)
+                if (mInitializeCallback != null)
                 {
-                    mRegisterCallback.onFailed(errorMsg);
+                    mInitializeCallback.onFailed(errorMsg);
                 }
             }
 
-            void onSuccess(AndroidJavaObject responseJson, AndroidJavaObject registerBody)
+            void onSuccess(AndroidJavaObject responseJson, AndroidJavaObject initializeBody)
             {
-                if (mRegisterCallback != null)
+                if (mInitializeCallback != null)
                 {
-                    mRegisterCallback.onSuccess();
+                    mInitializeCallback.onSuccess();
                 }
             }
         }
@@ -520,28 +520,23 @@ namespace GravityEngine.Wrapper
             }
         }
 
-        private static void register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
+        private static void initialize(string name, int version, string wxOpenId, IInitializeCallback initializeCallback)
         {
-            RegisterListenerAdapter listenerAdapter = new RegisterListenerAdapter();
-            getInstance().Call("register", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(),
+            InitializeListenerAdapter listenerAdapter = new InitializeListenerAdapter();
+            getInstance().Call("initialize", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(),
                 listenerAdapter, false);
         }
 
-        private static void registerIOS(string name, int version, bool enableAsa, string idfa, string idfv,
-            string caid1_md5, string caid2_md5, IRegisterCallback registerCallback)
+        private static void initializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+            string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)
         {
-            GE_Log.d("android not support registerIOS");
+            GE_Log.d("android not support initializeIOS");
         }
 
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
         {
             ResetClientIdListenerAdapter listenerAdapter = new ResetClientIdListenerAdapter();
             getInstance().Call("resetClientId", Turbo.GetAccessToken(), newClientId, listenerAdapter);
-        }
-
-        private static void reportBytedanceAdToGravity(string wxOpenId, string adUnitId, Dictionary<string, object> otherProperties)
-        {
-            GE_Log.d("android not support reportBytedanceAdToGravity");
         }
 
         private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,

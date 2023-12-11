@@ -12,7 +12,7 @@ namespace GravityEngine.Wrapper
         public static MonoBehaviour sMono;
         private static IDynamicSuperProperties mDynamicSuperProperties;
         private static IAutoTrackEventCallback mAutoTrackEventCallback;
-        private static IRegisterCallback mRegisterCallback;
+        private static IInitializeCallback _mInitializeCallback;
         private static IResetCallback mResetClientIdCallback;
 
         private static System.Random rnd = new System.Random();
@@ -132,8 +132,7 @@ namespace GravityEngine.Wrapper
         {
             clearSuperProperty();
         }
-
-
+        
         public static void TimeEvent(string eventName)
         {
             GE_PropertiesChecker.CheckString(eventName);
@@ -292,16 +291,16 @@ namespace GravityEngine.Wrapper
             calibrateTimeWithNtp(ntpServer);
         }
 
-        public static void Register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
+        public static void Initialize(string name, int version, string wxOpenId, IInitializeCallback initializeCallback)
         {
-            mRegisterCallback = registerCallback;
-            register(name, version, wxOpenId, registerCallback);
+            _mInitializeCallback = initializeCallback;
+            initialize(name, version, wxOpenId, initializeCallback);
         }
         
-        public static void RegisterIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IRegisterCallback registerCallback)
+        public static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)
         {
-            mRegisterCallback = registerCallback;
-            registerIOS(name, version, enableAsa, idfa, idfv, caid1_md5, caid2_md5, registerCallback);
+            _mInitializeCallback = initializeCallback;
+            initializeIOS(name, version, enableAsa, idfa, idfv, caid1_md5, caid2_md5, initializeCallback);
         }
 
         public static void ResetClientID(string newClientId, IResetCallback resetClientIdCallback)
@@ -310,12 +309,6 @@ namespace GravityEngine.Wrapper
             resetClientId(newClientId, resetClientIdCallback);
         }
 
-        public static void ReportBytedanceAdToGravity(string adType, string adUnitId,
-            Dictionary<string, object> otherProperties)
-        {
-            reportBytedanceAdToGravity(adType, adUnitId, otherProperties);
-        }
-        
         public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,
             string payMethod)
         {

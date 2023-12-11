@@ -435,24 +435,32 @@ namespace GravityEngine
             Track("$AdShow", properties);
             Flush();
         }
-
-        /// <summary>
-        /// 上报抖音小游戏广告观看事件 AdShow
-        /// </summary>
-        /// <param name="adType"></param>               广告位类型，取值为：reward、banner、interstitial，分别对应激励视频广告、Banner广告、插屏广告
-        /// <param name="adUnitId"></param>             广告位ID
-        /// <param name="otherProperties"></param>      其他需要携带的自定义参数
-        public static void TrackBytedanceAdShowEvent(string adType, string adUnitId, Dictionary<string, object> otherProperties = null)
-        {
-            GravityEngineWrapper.ReportBytedanceAdToGravity(adType, adUnitId, otherProperties);
-        }
-
+        
         /// <summary>
         /// 上报微信小游戏登录事件 $MPLogin
         /// </summary>
         public static void TrackMPLogin()
         {
             Track("$MPLogin");
+            Flush();
+        }
+        
+        /// <summary>
+        /// 上报微信小游戏注册事件 $MPRegister
+        /// </summary>
+        public static void TrackMPRegister()
+        {
+            Track("$MPRegister");
+            Flush();
+        }
+        
+        /// <summary>
+        /// 上报App注册事件 $AppRegister
+        /// </summary>
+        public static void TrackAppRegister()
+        {
+            Track("$AppRegister");
+            Flush();
         }
 
         /// <summary>
@@ -461,6 +469,7 @@ namespace GravityEngine
         public static void TrackMPLogout()
         {
             Track("$MPLogout");
+            Flush();
         }
 
         /// <summary>
@@ -1378,16 +1387,16 @@ namespace GravityEngine
         #region turbo
 
         /// <summary>
-        /// 在引力引擎注册，其他方法均需在本方法回调成功之后才可正常使用
+        /// 在引力引擎初始化，其他方法均需在本方法回调成功之后才可正常使用
         /// </summary>
         /// <param name="name"></param>             用户名
-        /// <param name="version"></param>          用户注册的程序版本，比如当前微信小游戏的版本号
-        /// <param name="wxOpenId"></param>         微信open id (微信小程序和小游戏必填)
-        /// <param name="registerCallback"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
+        /// <param name="version"></param>          用户注册的程序版本，比如当前小游戏的版本号
+        /// <param name="openId"></param>           open id (小程序/小游戏必填)
+        /// <param name="initializeCallback"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void Register(string name, int version, string wxOpenId, IRegisterCallback registerCallback)
+        public static void Initialize(string name, int version, string openId, IInitializeCallback initializeCallback)
         {
-            GravityEngineWrapper.Register(name, version, wxOpenId, registerCallback);
+            GravityEngineWrapper.Initialize(name, version, openId, initializeCallback);
         }
 
         /// <summary>
@@ -1400,13 +1409,13 @@ namespace GravityEngine
         /// <param name="idfv"></param>             当前用户 IDFV
         /// <param name="caid1MD5"></param>        当前用户中广协 ID 的 md5 hash（20230330 版本）（可为空）
         /// <param name="caid2MD5"></param>        当前用户中广协 ID 的 md5 hash（20220111 版本）（可为空）
-        /// <param name="registerCallback"></param> 网络回调，其他方法均需在回调成功之后才可正常使用
+        /// <param name="initializeCallback"></param> 网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void RegisterIOS(string name, int version, bool enableAsa, string idfa, string idfv,
-            string caid1MD5, string caid2MD5, IRegisterCallback registerCallback)
+        public static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+            string caid1MD5, string caid2MD5, IInitializeCallback initializeCallback)
         {
-            GravityEngineWrapper.RegisterIOS(name, version, enableAsa, idfa, idfv, caid1MD5, caid2MD5,
-                registerCallback);
+            GravityEngineWrapper.InitializeIOS(name, version, enableAsa, idfa, idfv, caid1MD5, caid2MD5,
+                initializeCallback);
         }
 
         public static void ResetClientID(string newClientId, IResetCallback resetClientIdCallback)

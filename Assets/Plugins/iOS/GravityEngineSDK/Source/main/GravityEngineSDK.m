@@ -313,16 +313,15 @@ static dispatch_queue_t ge_trackQueue;
     [task resume];
 }
 
-- (void)registerGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
-    
+- (void)trackRegisterEvent {
+    // 上报用户注册事件
+    [self track:@"$AppRegister"];
+    [self flush];
+}
+
+- (void)initializeGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withCreateTime:(long)createTimestamp withCompany:(NSString *)company withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback{
     if (!(idfa && idfa.length > 0) && !(idfv && idfv.length > 0) && !(caid1_md5 && caid1_md5.length > 0) && !(caid2_md5 && caid2_md5.length > 0)) {
-        GELogError(@"idfa/idfv/caid1_md5/caid2_md5 必现至少一个不为空！否则会严重影响归因结果！");
-        if (errorCallback) {
-            errorCallback([NSError errorWithDomain:@"com.gravityengine" code:-1 userInfo:@{
-                @"error": @"idfa/idfv/caid1_md5/caid2_md5 必现至少一个不为空！否则会严重影响归因结果！"
-            }]);
-        }
-        return;
+        GELogError(@"idfa/idfv/caid1_md5/caid2_md5 全部为空，请确保后续调用uploadDeviceInfo接口补报ID数据，否则会严重影响归因准确性！");
     }
     
     GENetwork *network = [[GENetwork alloc] init];
@@ -349,7 +348,7 @@ static dispatch_queue_t ge_trackQueue;
     deviceInfo[@"uptime_time"] = [GEDeviceInfo bootTimeSec];
     deviceInfo[@"latest_update_time"] = [GEDeviceInfo systemUpdateTime];
 
-    NSMutableDictionary *registerBody = [NSMutableDictionary dictionaryWithDictionary:@{
+    NSMutableDictionary *initializeBody = [NSMutableDictionary dictionaryWithDictionary:@{
         @"client_id": clientId,
         @"name": userName,
         @"channel": @"base_channel",
@@ -357,7 +356,13 @@ static dispatch_queue_t ge_trackQueue;
         @"device_info": deviceInfo
     }];
     if (syncAttribution == YES) {
-        registerBody[@"need_return_attribution"] = @true;
+        initializeBody[@"need_return_attribution"] = @true;
+    }
+    if (createTimestamp != 0 && company) {
+        initializeBody[@"history_info"] = @{
+            @"create_time": [NSNumber numberWithLong:createTimestamp],
+            @"company": company
+        };
     }
     
     if (@available(iOS 14.3, *)) {
@@ -367,14 +372,14 @@ static dispatch_queue_t ge_trackQueue;
             GELogDebug(@"asa token is %@", asaToken);
             // asaToken参数，注册 的时候获取，获取完成之后，传入给引力
             if (asaToken && asaToken.length > 0) {
-                registerBody[@"asa_token"] = asaToken;
+                initializeBody[@"asa_token"] = asaToken;
             }
         }
     }
     
     void(^block)(NSDictionary * _Nonnull result, NSError * _Nullable error) = ^(NSDictionary * _Nonnull result, NSError * _Nullable error) {
         NSNumber *code = [result objectForKey:@"code"];
-        GELogDebug(@"register respons code is %@", code);
+        GELogDebug(@"initialize respons code is %@", code);
         if ([code isEqualToNumber:@0]) {
             // 注册成功，准备开始上报各种信息
             [self.file archiveClientId:clientId];
@@ -395,9 +400,6 @@ static dispatch_queue_t ge_trackQueue;
                 @"$model": [GEDeviceInfo sharedManager].ge_iphoneType
             }];
             
-            // 上报用户注册事件
-            [self track:@"$AppRegister"];
-            [self flush];
             return;
         }
         
@@ -413,7 +415,7 @@ static dispatch_queue_t ge_trackQueue;
     if ([self.file unarchiveUserAgent]) {
         // 有值，直接调用
         GELogDebug(@"user agent is ready, will use it directly.");
-        [network postDataWith:registerBody handler:block];
+        [network postDataWith:initializeBody handler:block];
     } else {
         GELogDebug(@"user agent is not ready, will try to request it.");
         // 为nil，则开始尝试获取wkWebView的ua，之后调用
@@ -430,10 +432,15 @@ static dispatch_queue_t ge_trackQueue;
             } @finally {
                 GELogDebug(@"user agent is %@", realUserAgent);
                 [self.file archiveUserAgent:realUserAgent];
-                [network postDataWith:registerBody handler:block];
+                [network postDataWith:initializeBody handler:block];
             }
         }];
     }
+}
+
+
+- (void)initializeGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
+    [self initializeGravityEngineWithClientId:clientId withUserName:userName withVersion:version withAsaEnable:enableAsa withIdfa:idfa withIdfv:idfv withCaid1:caid1_md5 withCaid2:caid2_md5 withSyncAttribution:syncAttribution withCreateTime:0 withCompany:@"" withSuccessCallback:successCallback withErrorCallback:errorCallback];
 }
 
 - (void)resetClientID:(NSString *)newClientID withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
@@ -456,11 +463,11 @@ static dispatch_queue_t ge_trackQueue;
     network.serverURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/event_center/api/v1/user/reset_client_id/?access_token=%@&client_id=%@", _config.configureURL, _config.accessToken, encodedClientId]];
     network.securityPolicy = _config.securityPolicy;
     
-    NSDictionary *registerBody = @{
+    NSDictionary *initializeBody = @{
         @"new_client_id": newClientID
     };
 
-    [network postDataWith:(registerBody) handler:^(NSDictionary * _Nonnull result, NSError * _Nullable error) {
+    [network postDataWith:(initializeBody) handler:^(NSDictionary * _Nonnull result, NSError * _Nullable error) {
         GELogDebug(@"reset result is %@", result);
         if (error) {
             if (errorCallback) {
@@ -479,6 +486,49 @@ static dispatch_queue_t ge_trackQueue;
                 }
             }
         }
+    }];
+}
+
+- (void)uploadDeviceInfoWithIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 {
+    NSString * clientId = [self.file unarchiveClientId];
+    NSString * encodedClientId = [clientId ge_urlEncodedString];
+    
+    if (!clientId) {
+        GELogError(@"client id is nil, will not upload device info");
+        return;
+    }
+    if (!(idfa && idfa.length > 0) && !(idfv && idfv.length > 0) && !(caid1_md5 && caid1_md5.length > 0) && !(caid2_md5 && caid2_md5.length > 0)) {
+        GELogError(@"idfa/idfv/caid1_md5/caid2_md5 全部为空！本次补报ID行为将不会上传给引力后台！");
+        return;
+    }
+    GENetwork *network = [[GENetwork alloc] init];
+    network.debugMode = GravityEngineDebugOff;
+    network.appid = _config.appid;
+    
+    network.serverURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/event_center/api/v1/user/device_info/?access_token=%@&client_id=%@", _config.configureURL, _config.accessToken, encodedClientId]];
+    network.securityPolicy = _config.securityPolicy;
+    
+    NSMutableDictionary *deviceInfo = [NSMutableDictionary new];
+    deviceInfo[@"os_name"] = @"ios";
+    if(idfa) {
+        deviceInfo[@"idfa"] = idfa;
+    }
+    if(idfv) {
+        deviceInfo[@"idfv"] = idfv;
+    }
+    if(caid1_md5) {
+        deviceInfo[@"caid1_md5"] = caid1_md5;
+    }
+    if(caid2_md5) {
+        deviceInfo[@"caid2_md5"] = caid2_md5;
+    }
+    
+    NSDictionary *uploadBody = @{
+        @"data": deviceInfo
+    };
+
+    [network postDataWith:(uploadBody) handler:^(NSDictionary * _Nonnull result, NSError * _Nullable error) {
+        GELogDebug(@"upload device info result is %@", result);
     }];
 }
 
