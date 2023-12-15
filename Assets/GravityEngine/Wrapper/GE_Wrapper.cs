@@ -12,7 +12,7 @@ namespace GravityEngine.Wrapper
         public static MonoBehaviour sMono;
         private static IDynamicSuperProperties mDynamicSuperProperties;
         private static IAutoTrackEventCallback mAutoTrackEventCallback;
-        private static IInitializeCallback _mInitializeCallback;
+        private static IInitializeCallback mInitializeCallback;
         private static IResetCallback mResetClientIdCallback;
 
         private static System.Random rnd = new System.Random();
@@ -293,13 +293,13 @@ namespace GravityEngine.Wrapper
 
         public static void Initialize(string name, int version, string wxOpenId, IInitializeCallback initializeCallback)
         {
-            _mInitializeCallback = initializeCallback;
+            mInitializeCallback = initializeCallback;
             initialize(name, version, wxOpenId, initializeCallback);
         }
         
         public static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)
         {
-            _mInitializeCallback = initializeCallback;
+            mInitializeCallback = initializeCallback;
             initializeIOS(name, version, enableAsa, idfa, idfv, caid1_md5, caid2_md5, initializeCallback);
         }
 

@@ -458,7 +458,7 @@ namespace GravityEngine.Wrapper
             GE_Log.d("ios not support initialize");
         }
 
-        private static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+        private static void initializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
             string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)
         {
             _initializeCallback = initializeCallback;
