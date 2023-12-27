@@ -68,7 +68,7 @@ namespace GravitySDK.PC.GravityTurbo
             GravitySDKLogger.Print(registerRequestDir.ToString());
 
             UnityWebRequestMgr.Instance.Post(
-                TurboHost + "/event_center/api/v1/user/register/?access_token=" + _accessToken,
+                TurboHost + "/event_center/api/v1/user/initialize/?access_token=" + _accessToken,
                 registerRequestDir, (request =>
                 {
                     string responseText = request.downloadHandler.text;

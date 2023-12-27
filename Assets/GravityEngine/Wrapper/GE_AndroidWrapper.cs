@@ -63,7 +63,7 @@ namespace GravityEngine.Wrapper
                     .GetStatic<AndroidJavaObject>("currentActivity"); //获得Context
             AndroidJavaObject currentInstance;
 
-            currentInstance = sdkClass.CallStatic<AndroidJavaObject>("sharedInstance", context, mToken.accessToken);
+            currentInstance = sdkClass.CallStatic<AndroidJavaObject>("setupAndStart", context, mToken.accessToken);
             return currentInstance;
         }
 
@@ -107,7 +107,7 @@ namespace GravityEngine.Wrapper
                 };
             }
 
-            unityAPIInstance.Call("sharedInstance", context, GE_MiniJson.Serialize(configDic));
+            unityAPIInstance.Call("setupAndStart", context, GE_MiniJson.Serialize(configDic));
         }
 
         private static void flush()
