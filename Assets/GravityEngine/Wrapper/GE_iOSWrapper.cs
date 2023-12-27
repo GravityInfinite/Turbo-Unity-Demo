@@ -453,7 +453,7 @@ namespace GravityEngine.Wrapper
             GERegisterRecieveGameCallback(geHandlerPointer);
         }
 
-        private static void initialize(string name, int version, string wxOpenId, IRnitializeCallback initializeCallback)
+        private static void initialize(string name, int version, string wxOpenId, IInitializeCallback initializeCallback)
         {
             GE_Log.d("ios not support initialize");
         }
