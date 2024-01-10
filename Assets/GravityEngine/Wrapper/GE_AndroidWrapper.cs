@@ -492,7 +492,7 @@ namespace GravityEngine.Wrapper
             {
                 if (mInitializeCallback != null)
                 {
-                    mInitializeCallback.onSuccess();
+                    mInitializeCallback.onSuccess(responseJson.JSONObjectToDictionary());
                 }
             }
         }

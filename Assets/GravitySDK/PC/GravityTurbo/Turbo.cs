@@ -44,7 +44,7 @@ namespace GravitySDK.PC.GravityTurbo
             GravitySDKLogger.Print("turbo init success");
         }
 
-        public static void Initialize(string name, int version, string openId, Dictionary<string, string> wxLaunchQuery,
+        public static void Initialize(string name, int version, string openId, Dictionary<string, string> wxLaunchQuery, bool enableSyncAttribution,
             IInitializeCallback initializeCallback, UnityWebRequestMgr.Callback callback)
         {
             // check params
@@ -63,6 +63,7 @@ namespace GravitySDK.PC.GravityTurbo
                 {"wx_openid", openId},
                 {"wx_unionid", ""},
                 {"ad_data", wxLaunchQuery},
+                {"need_return_attribution", enableSyncAttribution},
             };
 
             GravitySDKLogger.Print(registerRequestDir.ToString());
@@ -81,7 +82,14 @@ namespace GravitySDK.PC.GravityTurbo
                             int code = Convert.ToInt32(re);
                             if (code == 0)
                             {
-                                initializeCallback?.onSuccess();
+                                if (res.TryGetValue("data", out object dataObj))
+                                {
+                                    initializeCallback?.onSuccess((Dictionary<string, object>) dataObj);
+                                }
+                                else
+                                {
+                                    initializeCallback?.onSuccess(new Dictionary<string, object>());
+                                }
                                 return;
                             }
                         }

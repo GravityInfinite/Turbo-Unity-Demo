@@ -1394,9 +1394,9 @@ namespace GravityEngine
         /// <param name="openId"></param>           open id (小程序/小游戏必填)
         /// <param name="initializeCallback"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void Initialize(string name, int version, string openId, IInitializeCallback initializeCallback)
+        public static void Initialize(string name, int version, string openId, bool enableSyncAttribution , IInitializeCallback initializeCallback)
         {
-            GravityEngineWrapper.Initialize(name, version, openId, initializeCallback);
+            GravityEngineWrapper.Initialize(name, version, openId, enableSyncAttribution, initializeCallback);
         }
 
         /// <summary>

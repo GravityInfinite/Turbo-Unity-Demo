@@ -402,9 +402,9 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.CalibrateTimeWithNtp(ntpServer);
         }
 
-        private static void initialize(string name, int version, string openid, IInitializeCallback initializeCallback)
+        private static void initialize(string name, int version, string openid, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
-            GravityPCSDK.Initialize(name, version, openid, initializeCallback);
+            GravityPCSDK.Initialize(name, version, openid, enableSyncAttribution, initializeCallback);
         }
         
         private static void initializeIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)

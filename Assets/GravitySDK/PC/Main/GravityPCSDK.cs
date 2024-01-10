@@ -377,7 +377,7 @@ namespace GravitySDK.PC.Main
             return GetInstance().TimeString(dateTime);
         }
 
-        public static void Initialize(string name, int version, string openid, IInitializeCallback initializeCallback)
+        public static void Initialize(string name, int version, string openid, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             LaunchOptionsGame launchOptionsSync = WX.GetLaunchOptionsSync();
@@ -391,7 +391,7 @@ namespace GravitySDK.PC.Main
             Dictionary<string, string> launchQuery = new Dictionary<string, string>();
             var launchScene = "";
 #endif
-            Turbo.Initialize(name, version, openid, launchQuery, initializeCallback, () =>
+            Turbo.Initialize(name, version, openid, launchQuery, enableSyncAttribution, initializeCallback, () =>
             {
                 UserSetOnce(new Dictionary<string, object>()
                 {

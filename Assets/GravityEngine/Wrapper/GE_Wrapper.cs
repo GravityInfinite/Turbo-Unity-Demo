@@ -291,10 +291,10 @@ namespace GravityEngine.Wrapper
             calibrateTimeWithNtp(ntpServer);
         }
 
-        public static void Initialize(string name, int version, string wxOpenId, IInitializeCallback initializeCallback)
+        public static void Initialize(string name, int version, string wxOpenId, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             mInitializeCallback = initializeCallback;
-            initialize(name, version, wxOpenId, initializeCallback);
+            initialize(name, version, wxOpenId, enableSyncAttribution, initializeCallback);
         }
         
         public static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)

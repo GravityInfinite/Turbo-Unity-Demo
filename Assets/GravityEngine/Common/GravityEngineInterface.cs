@@ -22,7 +22,7 @@ namespace GravityEngine
     {
         void onFailed(string errorMsg);
 
-        void onSuccess();
+        void onSuccess(Dictionary<string, object> responseJson);
     }
     
     public interface IResetCallback

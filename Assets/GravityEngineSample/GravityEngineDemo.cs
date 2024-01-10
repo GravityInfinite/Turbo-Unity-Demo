@@ -21,10 +21,14 @@ public class InitializeCallbackImpl : IInitializeCallback
         Debug.Log("initialize failed  with message " + errorMsg);
     }
 
-    public void onSuccess()
+    public void onSuccess(Dictionary<string, object> responseJson)
     {
         Debug.Log("initialize success");
         Debug.Log("initialize call end");
+        if (responseJson!=null)
+        {
+            GE_Log.d(responseJson.ToString());
+        }
         // 建议在此执行一次Flush
         GravityEngineAPI.Flush();
     }
@@ -185,7 +189,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
                 new InitializeCallbackImpl());
 #else
             Debug.Log("initialize clicked");
-            GravityEngineAPI.Initialize("name_123", 1, "your_openid_111", new InitializeCallbackImpl());
+            GravityEngineAPI.Initialize("name_123", 1, "your_openid_111", true, new InitializeCallbackImpl());
 #endif
         }
         

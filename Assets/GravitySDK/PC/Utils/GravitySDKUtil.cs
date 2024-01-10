@@ -243,11 +243,11 @@ namespace GravitySDK.PC.Utils
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return Convert.ToInt64(ts.TotalMilliseconds);
         }
-        
+
         private const string LastLaunchDateKey = "GravityLastLaunchDate";
         private static bool _FirstCheckCalled = false;
         private static bool _IsFirstLaunchToday = false;
-        
+
         public static bool IsFirstLaunchToday()
         {
             if (_FirstCheckCalled)
@@ -256,13 +256,13 @@ namespace GravitySDK.PC.Utils
             }
 
             _FirstCheckCalled = true;
-            
+
             // 获取上次启动的日期
             string lastLaunchDate = (string) GravitySDKFile.GetData(LastLaunchDateKey, typeof(string));
 
             // 获取当前日期
             string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
-            
+
             // 如果上次启动的日期为空或不是当天的日期，则返回 true 表示当日首次启动
             if (string.IsNullOrEmpty(lastLaunchDate) || !string.Equals(lastLaunchDate, currentDate))
             {
