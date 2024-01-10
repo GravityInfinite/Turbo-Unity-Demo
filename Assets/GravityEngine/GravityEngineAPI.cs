@@ -1412,9 +1412,9 @@ namespace GravityEngine
         /// <param name="initializeCallback"></param> 网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
         public static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
-            string caid1MD5, string caid2MD5, IInitializeCallback initializeCallback)
+            string caid1MD5, string caid2MD5, bool enableSyncAttribution,  IInitializeCallback initializeCallback)
         {
-            GravityEngineWrapper.InitializeIOS(name, version, enableAsa, idfa, idfv, caid1MD5, caid2MD5,
+            GravityEngineWrapper.InitializeIOS(name, version, enableAsa, idfa, idfv, caid1MD5, caid2MD5, enableSyncAttribution,
                 initializeCallback);
         }
 

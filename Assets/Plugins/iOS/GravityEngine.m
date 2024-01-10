@@ -484,7 +484,7 @@ void ge_track_pay_event(const char *app_id, int pay_amount, const char *pay_type
     [ge_getInstance(app_id_string) trackPayEventWithAmount:pay_amount withPayType:pay_type_string withOrderId:order_id_string withPayReason:pay_reason_string withPayMethod:pay_method_string];
 }
 
-void ge_initialize(const char *app_id, const char *client_id, const char *user_client_name, bool enable_asa, int version, const char *idfa, const char *idfv, const char *caid1_md5, const char *caid2_md5) {
+void ge_initialize(const char *app_id, const char *client_id, const char *user_client_name, bool enable_asa, int version, const char *idfa, const char *idfv, const char *caid1_md5, const char *caid2_md5, bool enableSyncAttribution) {
     NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
     NSString *client_id_string = client_id != NULL ? [NSString stringWithUTF8String:client_id] : nil;
     NSString *user_client_name_string = user_client_name != NULL ? [NSString stringWithUTF8String:user_client_name] : nil;
@@ -493,9 +493,9 @@ void ge_initialize(const char *app_id, const char *client_id, const char *user_c
     NSString *caid1_md5_string = caid1_md5 != NULL ? [NSString stringWithUTF8String:caid1_md5] : nil;
     NSString *caid2_md5_string = caid2_md5 != NULL ? [NSString stringWithUTF8String:caid2_md5] : nil;
     
-    [ge_getInstance(app_id_string) initializeGravityEngineWithClientId:client_id_string withUserName:user_client_name_string withVersion:version withAsaEnable:enable_asa withIdfa:idfa_string withIdfv:idfv_string withCaid1:caid1_md5_string withCaid2:caid2_md5_string withSyncAttribution:NO withSuccessCallback:^(NSDictionary * _Nonnull response){
+    [ge_getInstance(app_id_string) initializeGravityEngineWithClientId:client_id_string withUserName:user_client_name_string withVersion:version withAsaEnable:enable_asa withIdfa:idfa_string withIdfv:idfv_string withCaid1:caid1_md5_string withCaid2:caid2_md5_string withSyncAttribution:enableSyncAttribution withSuccessCallback:^(NSDictionary * _Nonnull response){
         NSLog(@"gravity engine initialize success");
-        geResultHandler("InitializeCallbackSuccess", "{}");
+        geResultHandler("InitializeCallbackSuccess", [[response descriptionWithLocale:nil] UTF8String]);
     } withErrorCallback:^(NSError * _Nonnull error) {
         NSLog(@"gravity engine initialize failed, and error is %@", error);
         geResultHandler("InitializeCallbackFailed", "{}");

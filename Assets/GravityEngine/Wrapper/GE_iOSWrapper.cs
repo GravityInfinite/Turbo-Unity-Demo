@@ -162,7 +162,7 @@ namespace GravityEngine.Wrapper
 
         [DllImport("__Internal")]
         private static extern void ge_initialize(string app_id, string clientId, string userClientName, bool enableAsa,
-            int version, string idfa, string idfv, string caid1_md5, string caid2_md5);
+            int version, string idfa, string idfv, string caid1_md5, string caid2_md5, bool enableSyncAttribution);
 
         [DllImport("__Internal")]
         private static extern void ge_resetClientId(string app_id, string newClientId);
@@ -459,11 +459,11 @@ namespace GravityEngine.Wrapper
         }
 
         private static void initializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
-            string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)
+            string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             _initializeCallback = initializeCallback;
             ge_initialize(AppID, Turbo.GetClientId(), name, enableAsa, version, idfa, idfv, caid1_md5,
-                caid2_md5);
+                caid2_md5, enableSyncAttribution);
         }
 
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
@@ -536,7 +536,8 @@ namespace GravityEngine.Wrapper
             {
                 if (_initializeCallback != null)
                 {
-                    _initializeCallback.onSuccess();
+                    Dictionary<string, object> jsonResponse = GE_MiniJson.Deserialize(jsonData);
+                    _initializeCallback.onSuccess(jsonResponse);
                     _initializeCallback = null;
                 }
 

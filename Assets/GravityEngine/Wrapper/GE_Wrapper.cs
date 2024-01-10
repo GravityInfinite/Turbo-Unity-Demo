@@ -297,10 +297,10 @@ namespace GravityEngine.Wrapper
             initialize(name, version, wxOpenId, enableSyncAttribution, initializeCallback);
         }
         
-        public static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, IInitializeCallback initializeCallback)
+        public static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             mInitializeCallback = initializeCallback;
-            initializeIOS(name, version, enableAsa, idfa, idfv, caid1_md5, caid2_md5, initializeCallback);
+            initializeIOS(name, version, enableAsa, idfa, idfv, caid1_md5, caid2_md5, enableSyncAttribution, initializeCallback);
         }
 
         public static void ResetClientID(string newClientId, IResetCallback resetClientIdCallback)
