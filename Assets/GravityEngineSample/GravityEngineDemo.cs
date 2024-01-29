@@ -185,7 +185,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             string idfv = "123456789";
             string caid1Md5 = "123456789";
             string caid2Md5 = "123456789";
-            GravityEngineAPI.InitializeIOS("name_123", 1, false, idfa, idfv, caid1Md5, caid2Md5,
+            GravityEngineAPI.InitializeIOS("name_123", 1, false, idfa, idfv, caid1Md5, caid2Md5, true,
                 new InitializeCallbackImpl());
 #else
             Debug.Log("initialize clicked");
