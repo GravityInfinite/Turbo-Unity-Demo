@@ -327,7 +327,7 @@ static dispatch_queue_t ge_trackQueue;
     GENetwork *network = [[GENetwork alloc] init];
     network.debugMode = GravityEngineDebugOff;
     network.appid = _config.appid;
-    network.serverURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/event_center/api/v1/user/register/?access_token=%@", _config.configureURL, _config.accessToken]];
+    network.serverURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/event_center/api/v1/user/initialize/?access_token=%@", _config.configureURL, _config.accessToken]];
     network.securityPolicy = _config.securityPolicy;
     
     NSMutableDictionary *deviceInfo = [NSMutableDictionary new];

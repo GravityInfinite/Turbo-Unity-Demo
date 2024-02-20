@@ -41,7 +41,7 @@
     
     if (![GEPresetProperties disableDuration]) {
         if (self.foregroundDuration > 0) {
-            self.properties[@"$event_duration"] = @([NSString stringWithFormat:@"%.3f", self.foregroundDuration].floatValue / 1000);
+            self.properties[@"$event_duration"] = @([NSString stringWithFormat:@"%.3f", self.foregroundDuration].intValue);
         }
     }
     

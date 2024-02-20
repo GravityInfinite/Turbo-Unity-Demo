@@ -56,6 +56,6 @@ static GEPublicConfig* config;
 }
 + (NSString*)version
 {
-    return @"4.7.2";
+    return @"4.7.3";
 }
 @end
