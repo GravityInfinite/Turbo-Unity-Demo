@@ -44,7 +44,7 @@ namespace GravitySDK.PC.GravityTurbo
             GravitySDKLogger.Print("turbo init success");
         }
 
-        public static void Initialize(string name, int version, string openId, Dictionary<string, string> wxLaunchQuery, bool enableSyncAttribution,
+        public static void Initialize(string clientId, string name, int version, string openId, Dictionary<string, string> wxLaunchQuery, bool enableSyncAttribution,
             IInitializeCallback initializeCallback, UnityWebRequestMgr.Callback callback)
         {
             // check params
@@ -56,7 +56,7 @@ namespace GravitySDK.PC.GravityTurbo
 
             var registerRequestDir = new Dictionary<string, object>()
             {
-                {"client_id", _clientID},
+                {"client_id", SetOrGetClientId(clientId)},
                 {"name", name},
                 {"channel", _channel},
                 {"version", version},
@@ -106,6 +106,20 @@ namespace GravitySDK.PC.GravityTurbo
 
         public static String GetClientId()
         {
+            return _clientID;
+        }
+        
+        /// <summary>
+        /// 如果传入的currentClientId不为空，则set到_clientID，否则直接返回当前的_clientId
+        /// </summary>
+        /// <param name="currentClientId"></param>
+        /// <returns></returns>
+        public static String SetOrGetClientId(string currentClientId)
+        {
+            if (!GravitySDKUtil.IsEmptyString(currentClientId))
+            {
+                _clientID = currentClientId;
+            }
             return _clientID;
         }
 

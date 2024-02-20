@@ -453,16 +453,16 @@ namespace GravityEngine.Wrapper
             GERegisterRecieveGameCallback(geHandlerPointer);
         }
 
-        private static void initialize(string name, int version, string wxOpenId, IInitializeCallback initializeCallback)
+        private static void initialize(string clientId, string name, int version, string wxOpenId, IInitializeCallback initializeCallback)
         {
             GE_Log.d("ios not support initialize");
         }
 
-        private static void initializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+        private static void initializeIOS(string clientId, string name, int version, bool enableAsa, string idfa, string idfv,
             string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             _initializeCallback = initializeCallback;
-            ge_initialize(AppID, Turbo.GetClientId(), name, enableAsa, version, idfa, idfv, caid1_md5,
+            ge_initialize(AppID, Turbo.SetOrGetClientId(clientId), name, enableAsa, version, idfa, idfv, caid1_md5,
                 caid2_md5, enableSyncAttribution);
         }
 

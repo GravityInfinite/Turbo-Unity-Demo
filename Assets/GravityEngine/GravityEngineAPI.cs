@@ -1253,7 +1253,7 @@ namespace GravityEngine
         /// 手动初始化 Gravity Engine SDK
         /// </summary>
         /// <param name="accessToken">项目token</param>
-        /// <param name="clientId">用户唯一ID</param>
+        /// <param name="clientId">用户唯一ID，只针对小游戏有效</param>
         /// <param name="mode">SDK运行模式</param>
         /// <param name="channel">用户渠道（选填）</param>
         public static void StartGravityEngine(string accessToken, string clientId, SDKRunMode mode,
@@ -1389,32 +1389,38 @@ namespace GravityEngine
         /// <summary>
         /// 在引力引擎初始化，其他方法均需在本方法回调成功之后才可正常使用
         /// </summary>
-        /// <param name="name"></param>             用户名
-        /// <param name="version"></param>          用户注册的程序版本，比如当前小游戏的版本号
-        /// <param name="openId"></param>           open id (小程序/小游戏必填)
-        /// <param name="initializeCallback"></param>     网络回调，其他方法均需在回调成功之后才可正常使用
+        /// <param name="clientId"></param>                 用户唯一ID(如传空，则使用调用StartGravityEngine时传入的clientID；如传，则会使用当前传入的clientID)
+        /// <param name="nickname"></param>                 用户昵称
+        /// <param name="version"></param>                  用户注册的程序版本，比如当前小游戏的版本号
+        /// <param name="openId"></param>                   open id (小程序/小游戏必填)
+        /// <param name="enableSyncAttribution"></param>    开启同步归因
+        /// <param name="initializeCallback"></param>       网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void Initialize(string name, int version, string openId, bool enableSyncAttribution , IInitializeCallback initializeCallback)
+        public static void Initialize(string clientId, string nickname, int version, string openId,
+            bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
-            GravityEngineWrapper.Initialize(name, version, openId, enableSyncAttribution, initializeCallback);
+            GravityEngineWrapper.Initialize(clientId, nickname, version, openId, enableSyncAttribution,
+                initializeCallback);
         }
 
         /// <summary>
         /// 在引力引擎注册，其他方法均需在本方法回调成功之后才可正常使用（iOS专用）
         /// </summary>
-        /// <param name="name"></param>             用户名
-        /// <param name="version"></param>          用户注册的程序版本，比如当前微信小游戏的版本号
-        /// <param name="enableAsa"></param>        是否开启asa归因
-        /// <param name="idfa"></param>             当前用户 IDFA
-        /// <param name="idfv"></param>             当前用户 IDFV
-        /// <param name="caid1MD5"></param>        当前用户中广协 ID 的 md5 hash（20230330 版本）（可为空）
-        /// <param name="caid2MD5"></param>        当前用户中广协 ID 的 md5 hash（20220111 版本）（可为空）
-        /// <param name="initializeCallback"></param> 网络回调，其他方法均需在回调成功之后才可正常使用
+        /// <param name="clientId"></param>                 用户唯一ID(如传空，则使用调用StartGravityEngine时传入的clientID；如传，则会使用当前传入的clientID)
+        /// <param name="nickname"></param>                 用户名
+        /// <param name="version"></param>                  用户注册的程序版本，比如当前微信小游戏的版本号
+        /// <param name="enableAsa"></param>                是否开启asa归因
+        /// <param name="idfa"></param>                     当前用户 IDFA
+        /// <param name="idfv"></param>                     当前用户 IDFV
+        /// <param name="caid1MD5"></param>                 当前用户中广协 ID 的 md5 hash（20230330 版本）（可为空）
+        /// <param name="caid2MD5"></param>                 当前用户中广协 ID 的 md5 hash（20220111 版本）（可为空）
+        /// <param name="enableSyncAttribution"></param>    开启同步归因
+        /// <param name="initializeCallback"></param>       网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void InitializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+        public static void InitializeIOS(string clientId, string nickname, int version, bool enableAsa, string idfa, string idfv,
             string caid1MD5, string caid2MD5, bool enableSyncAttribution,  IInitializeCallback initializeCallback)
         {
-            GravityEngineWrapper.InitializeIOS(name, version, enableAsa, idfa, idfv, caid1MD5, caid2MD5, enableSyncAttribution,
+            GravityEngineWrapper.InitializeIOS(clientId, nickname, version, enableAsa, idfa, idfv, caid1MD5, caid2MD5, enableSyncAttribution,
                 initializeCallback);
         }
 

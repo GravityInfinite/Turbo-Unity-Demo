@@ -179,17 +179,18 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
         GUILayout.Space(20);
         if (GUILayout.Button("Initialize", GUILayout.Height(Height)))
         {
+            string clientId = "1234567890067";
 #if UNITY_IOS && !UNITY_EDITOR
             // iOS原生应用注册
             string idfa = "123456789";
             string idfv = "123456789";
             string caid1Md5 = "123456789";
             string caid2Md5 = "123456789";
-            GravityEngineAPI.InitializeIOS("name_123", 1, false, idfa, idfv, caid1Md5, caid2Md5, true,
+            GravityEngineAPI.InitializeIOS(clientId, "name_123", 1, false, idfa, idfv, caid1Md5, caid2Md5, true,
                 new InitializeCallbackImpl());
 #else
             Debug.Log("initialize clicked");
-            GravityEngineAPI.Initialize("name_123", 1, "your_openid_111", true, new InitializeCallbackImpl());
+            GravityEngineAPI.Initialize(clientId,"name_123", 1, "your_openid_111", true, new InitializeCallbackImpl());
 #endif
         }
         

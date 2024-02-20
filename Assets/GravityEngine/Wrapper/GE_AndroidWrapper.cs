@@ -520,14 +520,14 @@ namespace GravityEngine.Wrapper
             }
         }
 
-        private static void initialize(string name, int version, string wxOpenId, bool enableSyncAttribution, IInitializeCallback initializeCallback)
+        private static void initialize(string clientId, string name, int version, string wxOpenId, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             InitializeListenerAdapter listenerAdapter = new InitializeListenerAdapter();
-            getInstance().Call("initialize", Turbo.GetAccessToken(), Turbo.GetClientId(), name, Turbo.GetChannel(),
+            getInstance().Call("initialize", Turbo.GetAccessToken(), Turbo.SetOrGetClientId(clientId), name, Turbo.GetChannel(),
                 listenerAdapter, enableSyncAttribution);
         }
 
-        private static void initializeIOS(string name, int version, bool enableAsa, string idfa, string idfv,
+        private static void initializeIOS(string clientId, string name, int version, bool enableAsa, string idfa, string idfv,
             string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             GE_Log.d("android not support initializeIOS");
