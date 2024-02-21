@@ -1389,11 +1389,11 @@ namespace GravityEngine
         /// <summary>
         /// 在引力引擎初始化，其他方法均需在本方法回调成功之后才可正常使用
         /// </summary>
-        /// <param name="clientId"></param>                 用户唯一ID(如传空，则使用调用StartGravityEngine时传入的clientID；如传，则会使用当前传入的clientID)
+        /// <param name="clientId"></param>                 用户唯一标识，如产品为小游戏，则必须填用户openid(如传空，则使用调用StartGravityEngine时传入的clientID；如传，则会使用当前传入的clientID)
         /// <param name="nickname"></param>                 用户昵称
         /// <param name="version"></param>                  用户注册的程序版本，比如当前小游戏的版本号
         /// <param name="openId"></param>                   open id (小程序/小游戏必填)
-        /// <param name="enableSyncAttribution"></param>    开启同步归因
+        /// <param name="enableSyncAttribution"></param>    是否开启同步获取归因信息，具体请参考同步归因：https://doc.gravity-engine.com/turbo-integrated/sync_attribution.html
         /// <param name="initializeCallback"></param>       网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
         public static void Initialize(string clientId, string nickname, int version, string openId,
@@ -1414,7 +1414,7 @@ namespace GravityEngine
         /// <param name="idfv"></param>                     当前用户 IDFV
         /// <param name="caid1MD5"></param>                 当前用户中广协 ID 的 md5 hash（20230330 版本）（可为空）
         /// <param name="caid2MD5"></param>                 当前用户中广协 ID 的 md5 hash（20220111 版本）（可为空）
-        /// <param name="enableSyncAttribution"></param>    开启同步归因
+        /// <param name="enableSyncAttribution"></param>    是否开启同步获取归因信息，具体请参考同步归因：https://doc.gravity-engine.com/turbo-integrated/sync_attribution.html
         /// <param name="initializeCallback"></param>       网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
         public static void InitializeIOS(string clientId, string nickname, int version, bool enableAsa, string idfa, string idfv,
