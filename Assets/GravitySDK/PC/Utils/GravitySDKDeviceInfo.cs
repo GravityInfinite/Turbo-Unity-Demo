@@ -204,7 +204,7 @@ namespace GravitySDK.PC.Utils
             {
                 return "";
             }
-#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE
             return RandomDeviceID();
 #else
                 return SystemInfo.deviceUniqueIdentifier;

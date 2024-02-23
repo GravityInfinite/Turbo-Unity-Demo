@@ -17,9 +17,11 @@ using UnityEngine.Networking;
 
 #if GRAVITY_WECHAT_GAME_MODE
 using WeChatWASM;
-
 #elif GRAVITY_BYTEDANCE_GAME_MODE
 using StarkSDKSpace;
+#elif GRAVITY_KUAISHOU_GAME_MODE
+using com.kwai.mini.game;
+using com.kwai.mini.game.config;
 #endif
 
 namespace GravitySDK.PC.Main
@@ -387,6 +389,10 @@ namespace GravitySDK.PC.Main
             LaunchOption launchOptionsSync = StarkSDK.API.GetLaunchOptionsSync();
             var launchQuery = launchOptionsSync.Query;
             var launchScene = launchOptionsSync.Scene;
+#elif GRAVITY_KUAISHOU_GAME_MODE
+            KSOutLaunchOption launchOption = KSConfig.kSOutLaunchOption;
+            var launchQuery = launchOption.query;
+            var launchScene = launchOption.from;
 #else
             Dictionary<string, string> launchQuery = new Dictionary<string, string>();
             var launchScene = "";

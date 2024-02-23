@@ -31,6 +31,9 @@ using UnityEngine.SceneManagement;
 using WeChatWASM;
 #elif GRAVITY_BYTEDANCE_GAME_MODE
 using StarkSDKSpace;
+#elif GRAVITY_KUAISHOU_GAME_MODE
+using com.kwai.mini.game;
+using com.kwai.mini.game.config;
 #endif
 
 namespace GravityEngine
@@ -323,7 +326,7 @@ namespace GravityEngine
         }
 
         /// <summary>
-        /// 上报微信小游戏启动事件 MPLaunch
+        /// 上报小游戏启动事件 MPLaunch
         /// </summary>
         /// <param name="query"></param>
         /// <param name="scene"></param>
@@ -1308,6 +1311,21 @@ namespace GravityEngine
                     system = systemInfo.system,
                     version = systemInfo.hostVersion, // 抖音版本号
                 });
+#elif GRAVITY_KUAISHOU_GAME_MODE
+                // 从快手SDK获取属性信息
+                KSSystemInfo ks = KSConfig.kSSystemInfo;
+                if (ks!=null)
+                {
+                    // 提前设置设备属性信息
+                    GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
+                    {
+                        version = ks.version, // 快手版本号
+                    });    
+                }
+                else
+                {
+                    Debug.Log("kuaishou system info is null");
+                }
 #endif
                 GE_PublicConfig.GetPublicConfig();
                 GravityEngineWrapper.SetVersionInfo(GE_PublicConfig.LIB_VERSION);
@@ -1354,6 +1372,19 @@ namespace GravityEngine
                 LaunchOption launchOptionsSync = StarkSDK.API.GetLaunchOptionsSync();
                 TrackMPLaunch(launchOptionsSync.Query, launchOptionsSync.Scene);
                 ReportSuperProperties(launchOptionsSync.Scene);
+#elif GRAVITY_KUAISHOU_GAME_MODE
+                // 快手小游戏不需要提前获取网络状态，直接使用unity自带的即可
+                KSOutLaunchOption launchOption = KSConfig.kSOutLaunchOption;
+                if (launchOption!=null)
+                {
+                    TrackMPLaunch(launchOption.query, launchOption.from);
+                    ReportSuperProperties(launchOption.from);    
+                }
+                else
+                {
+                    Debug.Log("kuaishou launch option is null");
+                    TrackMPLaunch(new Dictionary<string, string>(), "fake");
+                }
 #endif
             }
 
