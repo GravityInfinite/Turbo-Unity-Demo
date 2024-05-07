@@ -143,6 +143,11 @@ namespace GravityEngine.Wrapper
         {
             return getSuperProperties();
         }
+        
+        public static Dictionary<string, object> GetCurrentPresetProperties()
+        {
+            return getCurrentPresetProperties();
+        }
 
         public static void UserSet(Dictionary<string, object> properties)
         {

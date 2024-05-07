@@ -641,6 +641,20 @@ namespace GravityEngine
 
             return null;
         }
+        
+        /// <summary>
+        /// 返回当前预置事件属性.
+        /// </summary>
+        /// <returns>预置事件属性</returns>
+        public static Dictionary<string, object> GetCurrentPresetProperties()
+        {
+            if (tracking_enabled)
+            {
+                return GravityEngineWrapper.GetCurrentPresetProperties();
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// 清空公共事件属性.

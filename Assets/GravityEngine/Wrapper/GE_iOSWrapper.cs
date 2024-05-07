@@ -265,6 +265,11 @@ namespace GravityEngine.Wrapper
             return GE_MiniJson.Deserialize(superPropertiesString);
         }
 
+        private static Dictionary<string, object> getCurrentPresetProperties()
+        {
+            return new Dictionary<string, object>();
+        }
+
         private static void timeEvent(string eventName)
         {
             ge_time_event(AppID, eventName);

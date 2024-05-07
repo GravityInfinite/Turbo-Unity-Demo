@@ -177,6 +177,19 @@ namespace GravityEngine.Wrapper
             return result;
         }
 
+        private static Dictionary<string, object> getCurrentPresetProperties()
+        {
+            Dictionary<string, object> result = null;
+            AndroidJavaObject currentPresetPropertyObject = getInstance().Call<AndroidJavaObject>("getCurrentPresetProperties");
+            if (null != currentPresetPropertyObject)
+            {
+                string currentPresetPropertiesString = currentPresetPropertyObject.Call<string>("toString");
+                result = GE_MiniJson.Deserialize(currentPresetPropertiesString);
+            }
+
+            return result;
+        }
+
         private static void timeEvent(string eventName)
         {
             getInstance().Call("timeEvent", eventName);

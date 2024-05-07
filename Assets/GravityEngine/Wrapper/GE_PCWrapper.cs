@@ -134,6 +134,11 @@ namespace GravityEngine.Wrapper
         {
             return GravityPCSDK.SuperProperties();
         }
+        
+        private static Dictionary<string, object> getCurrentPresetProperties()
+        {
+            return new Dictionary<string, object>();
+        }
 
         private static void timeEvent(string eventName)
         {
