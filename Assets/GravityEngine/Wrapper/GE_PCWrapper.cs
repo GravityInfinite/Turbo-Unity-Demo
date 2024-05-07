@@ -413,7 +413,7 @@ namespace GravityEngine.Wrapper
             GravityPCSDK.Initialize(clientId, name, version, openid, enableSyncAttribution, initializeCallback);
         }
         
-        private static void initializeIOS(string clientId, string name, int version, bool enableAsa, string idfa, string idfv, string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
+        private static void initializeIOS(bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             GravitySDKLogger.Print("not support initializeIOS!");
         }

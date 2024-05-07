@@ -1270,10 +1270,10 @@ namespace GravityEngine
         /// 手动初始化 Gravity Engine SDK
         /// </summary>
         /// <param name="accessToken">项目token</param>
-        /// <param name="clientId">用户唯一ID，只针对小游戏有效</param>
-        /// <param name="mode">SDK运行模式</param>
+        /// <param name="clientId">用户唯一ID，iOS产品传固定值default_placeholder，使用SDK提供的默认值即可，SDK会自动采集client ID</param>
+        /// <param name="mode">SDK运行模式（默认为正常模式）</param>
         /// <param name="channel">用户渠道（选填）</param>
-        public static void StartGravityEngine(string accessToken, string clientId, SDKRunMode mode,
+        public static void StartGravityEngine(string accessToken, string clientId="default_placeholder", SDKRunMode mode = SDKRunMode.NORMAL,
             string channel = "base_channel")
         {
             SDKTimeZone timeZone = SDKTimeZone.Local;
@@ -1451,22 +1451,15 @@ namespace GravityEngine
         /// <summary>
         /// 在引力引擎注册，其他方法均需在本方法回调成功之后才可正常使用（iOS专用）
         /// </summary>
-        /// <param name="clientId"></param>                 用户唯一ID(如传空，则使用调用StartGravityEngine时传入的clientID；如传，则会使用当前传入的clientID)
-        /// <param name="nickname"></param>                 用户名
-        /// <param name="version"></param>                  用户注册的程序版本，比如当前微信小游戏的版本号
         /// <param name="enableAsa"></param>                是否开启asa归因
-        /// <param name="idfa"></param>                     当前用户 IDFA
-        /// <param name="idfv"></param>                     当前用户 IDFV
         /// <param name="caid1MD5"></param>                 当前用户中广协 ID 的 md5 hash（20230330 版本）（可为空）
         /// <param name="caid2MD5"></param>                 当前用户中广协 ID 的 md5 hash（20220111 版本）（可为空）
         /// <param name="enableSyncAttribution"></param>    是否开启同步获取归因信息，具体请参考同步归因：https://doc.gravity-engine.com/turbo-integrated/sync_attribution.html
         /// <param name="initializeCallback"></param>       网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void InitializeIOS(string clientId, string nickname, int version, bool enableAsa, string idfa, string idfv,
-            string caid1MD5, string caid2MD5, bool enableSyncAttribution,  IInitializeCallback initializeCallback)
+        public static void InitializeIOS(bool enableAsa, string caid1MD5, string caid2MD5, bool enableSyncAttribution,  IInitializeCallback initializeCallback)
         {
-            GravityEngineWrapper.InitializeIOS(clientId, nickname, version, enableAsa, idfa, idfv, caid1MD5, caid2MD5, enableSyncAttribution,
-                initializeCallback);
+            GravityEngineWrapper.InitializeIOS(enableAsa, caid1MD5, caid2MD5, enableSyncAttribution, initializeCallback);
         }
 
         public static void ResetClientID(string newClientId, IResetCallback resetClientIdCallback)

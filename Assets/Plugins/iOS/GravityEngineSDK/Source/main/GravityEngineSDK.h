@@ -118,6 +118,8 @@ typedef void (^CallbackWithError)(NSError * error);
 
 - (void)initializeGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withCreateTime:(long)createTimestamp withCompany:(NSString *)company withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback;
 
+- (void)initializeGravityEngineWithAsaEnable:(bool)enableAsa withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback;
+
 - (void)queryUserInfoWithSuccessCallback:(void(^)(NSDictionary* _Nonnull data))successCallback withErrorCallback:(CallbackWithError)errorCallback;
 
 - (void)resetClientID:(NSString *) newClientID withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback;
@@ -255,6 +257,11 @@ typedef void (^CallbackWithError)(NSError * error);
  Get a visitor ID: The #distinct_id value in the reported data.
  */
 - (NSString *)getDistinctId;
+
+/**
+ Get AccountId
+ */
+- (NSString *)getAccountId;
 
 /**
  Get sdk version

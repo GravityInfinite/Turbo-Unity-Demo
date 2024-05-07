@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)ge_urlEncodedString;
 
+- (int)extractAndConvertToNumber;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -500,7 +500,20 @@ void ge_initialize(const char *app_id, const char *client_id, const char *user_c
         NSLog(@"gravity engine initialize failed, and error is %@", error);
         geResultHandler("InitializeCallbackFailed", "{}");
     }];
+}
 
+void ge_initialize_v2(const char *app_id, bool enable_asa, const char *caid1_md5, const char *caid2_md5, bool enableSyncAttribution) {
+    NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
+    NSString *caid1_md5_string = caid1_md5 != NULL ? [NSString stringWithUTF8String:caid1_md5] : nil;
+    NSString *caid2_md5_string = caid2_md5 != NULL ? [NSString stringWithUTF8String:caid2_md5] : nil;
+    
+    [ge_getInstance(app_id_string) initializeGravityEngineWithAsaEnable:enable_asa withCaid1:caid1_md5_string withCaid2:caid2_md5_string withSyncAttribution:enableSyncAttribution withSuccessCallback:^(NSDictionary * _Nonnull response){
+        NSLog(@"gravity engine initialize success");
+        geResultHandler("InitializeCallbackSuccess", [[response descriptionWithLocale:nil] UTF8String]);
+    } withErrorCallback:^(NSError * _Nonnull error) {
+        NSLog(@"gravity engine initialize failed, and error is %@", error);
+        geResultHandler("InitializeCallbackFailed", "{}");
+    }];
 }
 
 void ge_resetClientId(const char *app_id, const char *new_client_id) {

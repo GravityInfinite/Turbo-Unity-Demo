@@ -161,8 +161,7 @@ namespace GravityEngine.Wrapper
             string payMethod);
 
         [DllImport("__Internal")]
-        private static extern void ge_initialize(string app_id, string clientId, string userClientName, bool enableAsa,
-            int version, string idfa, string idfv, string caid1_md5, string caid2_md5, bool enableSyncAttribution);
+        private static extern void ge_initialize_v2(string app_id, bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution);
 
         [DllImport("__Internal")]
         private static extern void ge_resetClientId(string app_id, string newClientId);
@@ -463,12 +462,10 @@ namespace GravityEngine.Wrapper
             GE_Log.d("ios not support initialize");
         }
 
-        private static void initializeIOS(string clientId, string name, int version, bool enableAsa, string idfa, string idfv,
-            string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
+        private static void initializeIOS(bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             _initializeCallback = initializeCallback;
-            ge_initialize(AppID, Turbo.SetOrGetClientId(clientId), name, enableAsa, version, idfa, idfv, caid1_md5,
-                caid2_md5, enableSyncAttribution);
+            ge_initialize_v2(AppID, enableAsa, caid1_md5, caid2_md5, enableSyncAttribution);
         }
 
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
