@@ -128,7 +128,7 @@ namespace GravityEngine.Wrapper
         {
             AndroidJavaObject date = getDate(dateTime);
             AndroidJavaObject tz = null;
-            getInstance().Call("track", eventName, getJSONObject(properties), date, tz);
+            getInstance().Call<string>("track", eventName, getJSONObject(properties), date, tz);
         }
 
         private static void track(string eventName, string properties, DateTime dateTime, TimeZoneInfo timeZone)
@@ -141,12 +141,12 @@ namespace GravityEngine.Wrapper
                     timeZone.Id);
             }
 
-            getInstance().Call("track", eventName, getJSONObject(properties), date, tz);
+            getInstance().Call<string>("track", eventName, getJSONObject(properties), date, tz);
         }
 
         private static void track(string eventName, string properties)
         {
-            getInstance().Call("track", eventName, getJSONObject(properties));
+            getInstance().Call<string>("track", eventName, getJSONObject(properties));
         }
 
         private static void setSuperProperties(string superProperties)
