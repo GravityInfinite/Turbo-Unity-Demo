@@ -9,6 +9,7 @@ using GravitySDK.PC.Utils;
 using GravitySDK.PC.DataModel;
 using GravitySDK.PC.Config;
 using GravitySDK.PC.Constant;
+using GravitySDK.PC.GravityTurbo;
 using UnityEngine.Networking;
 
 namespace GravityEngine.Wrapper
@@ -416,6 +417,11 @@ namespace GravityEngine.Wrapper
         private static void initializeIOS(bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             GravitySDKLogger.Print("not support initializeIOS!");
+        }
+        
+        private static string getCurrentClientID()
+        {
+            return Turbo.GetClientId();
         }
         
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)

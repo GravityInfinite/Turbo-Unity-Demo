@@ -1461,6 +1461,11 @@ namespace GravityEngine
         {
             GravityEngineWrapper.InitializeIOS(enableAsa, caid1MD5, caid2MD5, enableSyncAttribution, initializeCallback);
         }
+        
+        public static string GetCurrentClientID()
+        {
+            return GravityEngineWrapper.GetCurrentClientID();
+        }
 
         public static void ResetClientID(string newClientId, IResetCallback resetClientIdCallback)
         {

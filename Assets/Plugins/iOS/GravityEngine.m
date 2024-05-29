@@ -516,6 +516,11 @@ void ge_initialize_v2(const char *app_id, bool enable_asa, const char *caid1_md5
     }];
 }
 
+const char *ge_get_current_client_id(const char *app_id) {
+    NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
+    return ge_strdup([[ge_getInstance(app_id_string) getCurrentClientId] UTF8String]);
+}
+
 void ge_resetClientId(const char *app_id, const char *new_client_id) {
     NSString *app_id_string = app_id != NULL ? [NSString stringWithUTF8String:app_id] : nil;
     NSString *new_client_id_string = new_client_id != NULL ? [NSString stringWithUTF8String:new_client_id] : nil;

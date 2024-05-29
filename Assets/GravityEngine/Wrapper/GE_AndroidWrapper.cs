@@ -545,6 +545,11 @@ namespace GravityEngine.Wrapper
             GE_Log.d("android not support initializeIOS");
         }
 
+        private static string getCurrentClientID()
+        {
+            return Turbo.GetClientId();
+        }
+
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
         {
             ResetClientIdListenerAdapter listenerAdapter = new ResetClientIdListenerAdapter();

@@ -307,6 +307,11 @@ namespace GravityEngine.Wrapper
             mInitializeCallback = initializeCallback;
             initializeIOS(enableAsa, caid1_md5, caid2_md5, enableSyncAttribution, initializeCallback);
         }
+        
+        public static string GetCurrentClientID()
+        {
+            return getCurrentClientID();
+        }
 
         public static void ResetClientID(string newClientId, IResetCallback resetClientIdCallback)
         {

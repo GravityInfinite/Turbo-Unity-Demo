@@ -164,6 +164,9 @@ namespace GravityEngine.Wrapper
         private static extern void ge_initialize_v2(string app_id, bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution);
 
         [DllImport("__Internal")]
+        private static extern string ge_get_current_client_id(string app_id);
+
+        [DllImport("__Internal")]
         private static extern void ge_resetClientId(string app_id, string newClientId);
 
         private const string AppID = "gravity_engine_appid";
@@ -466,6 +469,11 @@ namespace GravityEngine.Wrapper
         {
             _initializeCallback = initializeCallback;
             ge_initialize_v2(AppID, enableAsa, caid1_md5, caid2_md5, enableSyncAttribution);
+        }
+
+        private static string getCurrentClientID()
+        {
+            return ge_get_current_client_id(AppID);
         }
 
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
