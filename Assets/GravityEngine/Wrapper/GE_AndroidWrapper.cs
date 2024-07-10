@@ -559,13 +559,13 @@ namespace GravityEngine.Wrapper
         private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,
             string payMethod)
         {
-            getInstance().Call("trackPayEvent", payAmount, payType, orderId, payReason, payMethod);
+            getInstance().Call<string>("trackPayEvent", payAmount, payType, orderId, payReason, payMethod);
         }
 
         private static void trackNativeAppAdShowEvent(string adUnionType, string adPlacementId, string adSourceId,
             string adType, string adnType, float ecpm)
         {
-            getInstance().Call("trackAdShowEvent", adUnionType, adPlacementId, adSourceId, adType, adnType, ecpm);
+            getInstance().Call<string>("trackAdShowEvent", adUnionType, adPlacementId, adSourceId, adType, adnType, ecpm);
         }
 
         private static void bindTAThirdPlatform(string taAccountId, string taDistinctId)
