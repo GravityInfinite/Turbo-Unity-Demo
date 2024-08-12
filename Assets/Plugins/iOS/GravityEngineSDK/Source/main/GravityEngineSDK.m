@@ -320,8 +320,9 @@ static dispatch_queue_t ge_trackQueue;
     [self flush];
 }
 
-- (void)initializeGravityEngineWithAsaEnable:(bool)enableAsa withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback{
+- (void)initializeGravityEngineWithAsaEnable:(bool)enableAsa withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withChannel:(NSString *)channel withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback{
     NSString *idfv = [self getDeviceId];
+    NSString *currentIdfv = [[GEDeviceInfo sharedManager] getIdentifier];
     
     NSString *idfa = [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString];
     if (idfa && idfa.length > 0 && [idfa isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
@@ -331,11 +332,11 @@ static dispatch_queue_t ge_trackQueue;
     }
     // 取build转化为数字
     NSString *build = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-    [self initializeGravityEngineWithClientId:idfv withUserName:@"默认名" withVersion:build.extractAndConvertToNumber withAsaEnable:enableAsa withIdfa:idfa withIdfv:idfv withCaid1:caid1_md5 withCaid2:caid2_md5 withSyncAttribution:syncAttribution withSuccessCallback:successCallback withErrorCallback:errorCallback];
+    [self initializeGravityEngineWithClientId:idfv withUserName:@"默认名" withVersion:build.extractAndConvertToNumber withAsaEnable:enableAsa withIdfa:idfa withIdfv:currentIdfv withCaid1:caid1_md5 withCaid2:caid2_md5 withSyncAttribution:syncAttribution withChannel:channel withSuccessCallback:successCallback withErrorCallback:errorCallback];
 }
 
 
-- (void)initializeGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withCreateTime:(long)createTimestamp withCompany:(NSString *)company withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback{
+- (void)initializeGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withCreateTime:(long)createTimestamp withCompany:(NSString *)company withChannel:(NSString *)channel withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback{
     if (!(idfa && idfa.length > 0) && !(idfv && idfv.length > 0) && !(caid1_md5 && caid1_md5.length > 0) && !(caid2_md5 && caid2_md5.length > 0)) {
         GELogError(@"idfa/idfv/caid1_md5/caid2_md5 全部为空，请确保后续调用uploadDeviceInfo接口补报ID数据，否则会严重影响归因准确性！");
     }
@@ -367,7 +368,7 @@ static dispatch_queue_t ge_trackQueue;
     NSMutableDictionary *initializeBody = [NSMutableDictionary dictionaryWithDictionary:@{
         @"client_id": clientId,
         @"name": userName,
-        @"channel": @"base_channel",
+        @"channel": channel,
         @"version": [NSNumber numberWithInt:version],
         @"device_info": deviceInfo
     }];
@@ -412,7 +413,7 @@ static dispatch_queue_t ge_trackQueue;
                 @"$manufacturer": @"Apple",
                 @"$brand": @"Apple",
                 @"$os": @"iOS",
-                @"$channel": @"base_channel",
+                @"$channel": channel,
                 @"$model": [GEDeviceInfo sharedManager].ge_iphoneType
             }];
             
@@ -455,8 +456,8 @@ static dispatch_queue_t ge_trackQueue;
 }
 
 
-- (void)initializeGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
-    [self initializeGravityEngineWithClientId:clientId withUserName:userName withVersion:version withAsaEnable:enableAsa withIdfa:idfa withIdfv:idfv withCaid1:caid1_md5 withCaid2:caid2_md5 withSyncAttribution:syncAttribution withCreateTime:0 withCompany:@"" withSuccessCallback:successCallback withErrorCallback:errorCallback];
+- (void)initializeGravityEngineWithClientId:(NSString *) clientId withUserName:(NSString *)userName withVersion:(int)version withAsaEnable:(bool)enableAsa withIdfa:(NSString *) idfa withIdfv:(NSString *)idfv withCaid1:(NSString *)caid1_md5 withCaid2:(NSString *)caid2_md5 withSyncAttribution:(bool)syncAttribution withChannel:(NSString *)channel withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {
+    [self initializeGravityEngineWithClientId:clientId withUserName:userName withVersion:version withAsaEnable:enableAsa withIdfa:idfa withIdfv:idfv withCaid1:caid1_md5 withCaid2:caid2_md5 withSyncAttribution:syncAttribution withCreateTime:0 withCompany:@"" withChannel:channel withSuccessCallback:successCallback withErrorCallback:errorCallback];
 }
 
 - (void)resetClientID:(NSString *)newClientID withSuccessCallback:(CallbackWithSuccess)successCallback withErrorCallback:(CallbackWithError)errorCallback {

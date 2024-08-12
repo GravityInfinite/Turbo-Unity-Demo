@@ -33,6 +33,7 @@ FOUNDATION_EXTERN NSString *const VERSION;
 + (NSDate *)systemUpdateTime;
 
 - (NSString*)ge_iphoneType;
+- (NSString*)getIdentifier;
 @end
 
 NS_ASSUME_NONNULL_END

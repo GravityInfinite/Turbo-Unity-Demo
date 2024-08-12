@@ -161,7 +161,7 @@ namespace GravityEngine.Wrapper
             string payMethod);
 
         [DllImport("__Internal")]
-        private static extern void ge_initialize_v2(string app_id, bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution);
+        private static extern void ge_initialize_v2(string app_id, bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution, string channel);
 
         [DllImport("__Internal")]
         private static extern string ge_get_current_client_id(string app_id);
@@ -465,10 +465,10 @@ namespace GravityEngine.Wrapper
             GE_Log.d("ios not support initialize");
         }
 
-        private static void initializeIOS(bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution, IInitializeCallback initializeCallback)
+        private static void initializeIOS(bool enableAsa, string caid1_md5, string caid2_md5, bool enableSyncAttribution, string channel, IInitializeCallback initializeCallback)
         {
             _initializeCallback = initializeCallback;
-            ge_initialize_v2(AppID, enableAsa, caid1_md5, caid2_md5, enableSyncAttribution);
+            ge_initialize_v2(AppID, enableAsa, caid1_md5, caid2_md5, enableSyncAttribution, channel);
         }
 
         private static string getCurrentClientID()

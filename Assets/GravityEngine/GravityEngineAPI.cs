@@ -1455,11 +1455,12 @@ namespace GravityEngine
         /// <param name="caid1MD5"></param>                 当前用户中广协 ID 的 md5 hash（20230330 版本）（可为空）
         /// <param name="caid2MD5"></param>                 当前用户中广协 ID 的 md5 hash（20220111 版本）（可为空）
         /// <param name="enableSyncAttribution"></param>    是否开启同步获取归因信息，具体请参考同步归因：https://doc.gravity-engine.com/turbo-integrated/sync_attribution.html
+        /// <param name="channel"></param>                  当前包渠道
         /// <param name="initializeCallback"></param>       网络回调，其他方法均需在回调成功之后才可正常使用
         /// <exception cref="ArgumentException"></exception>
-        public static void InitializeIOS(bool enableAsa, string caid1MD5, string caid2MD5, bool enableSyncAttribution,  IInitializeCallback initializeCallback)
+        public static void InitializeIOS(bool enableAsa, string caid1MD5, string caid2MD5, bool enableSyncAttribution, string channel, IInitializeCallback initializeCallback)
         {
-            GravityEngineWrapper.InitializeIOS(enableAsa, caid1MD5, caid2MD5, enableSyncAttribution, initializeCallback);
+            GravityEngineWrapper.InitializeIOS(enableAsa, caid1MD5, caid2MD5, enableSyncAttribution, channel, initializeCallback);
         }
         
         public static string GetCurrentClientID()

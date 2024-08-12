@@ -196,7 +196,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             // iOS原生应用注册
             string caid1Md5 = "123456789";
             string caid2Md5 = "123456789";
-            GravityEngineAPI.InitializeIOS(false, caid1Md5, caid2Md5, true, new InitializeCallbackImpl());
+            GravityEngineAPI.InitializeIOS(false, caid1Md5, caid2Md5, true, "appstore" new InitializeCallbackImpl());
 #else
             Debug.Log("initialize clicked");
             GravityEngineAPI.Initialize(clientId,"name_123", 1, "your_openid_111", true, new InitializeCallbackImpl());
