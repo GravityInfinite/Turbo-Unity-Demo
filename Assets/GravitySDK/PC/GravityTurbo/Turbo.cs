@@ -54,9 +54,10 @@ namespace GravitySDK.PC.GravityTurbo
                 throw new ArgumentException("name must be required");
             }
 
+            var currentClientId = SetOrGetClientId(clientId);
             var registerRequestDir = new Dictionary<string, object>()
             {
-                {"client_id", SetOrGetClientId(clientId)},
+                {"client_id", currentClientId},
                 {"name", name},
                 {"channel", _channel},
                 {"version", version},
@@ -69,7 +70,7 @@ namespace GravitySDK.PC.GravityTurbo
             GravitySDKLogger.Print(registerRequestDir.ToString());
 
             UnityWebRequestMgr.Instance.Post(
-                TurboHost + "/event_center/api/v1/user/initialize/?access_token=" + _accessToken,
+                TurboHost + "/event_center/api/v1/user/initialize/?access_token=" + _accessToken + "&client_id=" + currentClientId,
                 registerRequestDir, (request =>
                 {
                     string responseText = request.downloadHandler.text;
