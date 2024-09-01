@@ -256,5 +256,99 @@ mergeInto(LibraryManager.library, {
         var buffer = _malloc(bufferSize);
         stringToUTF8(returnStr, buffer, bufferSize);
         return buffer;
+    },
+    StarkCreateUDPSocket:function() {
+		if (!window.StarkSDK) return;
+        var res = window.StarkSDK.CreateUDPSocket();
+        var bufferSize = lengthBytesUTF8(res || '') + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(res, buffer, bufferSize);
+        return buffer;
+    },
+    StarkUDPSocketClose:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketClose(_StarkPointerStringify(id));
+    },
+    StarkUDPSocketConnect:function(id, option) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketConnect(_StarkPointerStringify(id), _StarkPointerStringify(option));
+    },
+    StarkUDPSocketOffClose:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketOffClose(_StarkPointerStringify(id));
+    },
+    StarkUDPSocketOffError:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketOffError(_StarkPointerStringify(id));
+    },
+    StarkUDPSocketOffListening:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketOffListening(_StarkPointerStringify(id));
+    },
+    StarkUDPSocketOffMessage:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketOffMessage(_StarkPointerStringify(id));
+    },
+    StarkUDPSocketOnClose:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketOnClose(_StarkPointerStringify(id));
+    },
+    StarkUDPSocketOnError:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketOnError(_StarkPointerStringify(id));
+    },
+    StarkUDPSocketOnListening:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketOnListening(_StarkPointerStringify(id));
+    },
+    StarkUDPSocketOnMessage:function(id, needInfo) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketOnMessage(_StarkPointerStringify(id), needInfo);
+    },
+    StarkUDPSocketSendString:function(id, data, param) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketSendString(_StarkPointerStringify(id), _StarkPointerStringify(data), _StarkPointerStringify(param));
+    },
+    StarkUDPSocketSendBuffer:function(id, dataPtr, dataLength, param) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketSendBuffer(_StarkPointerStringify(id), dataPtr, dataLength, _StarkPointerStringify(param));
+    },
+    StarkUDPSocketSetTTL:function(id, ttl) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketSetTTL(_StarkPointerStringify(id), ttl);
+    },
+    StarkUDPSocketBind:function(id, port) {
+		if (!window.StarkSDK) return;
+        var res = window.StarkSDK.UDPSocketBind(_StarkPointerStringify(id), _StarkPointerStringify(port));
+        return res;
+    },
+    StarkUDPSocketDestroy:function(id) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.UDPSocketDestroy(_StarkPointerStringify(id));
+    },
+    StarkRegisterUDPSocketOnMessageCallback:function(callback) {
+		if (!window.StarkSDK) return;
+        window.StarkSDK.RegisterUDPSocketOnMessageCallback(callback);
+    },
+    StarkGetSystemFont:function(onGetFontData){
+        window.StarkSDK && window.StarkSDK.GetSystemFont((data,length)=>{
+            var dataSize = data.byteLength;
+            var dataPtr;
+            try{
+               dataPtr = _malloc(dataSize);
+                if (!dataPtr) {
+                     throw new Error("Failed to allocate memory for font");
+                }
+                var dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, dataSize);
+                dataHeap.set(new Uint8Array(data));
+                Runtime.dynCall('vii',onGetFontData,[dataPtr,dataSize]);
+            }catch(e){
+                console.error("An error occurred while passing fontData", error);
+            }finally {
+                if(dataPtr){
+                    _free(dataPtr);
+                }
+            }
+        })
     }
 });

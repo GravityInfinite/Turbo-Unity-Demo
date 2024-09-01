@@ -520,7 +520,8 @@ namespace StarkSDKSpace
         /// <returns>字节数据，读取失败返回null</returns>
         public override byte[] ReadFileSync(string filePath)
         {
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            if (Application.platform == RuntimePlatform.WebGLPlayer ||
+                (Application.version.Contains("t") && (int)Application.platform == 0x00000032))
             {
                 filePath = FixFilePath(filePath);
                 var length = StarkReadBinFileSync(filePath);

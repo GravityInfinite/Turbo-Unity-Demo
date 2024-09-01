@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f6edf1651a4c404ab8b0519cff73132, type: 3}
+  m_Name: BuildConfig
+  m_EditorClassIdentifier: 
+  fundamentals:
+    useCustomSign: 0
+    useRemoteStreamingAssets: 0
+    minPlatformVersion: 1103
+    orientation: 0
+    projectVersion: 1
+    exportPath: /Users/fei/dev/unity/projects/GravityEngineSDK/Build/oppo
+    iconPath: 
+    packageName: com.DefaultCompany.GravityEngineDemo
+    projectName: "\u6211\u7684\u6E38\u620F"
+    projectVersionName: 1.0.0
+    signCertificate: 
+    signPrivate: 
+    streamingAssetsURL: 
+  assetCache:
+    enableBundleCache: 1
+    enableCacheLog: 0
+    keepOldVersion: 0
+    bundleHashLength: 32
+    defaultReleaseSize: 30
+    bundlePathIdentifier: 
+    excludeClearFiles: 
+    excludeFileExtensions: .json;.hash

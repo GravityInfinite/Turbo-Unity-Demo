@@ -285,6 +285,121 @@ namespace StarkSDKSpace.UNBridgeLib.LitJson
                 json = null;
             }
         }
+        
+        public String OptGetString(string propName, string defaultValue = "") {
+            EnsureDictionary ();
+            inst_object.TryGetValue(propName, out var value);
+            if (value == null)
+            {
+                return defaultValue;
+            }
+            
+            if (value.IsString)
+            {
+                return (string)value;
+            }
+            else
+            {
+                return value.ToJson();
+            }
+            
+        }
+        
+        public int OptGetInt(string propName, int defaultValue = 0) {
+            EnsureDictionary ();
+            inst_object.TryGetValue(propName, out var value);
+            if (value == null)
+            {
+                return defaultValue;
+            }
+
+            if (value.IsInt)
+            {
+                return (int)value;
+            }
+
+            return defaultValue;
+        }
+        
+        public double OptGetDouble(string propName, double defaultValue = 0) {
+            EnsureDictionary ();
+            inst_object.TryGetValue(propName, out var value);
+            if (value == null)
+            {
+                return defaultValue;
+            }
+
+            if (value.IsDouble)
+            {
+                return (double)value;
+            }
+
+            return defaultValue;
+        }
+        
+        public long OptGetLong(string propName, long defaultValue = 0) {
+            EnsureDictionary ();
+            inst_object.TryGetValue(propName, out var value);
+            if (value == null)
+            {
+                return defaultValue;
+            }
+
+            if (value.IsLong)
+            {
+                return (long)value;
+            }
+
+            return defaultValue;
+        }
+        
+        public bool OptGetBoolean(string propName, bool defaultValue = false) {
+            EnsureDictionary ();
+            inst_object.TryGetValue(propName, out var value);
+            if (value == null)
+            {
+                return defaultValue;
+            }
+
+            if (value.IsBoolean)
+            {
+                return (bool)value;
+            }
+
+            return defaultValue;
+        }
+        
+        public JsonData OptGetObject(string propName, JsonData defaultValue) {
+            EnsureDictionary ();
+            inst_object.TryGetValue(propName, out var value);
+            if (value == null)
+            {
+                return defaultValue;
+            }
+
+            if (value.IsObject)
+            {
+                return (JsonData)value;
+            }
+
+            return defaultValue;
+        }
+        
+        public JsonData OptGetJsonArray(string propName, JsonData defaultValue) {
+            EnsureDictionary ();
+            inst_object.TryGetValue(propName, out var value);
+            if (value == null)
+            {
+                return defaultValue;
+            }
+
+            if (value.IsArray)
+            {
+                return (JsonData)value;
+            }
+
+            return defaultValue;
+        }
 
         public JsonData this[int index] {
             get {
@@ -343,6 +458,13 @@ namespace StarkSDKSpace.UNBridgeLib.LitJson
         {
             type = JsonType.Long;
             inst_long = number;
+        }
+
+        public static JsonData NewJsonArray()
+        {
+            JsonData jsonData = new JsonData();
+            jsonData.EnsureList();
+            return jsonData;
         }
 
         public JsonData (object obj)
@@ -990,6 +1112,100 @@ namespace StarkSDKSpace.UNBridgeLib.LitJson
             return json;
         }
 
+        public string ToEJson ()
+        {
+            if (json != null)
+                return json;
+
+            StringWriter sw = new StringWriter ();
+            JsonWriter writer = new JsonWriter (sw);
+            writer.Validate = false;
+
+            WriteEJson (this, writer);
+            json = sw.ToString ();
+
+            return json;
+        }
+        private static void WriteEJson (IJsonWrapper obj, JsonWriter writer)
+        {
+            if (obj == null) {
+                writer.Write (null);
+                return;
+            }
+
+            if (obj.IsString) {
+                writer.Write (obj.GetString ());
+                return;
+            }
+
+            if (obj.IsBoolean) {
+                writer.Write (obj.GetBoolean ());
+                return;
+            }
+
+            if (obj.IsDouble) {
+                JsonData tmpData = new JsonData();
+                tmpData["$numberDouble"] = obj.GetDouble().ToString();
+                writer.WriteObjectStart ();
+                foreach (DictionaryEntry entry in ((IDictionary) tmpData)) {
+                    writer.WritePropertyName ((string) entry.Key);
+                    WriteEJson ((JsonData) entry.Value, writer);
+                }
+                writer.WriteObjectEnd ();
+                
+                // writer.Write (obj.GetDouble ());
+                return;
+            }
+
+            if (obj.IsInt) {
+                JsonData tmpData = new JsonData();
+                tmpData["$numberInt"] = obj.GetInt().ToString();
+                writer.WriteObjectStart ();
+                foreach (DictionaryEntry entry in ((IDictionary) tmpData)) {
+                    writer.WritePropertyName ((string) entry.Key);
+                    WriteEJson ((JsonData) entry.Value, writer);
+                }
+                writer.WriteObjectEnd ();
+                return;
+            }
+
+            if (obj.IsLong) {
+                JsonData tmpData = new JsonData();
+                tmpData["$numberLong"] = obj.GetLong().ToString();
+                writer.WriteObjectStart ();
+                foreach (DictionaryEntry entry in ((IDictionary) tmpData)) {
+                    writer.WritePropertyName ((string) entry.Key);
+                    WriteEJson ((JsonData) entry.Value, writer);
+                }
+                writer.WriteObjectEnd ();
+                
+                // writer.Write (obj.GetLong ());
+                return;
+            }
+
+            if (obj.IsArray) {
+                writer.WriteArrayStart ();
+                foreach (object elem in (IList) obj)
+                    WriteEJson ((JsonData) elem, writer);
+                writer.WriteArrayEnd ();
+
+                return;
+            }
+
+            if (obj.IsObject) {
+                writer.WriteObjectStart ();
+
+                foreach (DictionaryEntry entry in ((IDictionary) obj)) {
+                    writer.WritePropertyName ((string) entry.Key);
+                    WriteEJson ((JsonData) entry.Value, writer);
+                }
+                writer.WriteObjectEnd ();
+
+                return;
+            }
+        }
+        
+        
         public void ToJson (JsonWriter writer)
         {
             bool old_validate = writer.Validate;
@@ -1005,7 +1221,7 @@ namespace StarkSDKSpace.UNBridgeLib.LitJson
         {
             switch (type) {
             case JsonType.Array:
-                return "JsonData array";
+                return ToJson();
 
             case JsonType.Boolean:
                 return inst_boolean.ToString ();
@@ -1020,7 +1236,7 @@ namespace StarkSDKSpace.UNBridgeLib.LitJson
                 return inst_long.ToString ();
 
             case JsonType.Object:
-                return "JsonData object";
+                return ToJson();
 
             case JsonType.String:
                 return inst_string;

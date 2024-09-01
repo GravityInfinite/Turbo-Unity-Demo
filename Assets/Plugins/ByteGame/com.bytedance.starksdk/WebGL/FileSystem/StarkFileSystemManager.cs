@@ -4,7 +4,7 @@ namespace StarkSDKSpace
 {
     /**
      * 文件存储接口
-     * 具体使用说明参考文档：https://bytedance.feishu.cn/docx/X7BzdU6ANoKbqxxxjVfcUCTMnBc
+     * 具体使用说明参考文档：https://bytedance.feishu.cn/docx/JpAMdacnaoyFDdx0fhXcUwL5nAe
      */
     public abstract class StarkFileSystemManager
     {
