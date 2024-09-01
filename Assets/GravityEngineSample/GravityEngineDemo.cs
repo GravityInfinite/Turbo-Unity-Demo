@@ -126,7 +126,7 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             {
                 {"auto_track_key", "auto_track_value"} // 静态属性
             });
-#elif UNITY_ANDROID && !UNITY_EDITOR && !GRAVITY_BYTEDANCE_GAME_MODE && !GRAVITY_KUAISHOU_GAME_MODE
+#elif UNITY_ANDROID && !UNITY_EDITOR && !GRAVITY_BYTEDANCE_GAME_MODE && !GRAVITY_KUAISHOU_GAME_MODE && !GRAVITY_OPPO_GAME_MODE
             //Android原生应用示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "x5emsWAxqnlwqpDH1j4bbicR8igmhruT";
@@ -167,6 +167,19 @@ public class GravityEngineDemo : MonoBehaviour, IDynamicSuperProperties
             });
 #elif GRAVITY_KUAISHOU_GAME_MODE
             //快手小游戏示例
+            //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
+            string accessToken = "TZNwFfKUsvgyInVhQiydg6lpx5aWYk0r";
+            string clientId = "123456789";
+
+            // 启动引力引擎
+            GravityEngineAPI.StartGravityEngine(accessToken, clientId, GravityEngineAPI.SDKRunMode.DEBUG);
+            // 快手小游戏开启自动采集，并设置自定属性
+            GravityEngineAPI.EnableAutoTrack(AUTO_TRACK_EVENTS.KUAISHOU_GAME_ALL, new Dictionary<string, object>()
+            {
+                {"auto_track_key", "auto_track_value"} // 静态属性
+            });
+#elif GRAVITY_OPPO_GAME_MODE
+            //OPPO小游戏示例
             //设置实例参数并启动引擎，将以下三个参数修改成您应用对应的参数，参数可以在引力后台--管理中心--应用管理中查看
             string accessToken = "TZNwFfKUsvgyInVhQiydg6lpx5aWYk0r";
             string clientId = "123456789";

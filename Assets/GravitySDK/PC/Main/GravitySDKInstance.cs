@@ -56,7 +56,7 @@ namespace GravitySDK.PC.Main
         private MonoBehaviour mMono;
         private static MonoBehaviour sMono;
         private GravitySDKAutoTrack mAutoTrack;
-#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE || GRAVITY_OPPO_GAME_MODE
         private WeChatGameAutoTrack mWechatGameAutoTrack;
 #endif
 
@@ -128,8 +128,8 @@ namespace GravitySDK.PC.Main
             this.mAutoTrack = (GravitySDKAutoTrack) mGravitySDKAutoTrack.GetComponent(typeof(GravitySDKAutoTrack));
             UnityEngine.Object.DontDestroyOnLoad(mGravitySDKAutoTrack);
 
-#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE
-            // 挂载采集器，以开启微信、抖音、快手小游戏的自动采集
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE || GRAVITY_OPPO_GAME_MODE
+            // 挂载采集器，以开启微信、抖音、快手小游戏、OPPO快游戏的自动采集
             GameObject mWechatGameAutoTrackObj = new GameObject("WechatGameAutoTrack", typeof(WeChatGameAutoTrack));
             mWechatGameAutoTrack =
                 (WeChatGameAutoTrack) mWechatGameAutoTrackObj.GetComponent(typeof(WeChatGameAutoTrack));
@@ -235,7 +235,7 @@ namespace GravitySDK.PC.Main
         public virtual void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
         {
             this.mAutoTrack.EnableAutoTrack(events, properties);
-#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE || GRAVITY_OPPO_GAME_MODE
             mWechatGameAutoTrack.EnableAutoTrack(events, properties);
 #endif
         }
@@ -243,7 +243,7 @@ namespace GravitySDK.PC.Main
         public virtual void EnableAutoTrack(AUTO_TRACK_EVENTS events, IAutoTrackEventCallback_PC eventCallback)
         {
             this.mAutoTrack.EnableAutoTrack(events, eventCallback);
-#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE || GRAVITY_OPPO_GAME_MODE
             mWechatGameAutoTrack.EnableAutoTrack(events, null);
 #endif
         }

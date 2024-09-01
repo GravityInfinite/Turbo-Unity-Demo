@@ -34,6 +34,8 @@ using StarkSDKSpace;
 #elif GRAVITY_KUAISHOU_GAME_MODE
 using com.kwai.mini.game;
 using com.kwai.mini.game.config;
+#elif GRAVITY_OPPO_GAME_MODE
+using QGMiniGame;
 #endif
 
 namespace GravityEngine
@@ -1340,6 +1342,26 @@ namespace GravityEngine
                 {
                     Debug.Log("kuaishou system info is null");
                 }
+#elif GRAVITY_OPPO_GAME_MODE
+                // 从OPPO快游戏SDK获取属性信息
+                QG.GetSystemInfo((systemInfo) =>
+                {
+                    GravitySDKDeviceInfo.SetWechatGameDeviceInfo(new WechatGameDeviceInfo()
+                    {
+                        SDKVersion = systemInfo.data.COREVersion, // 抖音SDK版本号
+                        brand = systemInfo.data.brand,
+                        language = systemInfo.data.language,
+                        model = systemInfo.data.model,
+                        platform = systemInfo.data.platformVersionName,
+                        // screenHeight = systemInfo.data.screenHeight,
+                        // screenWidth = systemInfo.data.screenWidth,
+                        system = systemInfo.data.system,
+                    },
+                    (err) =>
+                    {
+                        Debug.Log("QG.GetSystemInfo fail = " + JsonUtility.ToJson(err));
+                    });
+                });
 #endif
                 GE_PublicConfig.GetPublicConfig();
                 GravityEngineWrapper.SetVersionInfo(GE_PublicConfig.LIB_VERSION);
@@ -1399,11 +1421,49 @@ namespace GravityEngine
                     Debug.Log("kuaishou launch option is null");
                     TrackMPLaunch(new Dictionary<string, string>(), "fake");
                 }
+#elif GRAVITY_OPPO_GAME_MODE
+                var launchStr =  QG.GetEnterOptionsSync();
+                Debug.Log("oppo quickgame launch info is " + launchStr);
+                if (launchStr!=null)
+                {
+                    Dictionary<string, object> launchOptionDict = GE_MiniJson.Deserialize(launchStr);
+                    if (launchOptionDict.TryGetValue("query", out var queryStr))
+                    {
+                        
+                        Dictionary<string, object> queryDict = GE_MiniJson.Deserialize(queryStr as string);
+                        TrackMPLaunch(ConvertToDictionary(queryDict), "");
+                        ReportSuperProperties("");   
+                    }
+                    else
+                    {
+                        queryStr = "{}";
+                        Debug.Log("oppo quickgame query is null");
+                    }
+                }
+                else
+                {
+                    Debug.Log("oppo quickgame launch option is null");
+                    TrackMPLaunch(new Dictionary<string, string>(), "fake");
+                }
 #endif
             }
 
             //上报缓存事件
             FlushEventCaches();
+        }
+        
+        static Dictionary<string, string> ConvertToDictionary(Dictionary<string, object> sourceDict)
+        {
+            var targetDict = new Dictionary<string, string>();
+
+            foreach (var kvp in sourceDict)
+            {
+                // 尝试将值转换为字符串
+                string stringValue = kvp.Value?.ToString();
+                targetDict[kvp.Key] = stringValue;
+            }
+
+            return targetDict;
         }
 
         // 统计启动场景

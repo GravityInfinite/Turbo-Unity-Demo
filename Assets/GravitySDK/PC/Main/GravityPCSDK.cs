@@ -22,6 +22,8 @@ using StarkSDKSpace;
 #elif GRAVITY_KUAISHOU_GAME_MODE
 using com.kwai.mini.game;
 using com.kwai.mini.game.config;
+#elif GRAVITY_OPPO_GAME_MODE
+using QGMiniGame;
 #endif
 
 namespace GravitySDK.PC.Main
@@ -393,6 +395,26 @@ namespace GravitySDK.PC.Main
             KSOutLaunchOption launchOption = KSConfig.kSOutLaunchOption;
             var launchQuery = launchOption.query;
             var launchScene = launchOption.from;
+#elif GRAVITY_OPPO_GAME_MODE
+            Dictionary<string, string> launchQuery = new Dictionary<string, string>();
+            var launchScene = "";
+            var launchStr =  QG.GetEnterOptionsSync();
+            Debug.Log("oppo quickgame launch info is " + launchStr);
+            if (launchStr!=null)
+            {
+                Dictionary<string, object> launchOptionDict = GE_MiniJson.Deserialize(launchStr);
+                if (launchOptionDict.TryGetValue("query", out var queryStr))
+                {
+                        
+                    Dictionary<string, object> queryDict = GE_MiniJson.Deserialize(queryStr as string);
+                    launchQuery = ConvertToDictionary(queryDict);
+                }
+                else
+                {
+                    Debug.Log("oppo quickgame query is null");
+                    
+                }
+            }
 #else
             Dictionary<string, string> launchQuery = new Dictionary<string, string>();
             var launchScene = "";
@@ -412,6 +434,20 @@ namespace GravitySDK.PC.Main
                 
                 Flush();
             });
+        }
+        
+        static Dictionary<string, string> ConvertToDictionary(Dictionary<string, object> sourceDict)
+        {
+            var targetDict = new Dictionary<string, string>();
+
+            foreach (var kvp in sourceDict)
+            {
+                // 尝试将值转换为字符串
+                string stringValue = kvp.Value?.ToString();
+                targetDict[kvp.Key] = stringValue;
+            }
+
+            return targetDict;
         }
         
         public static void TrackPayEvent(int payAmount, string payType, string orderId, string payReason,

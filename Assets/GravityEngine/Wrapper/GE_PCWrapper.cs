@@ -1,4 +1,4 @@
-﻿#if ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE
+﻿#if ((!(UNITY_IOS) || UNITY_EDITOR) && (!(UNITY_ANDROID) || UNITY_EDITOR)) || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE || GRAVITY_OPPO_GAME_MODE
 
 // #if false
 using System;
@@ -297,7 +297,7 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_CRASH;
             }
-#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE || GRAVITY_OPPO_GAME_MODE
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHOW;
@@ -344,7 +344,7 @@ namespace GravityEngine.Wrapper
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.APP_CRASH;
             }
-#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE
+#if GRAVITY_WECHAT_GAME_MODE || GRAVITY_BYTEDANCE_GAME_MODE || GRAVITY_KUAISHOU_GAME_MODE || GRAVITY_OPPO_GAME_MODE
             if ((autoTrackEvents & AUTO_TRACK_EVENTS.MP_SHOW) != 0)
             {
                 pcAutoTrackEvents = pcAutoTrackEvents | AUTO_TRACK_EVENTS.MP_SHOW;
