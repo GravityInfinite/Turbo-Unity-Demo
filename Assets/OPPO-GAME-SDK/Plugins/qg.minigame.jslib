@@ -367,6 +367,24 @@ var QgGameBridge = {
     // console.log("???? deviceOrientation?" + res.deviceOrientation);
     // console.log("??? COREVersion?" + res.COREVersion);
   },
+  
+  QGGetEnterOptionsSync: function () {
+      if (typeof qg == "undefined") {
+        console.log("qg.minigame.jslib  qg is undefined");
+        return;
+      }
+      var res = qg.getEnterOptionsSync();
+      var returnStr = JSON.stringify(res);
+      console.log(returnStr);
+      if (returnStr) {
+        var bufferSize = lengthBytesUTF8(returnStr) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;
+      } else {
+        console.log("??????????");
+      }
+    },
 
   // vConsole
   QGSetEnableDebugTrue: function () {

@@ -313,6 +313,15 @@ namespace QGMiniGame
         }
 
         #endregion
+        
+        #region 同步获取小游戏启动时的参数(包括冷启动和热启动)
+
+        public static string GetEnterOptionsSync()
+        {
+            return QGMiniGameManager.Instance.GetEnterOptionsSync();
+        }
+
+        #endregion
 
         #region SetEnableDebugTrue 打开vConsole
 

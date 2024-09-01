@@ -119,6 +119,15 @@ namespace QGMiniGame
         }
 
         #endregion
+        
+        #region 同步获取小游戏启动时的参数(包括冷启动和热启动)
+
+        public string GetEnterOptionsSync()
+        {
+            return QGGetEnterOptionsSync();
+        }
+
+        #endregion
 
         #region 打开vConsole
 
@@ -1163,6 +1172,9 @@ namespace QGMiniGame
 
         [DllImport("__Internal")]
         private static extern string QGGetSystemInfoSync();
+        
+        [DllImport("__Internal")]
+        private static extern string QGGetEnterOptionsSync();
 
         [DllImport("__Internal")]
         private static extern void QGSetEnableDebugTrue();
