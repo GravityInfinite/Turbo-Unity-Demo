@@ -2,6 +2,8 @@
 
 #if GRAVITY_BYTEDANCE_GAME_MODE
 using StarkSDKSpace;
+#elif GRAVITY_OPPO_GAME_MODE
+using QGMiniGame;
 #endif
 
 namespace GravitySDK.PC.Storage
@@ -47,6 +49,8 @@ namespace GravitySDK.PC.Storage
                 }
 
                 StarkSDK.API.PlayerPrefs.Save();
+#elif GRAVITY_OPPO_GAME_MODE
+                QG.StorageSetItem(key, (string)value);
 #else
                 if (value.GetType() == typeof(int))
                 {
@@ -103,6 +107,11 @@ namespace GravitySDK.PC.Storage
 
                 StarkSDK.API.PlayerPrefs.Save();
             }
+#elif GRAVITY_OPPO_GAME_MODE
+            if (!string.IsNullOrEmpty(key))
+            {
+                return QG.StorageGetItem(key);
+            }
 #else
             if (!string.IsNullOrEmpty(key) && UnityEngine.PlayerPrefs.HasKey(key))
             {
@@ -139,6 +148,8 @@ namespace GravitySDK.PC.Storage
                 {
                     StarkSDK.API.PlayerPrefs.DeleteKey(key);
                 }
+#elif GRAVITY_OPPO_GAME_MODE
+                QG.StorageRemoveItem(key);
 #else
                 if (UnityEngine.PlayerPrefs.HasKey(key))
                 {
