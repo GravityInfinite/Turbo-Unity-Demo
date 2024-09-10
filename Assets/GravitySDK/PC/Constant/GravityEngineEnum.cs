@@ -22,7 +22,7 @@ namespace GravitySDK.PC.Constant
         MP_ADD_TO_FAVORITES = 1 << 11, // 当小游戏添加收藏的时候触发上报，对应 $MPAddFavorites
         WECHAT_GAME_ALL = APP_SCENE_LOAD | APP_SCENE_UNLOAD | MP_SHOW | MP_HIDE | MP_SHARE | MP_ADD_TO_FAVORITES,
         BYTEDANCE_GAME_ALL = APP_SCENE_LOAD | APP_SCENE_UNLOAD | MP_SHOW | MP_HIDE,
-        KUAISHOU_GAME_ALL = APP_SCENE_LOAD | APP_SCENE_UNLOAD // MP_SHOW和MP_HIDE暂时快手SDK还没有支持，需要依赖快手SDK的更新
+        KUAISHOU_GAME_ALL = APP_SCENE_LOAD | APP_SCENE_UNLOAD, // MP_SHOW和MP_HIDE暂时快手SDK还没有支持，需要依赖快手SDK的更新
         OPPO_GAME_ALL = APP_SCENE_LOAD | APP_SCENE_UNLOAD // 暂时不支持其他类型的事件，后面可以加
 #endif
     }

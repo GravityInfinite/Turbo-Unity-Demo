@@ -1356,10 +1356,6 @@ namespace GravityEngine
                         // screenHeight = systemInfo.data.screenHeight,
                         // screenWidth = systemInfo.data.screenWidth,
                         system = systemInfo.data.system,
-                    },
-                    (err) =>
-                    {
-                        Debug.Log("QG.GetSystemInfo fail = " + JsonUtility.ToJson(err));
                     });
                 });
 #endif
@@ -1429,10 +1425,10 @@ namespace GravityEngine
                     Dictionary<string, object> launchOptionDict = GE_MiniJson.Deserialize(launchStr);
                     if (launchOptionDict.TryGetValue("query", out var queryStr))
                     {
-                        
-                        Dictionary<string, object> queryDict = GE_MiniJson.Deserialize(queryStr as string);
+                        Dictionary<string, object> queryDict = (Dictionary<string, object>) queryStr;
                         TrackMPLaunch(ConvertToDictionary(queryDict), "");
-                        ReportSuperProperties("");   
+                        ReportSuperProperties("");
+                        Debug.Log("oppo quickgame query got");
                     }
                     else
                     {

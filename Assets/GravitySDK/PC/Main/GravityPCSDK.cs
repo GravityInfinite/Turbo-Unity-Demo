@@ -405,14 +405,13 @@ namespace GravitySDK.PC.Main
                 Dictionary<string, object> launchOptionDict = GE_MiniJson.Deserialize(launchStr);
                 if (launchOptionDict.TryGetValue("query", out var queryStr))
                 {
-                        
-                    Dictionary<string, object> queryDict = GE_MiniJson.Deserialize(queryStr as string);
+                    Dictionary<string, object> queryDict = (Dictionary<string, object>) queryStr;
                     launchQuery = ConvertToDictionary(queryDict);
+                    Debug.Log("oppo quickgame query got");
                 }
                 else
                 {
                     Debug.Log("oppo quickgame query is null");
-                    
                 }
             }
 #else
