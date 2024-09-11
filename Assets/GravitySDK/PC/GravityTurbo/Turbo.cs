@@ -82,6 +82,7 @@ namespace GravitySDK.PC.GravityTurbo
                 },
                 (complete) =>
                 {
+                    Debug.Log("gravity-engine current deviceId is " + deviceId);
                     QG.GetSystemInfo((msg) =>
                         {
                             string brand = msg.data.brand; // 手机品牌
@@ -94,7 +95,7 @@ namespace GravitySDK.PC.GravityTurbo
                             string system = msg.data.system; // 系统版本
                             string COREVersion = msg.data.COREVersion; // 版本号
                             
-                            var deviceInfo = new Dictionary<string, object>()
+                            var deviceInfo = new Dictionary<string, string>()
                             {
                                 {"os_name", "android"},
                                 {"android_id", deviceId},
@@ -112,7 +113,7 @@ namespace GravitySDK.PC.GravityTurbo
                         (err) =>
                         {
                             Debug.Log("QG.GetSystemInfo fail = " + JsonUtility.ToJson(err));
-                            var deviceInfo = new Dictionary<string, object>()
+                            var deviceInfo = new Dictionary<string, string>()
                             {
                                 {"os_name", "android"},
                                 {"android_id", deviceId},
