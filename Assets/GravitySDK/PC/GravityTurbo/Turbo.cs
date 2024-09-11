@@ -4,6 +4,9 @@ using GravityEngine;
 using GravityEngine.Utils;
 using GravitySDK.PC.TaskManager;
 using GravitySDK.PC.Utils;
+#if GRAVITY_OPPO_GAME_MODE
+using QGMiniGame;
+#endif
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -66,9 +69,69 @@ namespace GravitySDK.PC.GravityTurbo
                 {"ad_data", wxLaunchQuery},
                 {"need_return_attribution", enableSyncAttribution},
             };
+#if GRAVITY_OPPO_GAME_MODE
+            string deviceId = "";
+            QG.GetDeviceId(
+                (success) =>
+                {
+                    deviceId = success.data.deviceId; //设备唯一标识
+                },
+                (fail) =>
+                {
+                    Debug.Log("QG.GetDeviceId fail = " + JsonUtility.ToJson(fail));
+                },
+                (complete) =>
+                {
+                    QG.GetSystemInfo((msg) =>
+                        {
+                            string brand = msg.data.brand; // 手机品牌
+                            string language = msg.data.language; // 系统语言
+                            string model = msg.data.model; // 手机型号
+                            string platformVersionName = msg.data.platformVersionName; // 客户端平台
+                            string platformVersionCode = msg.data.platformVersionCode; // Version
+                            string screenHeight = msg.data.screenHeight; // 屏幕高度
+                            string screenWidth = msg.data.screenWidth; // 屏幕宽度
+                            string system = msg.data.system; // 系统版本
+                            string COREVersion = msg.data.COREVersion; // 版本号
+                            
+                            var deviceInfo = new Dictionary<string, object>()
+                            {
+                                {"os_name", "android"},
+                                {"android_id", deviceId},
+                                {"imei", deviceId},
+                                {"oaid", deviceId},
+                                {"rom", platformVersionName},
+                                {"rom_version", platformVersionCode},
+                                {"brand", brand},
+                                {"model", model},
+                                {"android_version", COREVersion}
+                            };
+                            registerRequestDir["device_info"] = deviceInfo;
+                            RequestInitialize(initializeCallback, callback, currentClientId, registerRequestDir);
+                        },
+                        (err) =>
+                        {
+                            Debug.Log("QG.GetSystemInfo fail = " + JsonUtility.ToJson(err));
+                            var deviceInfo = new Dictionary<string, object>()
+                            {
+                                {"os_name", "android"},
+                                {"android_id", deviceId},
+                                {"imei", deviceId},
+                                {"oaid", deviceId},
+                            };
+                            registerRequestDir["device_info"] = deviceInfo;
+                            RequestInitialize(initializeCallback, callback, currentClientId, registerRequestDir);
+                        });
+                });
+#else
+            RequestInitialize(initializeCallback, callback, currentClientId, registerRequestDir);
+#endif
+        }
 
+        private static void RequestInitialize(IInitializeCallback initializeCallback, UnityWebRequestMgr.Callback callback, string currentClientId,
+            Dictionary<string, object> registerRequestDir)
+        {
             GravitySDKLogger.Print(registerRequestDir.ToString());
-
             UnityWebRequestMgr.Instance.Post(
                 TurboHost + "/event_center/api/v1/user/initialize/?access_token=" + _accessToken + "&client_id=" + currentClientId,
                 registerRequestDir, (request =>
@@ -99,7 +162,7 @@ namespace GravitySDK.PC.GravityTurbo
                     initializeCallback?.onFailed("code is not 0, failed with msg " + res?["msg"]);
                 }), callback);
         }
-        
+
         public static String GetAccessToken()
         {
             return _accessToken;
