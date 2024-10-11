@@ -36,7 +36,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
     public void EnableAutoTrack(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties = null)
     {
         SetAutoTrackProperties(events, properties);
-        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHOW))
+        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHOW) || true)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             WX.OnShow((result =>
@@ -54,7 +54,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
 #endif
         }
 
-        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_HIDE))
+        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_HIDE) || true)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             WX.OnHide((result =>
@@ -71,7 +71,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
 #endif
         }
 
-        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES))
+        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES) || true)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             WX.OnAddToFavorites((action =>
@@ -82,7 +82,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
 #endif
         }
 
-        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHARE))
+        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHARE) || true)
         {
 #if GRAVITY_WECHAT_GAME_MODE
             WXShareAppMessageParam param = new WXShareAppMessageParam();
@@ -98,7 +98,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
     public void SetAutoTrackProperties(AUTO_TRACK_EVENTS events, Dictionary<string, object> properties)
     {
         _mAutoTrackEvents = events;
-        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHOW))
+        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHOW) || true)
         {
             if (_mAutoTrackProperties.ContainsKey(AUTO_TRACK_EVENTS.MP_SHOW.ToString()))
             {
@@ -109,7 +109,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
             _mAutoTrackProperties[AUTO_TRACK_EVENTS.MP_SHOW.ToString()] = properties;
         }
 
-        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_HIDE))
+        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_HIDE) || true)
         {
             if (_mAutoTrackProperties.ContainsKey(AUTO_TRACK_EVENTS.MP_HIDE.ToString()))
             {
@@ -120,7 +120,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
             _mAutoTrackProperties[AUTO_TRACK_EVENTS.MP_HIDE.ToString()] = properties;
         }
 
-        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHARE))
+        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_SHARE) || true)
         {
             if (_mAutoTrackProperties.ContainsKey(AUTO_TRACK_EVENTS.MP_SHARE.ToString()))
             {
@@ -131,7 +131,7 @@ public class WeChatGameAutoTrack : MonoBehaviour
             _mAutoTrackProperties[AUTO_TRACK_EVENTS.MP_SHARE.ToString()] = properties;
         }
 
-        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES))
+        if (_mAutoTrackEvents.HasFlag(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES) || true)
         {
             if (_mAutoTrackProperties.ContainsKey(AUTO_TRACK_EVENTS.MP_ADD_TO_FAVORITES.ToString()))
             {
