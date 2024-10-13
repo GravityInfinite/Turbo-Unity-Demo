@@ -30,7 +30,7 @@ namespace GravitySDK.PC.Request
 
             Dictionary<string, object> param = new Dictionary<string, object>();
             param["event_list"] = this.Data();
-            param["client_id"] = Turbo.GetClientId();
+            param["client_id"] = GravityHelper.GetClientId();
             param["flush_time"] = GravitySDKUtil.GetTimeStamp();
             string content = GravitySDKJSON.Serialize(param);
             byte[] contentCompressed = Encoding.UTF8.GetBytes(content);

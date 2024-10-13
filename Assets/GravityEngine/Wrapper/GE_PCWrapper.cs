@@ -421,7 +421,7 @@ namespace GravityEngine.Wrapper
         
         private static string getCurrentClientID()
         {
-            return Turbo.GetClientId();
+            return GravityHelper.GetClientId();
         }
         
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)

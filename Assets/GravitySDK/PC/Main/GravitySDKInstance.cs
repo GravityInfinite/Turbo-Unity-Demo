@@ -199,7 +199,7 @@ namespace GravitySDK.PC.Main
             {
                 this.mAccountID = accountID;
                 GravitySDKFile.SaveData(GravitySDKConstant.ACCOUNT_ID, accountID);
-                Turbo.SetClientId(accountID);
+                GravityHelper.SetClientId(accountID);
                 
                 Track("$MPLogin");
             }
@@ -223,7 +223,7 @@ namespace GravitySDK.PC.Main
 
             this.mAccountID = "";
             GravitySDKFile.DeleteData(GravitySDKConstant.ACCOUNT_ID);
-            Turbo.SetClientId("");
+            GravityHelper.SetClientId("");
 
             if (logoutCallback!=null)
             {

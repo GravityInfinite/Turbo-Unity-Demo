@@ -1377,7 +1377,7 @@ namespace GravityEngine
                         GE_Log.d("GravityEngine start with SERVER_URL: " + GravitySDKConstant.SERVER_URL +
                                  ", MODE: " + token.mode);
 
-                        Turbo.InitSDK(token.accessToken, token.clientId, token.channel);
+                        GravityHelper.InitSDK(token.accessToken, token.clientId, token.channel);
                         GravityEngineWrapper.ShareInstance(token, _sGravityEngineAPI);
                         GravityEngineWrapper.SetNetworkType(_sGravityEngineAPI.networkType);
                     }

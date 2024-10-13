@@ -12,9 +12,9 @@ using UnityEngine.Networking;
 
 namespace GravitySDK.PC.GravityTurbo
 {
-    public static class Turbo
+    public static class GravityHelper
     {
-        private const string TurboHost = "https://backend.gravity-engine.com";
+        private const string GravityHost = "https://backend.gravity-engine.com";
         private static string _accessToken;
         private static string _clientID;
         private static string _channel;
@@ -33,7 +33,7 @@ namespace GravitySDK.PC.GravityTurbo
         }
 
         /// <summary>
-        /// 初始化turbo SDK必须参数（每次启动都需要调用）
+        /// 初始化GravityHelper SDK必须参数（每次启动都需要调用）
         /// </summary>
         /// <param name="accessToken">项目通行证，在：网站后台-->管理中心-->应用列表中找到Access Token列 复制（首次使用可能需要先新增应用）</param> 
         /// <param name="clientId">用户唯一标识，如微信小程序/小游戏的openid、Android ID、iOS的IDFA、或业务侧自行生成的唯一用户ID均可</param>
@@ -44,7 +44,7 @@ namespace GravitySDK.PC.GravityTurbo
             _clientID = clientId;
             _channel = channel;
             GlobalCheck();
-            GravitySDKLogger.Print("turbo init success");
+            GravitySDKLogger.Print("GravityHelper init success");
         }
 
         public static void Initialize(string clientId, string name, int version, string openId, Dictionary<string, string> wxLaunchQuery, bool enableSyncAttribution,
@@ -134,7 +134,7 @@ namespace GravitySDK.PC.GravityTurbo
         {
             GravitySDKLogger.Print(registerRequestDir.ToString());
             UnityWebRequestMgr.Instance.Post(
-                TurboHost + "/event_center/api/v1/user/initialize/?access_token=" + _accessToken + "&client_id=" + currentClientId,
+                GravityHost + "/event_center/api/v1/user/initialize/?access_token=" + _accessToken + "&client_id=" + currentClientId,
                 registerRequestDir, (request =>
                 {
                     string responseText = request.downloadHandler.text;
@@ -192,7 +192,7 @@ namespace GravitySDK.PC.GravityTurbo
                     {"code", code},
                 };
                 UnityWebRequestMgr.Instance.Post(
-                    TurboHost + "/event_center/api/v1/base/"+ platformStr + "/code2Session/?access_token=" + accessToken, requestDir,
+                    GravityHost + "/event_center/api/v1/base/"+ platformStr + "/code2Session/?access_token=" + accessToken, requestDir,
                 (request =>
                 {
                     string responseText = request.downloadHandler.text;

@@ -418,11 +418,11 @@ namespace GravitySDK.PC.Main
             Dictionary<string, string> launchQuery = new Dictionary<string, string>();
             var launchScene = "";
 #endif
-            Turbo.Initialize(clientId, name, version, openid, launchQuery, enableSyncAttribution, initializeCallback, () =>
+            GravityHelper.Initialize(clientId, name, version, openid, launchQuery, enableSyncAttribution, initializeCallback, () =>
             {
                 UserSetOnce(new Dictionary<string, object>()
                 {
-                    {"$channel", Turbo.GetChannel()},
+                    {"$channel", GravityHelper.GetChannel()},
                     {GravitySDKConstant.MANUFACTURE, GravitySDKDeviceInfo.Manufacture()},
                     {GravitySDKConstant.DEVICE_MODEL, GravitySDKDeviceInfo.DeviceModel()},
                     {GravitySDKConstant.DEVICE_BRAND, GravitySDKDeviceInfo.Manufacture().ToUpper()},

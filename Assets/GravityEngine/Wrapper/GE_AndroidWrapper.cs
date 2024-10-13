@@ -536,7 +536,7 @@ namespace GravityEngine.Wrapper
         private static void initialize(string clientId, string name, int version, string wxOpenId, bool enableSyncAttribution, IInitializeCallback initializeCallback)
         {
             InitializeListenerAdapter listenerAdapter = new InitializeListenerAdapter();
-            getInstance().Call("initialize", Turbo.GetAccessToken(), Turbo.SetOrGetClientId(clientId), name, Turbo.GetChannel(),
+            getInstance().Call("initialize", GravityHelper.GetAccessToken(), GravityHelper.SetOrGetClientId(clientId), name, GravityHelper.GetChannel(),
                 listenerAdapter, enableSyncAttribution);
         }
 
@@ -547,13 +547,13 @@ namespace GravityEngine.Wrapper
 
         private static string getCurrentClientID()
         {
-            return Turbo.GetClientId();
+            return GravityHelper.GetClientId();
         }
 
         private static void resetClientId(string newClientId, IResetCallback resetClientIdCallback)
         {
             ResetClientIdListenerAdapter listenerAdapter = new ResetClientIdListenerAdapter();
-            getInstance().Call("resetClientId", Turbo.GetAccessToken(), newClientId, listenerAdapter);
+            getInstance().Call("resetClientId", GravityHelper.GetAccessToken(), newClientId, listenerAdapter);
         }
 
         private static void trackPayEvent(int payAmount, string payType, string orderId, string payReason,

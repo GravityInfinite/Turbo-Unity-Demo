@@ -38,7 +38,7 @@ namespace GravitySDK.PC.Config
             serverUrl = this.VerifyUrl(serverUrl);
             this.mServerUrl = serverUrl;
             this.mNormalUrl = serverUrl + "/event_center/api/v1/event/collect/?access_token=" +
-                              Turbo.GetAccessToken();
+                              GravityHelper.GetAccessToken();
             this.mConfigUrl = serverUrl + "/config";
             this.mInstanceName = instanceName;
             try
