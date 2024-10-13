@@ -6,6 +6,7 @@ using System;
 using System.Threading;
 using GravityEngine.Utils;
 using GravitySDK.PC.Constant;
+using GravitySDK.PC.GravityTurbo;
 using GravitySDK.PC.Utils;
 
 #if GRAVITY_WECHAT_GAME_MODE
@@ -31,6 +32,28 @@ public class InitializeCallbackImpl : IInitializeCallback
         }
         // 建议在此执行一次Flush
         GravityEngineAPI.Flush();
+    }
+}
+
+public class GetOpenIdCallbackImpl : IGetOpenIdCallback
+{
+    public void onFailed(string errorMsg)
+    {
+        Debug.Log("getOpenId failed  with message " + errorMsg);
+    }
+
+    public void onSuccess(Dictionary<string, object> responseJson)
+    {
+        Debug.Log("getOpenId success");
+        Debug.Log("getOpenId call end");
+        if (responseJson!=null)
+        {
+            Dictionary<string, object> dataDict = (Dictionary<string, object>) responseJson;
+            foreach (var kvp in dataDict)
+            {
+                Debug.Log("key " + kvp.Key + " : " + kvp.Value?.ToString());
+            }
+        }
     }
 }
 

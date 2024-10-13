@@ -36,4 +36,12 @@ namespace GravityEngine
     {
         void onCompleted();
     }
+    
+    
+    public interface IGetOpenIdCallback
+    {
+        void onFailed(string errorMsg);
+
+        void onSuccess(Dictionary<string, object> responseJson);
+    }
 }

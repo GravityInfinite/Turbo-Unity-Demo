@@ -163,6 +163,84 @@ namespace GravitySDK.PC.GravityTurbo
                     initializeCallback?.onFailed("code is not 0, failed with msg " + res?["msg"]);
                 }), callback);
         }
+        
+        
+        public static void GetOpenId(string code, string accessToken, IGetOpenIdCallback getOpenIdCallback)
+        {
+#if GRAVITY_WECHAT_GAME_MODE
+            string platformStr = "wx"
+#elif GRAVITY_BYTEDANCE_GAME_MODE
+            string platformStr = "dy"
+#elif GRAVITY_KUAISHOU_GAME_MODE
+            string platformStr = "ks"
+#else
+            string platformStr = null;
+#endif
+            if (getOpenIdCallback == null)
+            {
+                GravitySDKLogger.Print("Callback error");
+                return;
+            }
+            if (platformStr == null)
+            {
+                getOpenIdCallback.onFailed("平台类型错误，请检查是否正确添加全局宏参数：GRAVITY_WECHAT_GAME_MODE、GRAVITY_BYTEDANCE_GAME_MODE或者GRAVITY_KUAISHOU_GAME_MODE");
+            }
+            else
+            {
+                var requestDir = new Dictionary<string, object>()
+                {
+                    {"code", code},
+                };
+                UnityWebRequestMgr.Instance.Post(
+                    TurboHost + "/event_center/api/v1/base/"+ platformStr + "/code2Session/?access_token=" + accessToken, requestDir,
+                (request =>
+                {
+                    string responseText = request.downloadHandler.text;
+                    // string responseText = "{\n  \"data\": {\n    \"resp\": {\n      \"session_key\": \"wHVdBZh5CmqKTl7zTnloSg==\",\n      \"openid\": \"oeleK67L8sN8MIqAkZa2fkPftyvs\",\n      \"unionid\": \"oaNSjv-v854AXW_1W41MZv3sSwKU\"\n    }\n  },\n  \"extra\": {},\n  \"code\": 0,\n  \"msg\": \"成功\"\n}";
+                    
+                    Dictionary<string, object> res = GE_MiniJson.Deserialize(responseText);
+                    Debug.Log("response is " + responseText);
+                    if (res != null)
+                    {
+                        if (res.TryGetValue("code", out var re))
+                        {
+                            int code = Convert.ToInt32(re);
+                            if (code == 0)
+                            {
+                                if (res.TryGetValue("data", out object dataObj))
+                                {
+                                    Dictionary<string, object> dataDict = (Dictionary<string, object>) dataObj;
+                                    // foreach (var kvp in dataDict)
+                                    // {
+                                    //     Debug.Log("key " + kvp.Key + " : " + kvp.Value?.ToString());
+                                    // }
+                                    if (dataDict.TryGetValue("resp", out object respObj))
+                                    {
+                                        // Dictionary<string, object> respDict = (Dictionary<string, object>) respObj;
+                                        // foreach (var kvp in respDict)
+                                        // {
+                                        //     Debug.Log("key " + kvp.Key + " : " + kvp.Value?.ToString());
+                                        // }
+                                        getOpenIdCallback?.onSuccess((Dictionary<string, object>) respObj);
+                                    }
+                                    else
+                                    {
+                                        getOpenIdCallback?.onSuccess(new Dictionary<string, object>());
+                                    }
+                                }
+                                else
+                                {
+                                    getOpenIdCallback?.onSuccess(new Dictionary<string, object>());
+                                }
+                                return;
+                            }
+                        }
+                    }
+
+                    getOpenIdCallback?.onFailed("code is not 0, failed with msg " + res?["msg"]);
+                }));
+            }
+        }
 
         public static String GetAccessToken()
         {
